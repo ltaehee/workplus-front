@@ -16,7 +16,7 @@ const ProfilePage = () => {
     agenda: "회의 안건 내용",
   };
   return (
-    <div className=" mt-96 p-6">
+    <div className="mt-56 p-6 border-2 border-black">
       <h1>프로필 페이지</h1>
       <div>
         <Button btnText="모달 열기 버튼" onClick={openModal} />

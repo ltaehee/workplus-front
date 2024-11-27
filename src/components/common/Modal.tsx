@@ -73,11 +73,7 @@ const Modal: React.FC<ModalProps> = ({
           <p className="mt-10 text-gray-500">회의 안건</p>
           <p className="mt-2">{agenda}</p>
         </div>
-        <Button
-          onClick={onClose}
-          btnText="컴포넌트 버튼"
-          className="mt-8 bg-blue-500 hover:bg-blue-700"
-        />
+        <Button onClick={onClose} btnText="컴포넌트 버튼" className="mt-8 " />
       </div>
     </div>
   );
