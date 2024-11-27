@@ -1,5 +1,7 @@
 import { useState } from "react";
 import Modal from "../components/common/Modal";
+import Input from "../components/common/Input";
+import Button from "../components/common/Button";
 
 const ProfilePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,12 +16,10 @@ const ProfilePage = () => {
     agenda: "회의 안건 내용",
   };
   return (
-    <>
+    <div className=" p-6 border-2 border-black">
       <h1>프로필 페이지</h1>
       <div>
-        <button className="bg-blue-500 text-white" onClick={openModal}>
-          모달 열기
-        </button>
+        <Button btnText="모달 열기 버튼" onClick={openModal} />
         <Modal
           isOpen={isModalOpen}
           onClose={closeModal}
@@ -29,7 +29,8 @@ const ProfilePage = () => {
           agenda={dummyData.agenda}
         />
       </div>
-    </>
+      <Input type="text" placeholder="아무거나" className="mt-5" />
+    </div>
   );
 };
 
