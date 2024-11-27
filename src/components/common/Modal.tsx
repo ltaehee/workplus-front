@@ -1,14 +1,15 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Button from "./Button";
 
-interface ModalProps {
+type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   date: string;
   organizer: string;
   agenda: string;
-}
+};
 
 const Modal: React.FC<ModalProps> = ({
   isOpen,
@@ -49,7 +50,7 @@ const Modal: React.FC<ModalProps> = ({
     onClose();
   };
 
-  // 모달 내부에서 클릭 시 안닫히게
+  /* 모달 내부에서 클릭 시 안닫히게 */
   const handleModalClick = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
@@ -72,12 +73,11 @@ const Modal: React.FC<ModalProps> = ({
           <p className="mt-10 text-gray-500">회의 안건</p>
           <p className="mt-2">{agenda}</p>
         </div>
-        <button
-          className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700 w-full mt-8"
+        <Button
           onClick={onClose}
-        >
-          확인
-        </button>
+          btnText="컴포넌트 버튼"
+          className="mt-8 bg-blue-500 hover:bg-blue-700"
+        />
       </div>
     </div>
   );
