@@ -1,11 +1,11 @@
-import { FC } from "react";
-import DatePicker from "../components/common/datePicker";
-const MainPage:FC = () => {
+const MainPage = () => {
+  
   return (
     <>
       <h1>main page</h1>
       <br />
-      <DatePicker />
+      {/* <DatePicker /> */}
+      
     </>
   );
 };
