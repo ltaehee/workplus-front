@@ -1,11 +1,9 @@
-import { useNavigate, useRouteError } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import errorImg from "/img/errorImg.png";
 import Button from "../components/common/Button";
 
 const ErrorPage = () => {
   const navigate = useNavigate();
-  const error = useRouteError();
-  console.log({ error });
   return (
     <div className="w-full h-screen flex justify-center items-center -translate-y-20">
       <div className="w-96 flex flex-col justify-center items-center p-4">
