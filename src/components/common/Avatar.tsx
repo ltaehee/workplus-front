@@ -1,9 +1,9 @@
-interface ProfileImgProps {
+interface AvatarProps {
   width: string;
   className?: string;
 }
 
-const ProfileImg = (props: ProfileImgProps) => {
+const Avatar = (props: AvatarProps) => {
   const { width, className } = props;
   return (
     <svg
@@ -22,4 +22,4 @@ const ProfileImg = (props: ProfileImgProps) => {
   );
 };
 
-export default ProfileImg;
+export default Avatar;

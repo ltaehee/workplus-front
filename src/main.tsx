@@ -6,6 +6,7 @@ import MainPage from "./pages/MainPage.tsx";
 import ProfilePage from "./pages/profilePage.tsx";
 import VacationPage from "./pages/vacationPage.tsx";
 import ErrorPage from "./pages/ErrorPage.tsx";
+import LoginPage from "./pages/LoginPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
         element: <VacationPage />,
       },
     ],
+  },
+  {
+    path: "/login",
+    element: <LoginPage />,
   },
   {
     path: "*",

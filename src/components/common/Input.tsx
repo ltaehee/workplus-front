@@ -4,6 +4,7 @@ type InputProps = {
   onChange?: () => void;
   placeholder?: string;
   className?: string;
+  id?: string;
 };
 
 const Input: React.FC<InputProps> = ({
@@ -12,15 +13,24 @@ const Input: React.FC<InputProps> = ({
   onChange,
   placeholder,
   className,
+  id,
 }) => {
   return (
-    <input
-      type={type}
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      className={`px-4 py-2 border rounded-md w-full focus:outline-none focus:ring-2 ${className}`}
-    />
+    <div>
+      {id ? (
+        <label className={"text-sm"} htmlFor={id}>
+          {id}
+        </label>
+      ) : null}
+      <input
+        id={id}
+        type={type}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className={`px-4 py-2 border rounded-md w-full focus:outline-none focus:ring-2 ${className}`}
+      />
+    </div>
   );
 };
 

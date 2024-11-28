@@ -1,16 +1,16 @@
 import { useState } from "react";
-import Logo from "../../assets/Logo";
-import ProfileImg from "../../assets/ProfileImg";
-import Bell from "../../assets/icons/Bell";
-import MenuIcon from "../../assets/icons/MenuIcon";
-import XIcon from "../../assets/XIcon";
+import Logo from "./Logo";
+import Avatar from "./Avatar";
+import Bell from "../icons/Bell";
+import MenuIcon from "../icons/MenuIcon";
+import XIcon from "../icons/XIcon";
 import axios from "axios";
 
 const Header = () => {
   const [isMenu, setIsMenu] = useState(false);
-  const [idAdmin, setIsAdmin] = useState(false);
+  const [idAdmin, setIsAdmin] = useState(true);
   const [isAlarm, setIsAlarm] = useState(true);
-  const [profileImage, setProfileImage] = useState("");
+  const [AvatarImage, setAvatarImage] = useState("");
 
   const handleClickMenu = () => {
     setIsMenu(!isMenu);
@@ -61,7 +61,7 @@ const Header = () => {
             </button>
             <button>
               <a className={"flex justify-between items-center"} href="">
-                <ProfileImg className={"md:block hidden"} width={"40px"} />
+                <Avatar className={"md:block hidden"} width={"40px"} />
               </a>
             </button>
             <a

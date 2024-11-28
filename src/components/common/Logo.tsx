@@ -1,5 +1,5 @@
 interface LogoProps {
-  width: string;
+  width?: string;
   className?: string;
 }
 
