@@ -13,3 +13,7 @@
 * {
   font-family: "Pretendard-Regular";
 }
+
+.react-datepicker-wrapper {
+  width: 100%;
+}
