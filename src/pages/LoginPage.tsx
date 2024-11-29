@@ -26,6 +26,7 @@ const LoginPage = () => {
         password,
       });
       localStorage.setItem("token", response.headers.token);
+      localStorage.setItem("user", JSON.stringify(response.data.data.user));
       navigate("/");
     } catch (err) {
       console.log("handleClickLogin 오류", err);
@@ -33,6 +34,10 @@ const LoginPage = () => {
         alert(err.response?.data.message);
       }
     }
+  };
+
+  const handleClickGoogleLogin = async () => {
+    window.location.href = "http://localhost:8080/google-oauth";
   };
 
   return (
@@ -64,9 +69,9 @@ const LoginPage = () => {
                 "flex justify-center items-center text-sm text-slate-500"
               }
             >
-              <a href="">회원가입</a>
+              <button onClick={() => navigate("/signup")}>회원가입</button>
               <p className={"px-1"}> | </p>
-              <a href="">비밀번호 찾기</a>
+              <button onClick={() => navigate("/signup")}>비밀번호 찾기</button>
             </div>
           </div>
           <div className={"flex flex-col gap-4 w-8/12 min-w-80"}>
@@ -75,7 +80,7 @@ const LoginPage = () => {
               <span className={"text-slate-600"}>SNS 간편 로그인</span>
               <div className={"flex-1 border-t border-gray-400 ml-4"}></div>
             </div>
-            <Button btnText={"구글 로그인"} />
+            <Button onClick={handleClickGoogleLogin} btnText={"구글 로그인"} />
             <Button btnText={"카카오 로그인"} />
           </div>
         </div>

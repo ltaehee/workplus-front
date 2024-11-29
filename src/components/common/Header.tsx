@@ -5,12 +5,15 @@ import Bell from "../icons/Bell";
 import MenuIcon from "../icons/MenuIcon";
 import XIcon from "../icons/XIcon";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [isMenu, setIsMenu] = useState(false);
-  const [idAdmin, setIsAdmin] = useState(true);
-  const [isAlarm, setIsAlarm] = useState(true);
+  const [idAdmin, setIsAdmin] = useState(false);
+  const [isAlarm, setIsAlarm] = useState(false);
   const [AvatarImage, setAvatarImage] = useState("");
+
+  const navigate = useNavigate();
 
   const handleClickMenu = () => {
     setIsMenu(!isMenu);
@@ -64,14 +67,18 @@ const Header = () => {
                 <Avatar className={"md:block hidden"} width={"40px"} />
               </a>
             </button>
-            <a
+            <button
               className={
                 "md:flex hidden justify-between items-center text-slate-400 text-sm text-nowrap"
               }
-              href=""
+              onClick={() => {
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+                navigate("/login");
+              }}
             >
               로그아웃
-            </a>
+            </button>
             {isMenu ? (
               <button className={"md:hidden block"} onClick={handleClickMenu}>
                 <XIcon width={"24px"} />
@@ -112,6 +119,11 @@ const Header = () => {
           </button>
           <button
             className={"py-4 border-b border-slate-300 w-11/12 text-slate-900"}
+            onClick={() => {
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              navigate("/login");
+            }}
           >
             로그아웃
           </button>
@@ -134,6 +146,11 @@ const Header = () => {
           </button>
           <button
             className={"py-4 border-b border-slate-300 w-11/12 text-slate-900"}
+            onClick={() => {
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              navigate("/login");
+            }}
           >
             로그아웃
           </button>

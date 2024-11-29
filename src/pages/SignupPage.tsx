@@ -5,11 +5,6 @@ import { ChangeEvent, useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 
-interface Location {
-  token: string;
-  expires: string;
-}
-
 const regex =
   /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*()_+[\]{};':"\\|,.<>\/?`~\-]).{8,}$/;
 
