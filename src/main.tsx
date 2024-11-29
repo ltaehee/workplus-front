@@ -10,6 +10,8 @@ import ProfilePage from "./pages/ProfilePage.tsx";
 import SignupPage from "./pages/SignupPage.tsx";
 import MeetingPage from "./pages/MeetingPage.tsx";
 import AdminPage from "./pages/AdminPage.tsx";
+import VacationDetailPage from "./pages/VacationDetailPage.tsx";
+import MeetingDetailPage from "./pages/MeetingDetailPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +38,14 @@ const router = createBrowserRouter([
       {
         path: "/admin",
         element: <AdminPage />,
+      },
+      {
+        path: "/vacationDetail",
+        element: <VacationDetailPage />,
+      },
+      {
+        path: "/meetingDetail",
+        element: <MeetingDetailPage />,
       },
     ],
   },

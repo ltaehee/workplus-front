@@ -1,23 +1,21 @@
 import { ChangeEvent, useState } from "react";
-import SelectBox from "../components/common/SelectBox";
-import Input from "../components/common/Input";
-import Button from "../components/common/Button";
 import Datepicker from "../components/common/DatePicker";
-const VacationPage = () => {
-  const [isOption, setIsOption] = useState("");
+import Input from "../components/common/Input";
+import SelectBox from "../components/common/SelectBox";
+import Button from "../components/common/Button";
 
+const VacationDetailPage = () => {
+  const [isOption, setIsOption] = useState("");
   const handleChangeSelect = (e: ChangeEvent<HTMLSelectElement>) => {
     setIsOption(e.target.value);
     console.log(e.target.value);
   };
-
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [endDate, setEndDate] = useState<Date | null>(new Date());
-
   return (
     <>
       <div className="w-full flex flex-col space-y-5 items-center">
-        <p className="mt-20">휴가 신청 페이지</p>
+        <p className="mt-20">휴가 신청 상세 페이지</p>
         <div className="w-1/6">
           <Input placeholder="이름" id={"이름"} />
         </div>
@@ -53,12 +51,17 @@ const VacationPage = () => {
         <div className="w-1/6">
           <Input placeholder="사유" id={"사유"} />
         </div>
-        <div className="w-1/6">
-          <Button btnText="등록" />
+        <div className="w-1/6 flex justify-between">
+          <div className="w-1/3">
+            <Button btnText="수정" />
+          </div>
+          <div className="w-1/3">
+            <Button btnText="삭제" />
+          </div>
         </div>
       </div>
     </>
   );
 };
 
-export default VacationPage;
+export default VacationDetailPage;

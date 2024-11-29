@@ -1,16 +1,12 @@
 import { useState } from "react";
+import { UserData } from "./MeetingPage";
 import Datepicker from "../components/common/DatePicker";
 import Input from "../components/common/Input";
-import Button from "../components/common/Button";
-import ReactDatePiker from "react-datepicker";
 import AutoComplete from "../components/common/AutoComplete";
+import ReactDatePiker from "react-datepicker";
+import Button from "../components/common/Button";
 
-export type UserData = {
-  name: string;
-  id: string;
-};
-
-const MeetingPage: React.FC = () => {
+const MeetingDetailPage: React.FC = () => {
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [selectedTime, setSelectedTime] = useState<Date | null>(new Date());
 
@@ -34,7 +30,7 @@ const MeetingPage: React.FC = () => {
   return (
     <>
       <div className="w-full flex flex-col space-y-5 items-center">
-        <p className="mt-20">회의 일정 생성 페이지</p>
+        <p className="mt-20">회의 일정 상세 페이지</p>
         <div className="w-1/6">
           <Datepicker
             className="w-full"
@@ -78,12 +74,17 @@ const MeetingPage: React.FC = () => {
             dateFormat="hh:mm aa"
           />
         </div>
-        <div className="w-1/6">
-          <Button btnText="등록" />
+        <div className="w-1/6 flex justify-between">
+          <div className="w-1/3">
+            <Button btnText="수정" />
+          </div>
+          <div className="w-1/3">
+            <Button btnText="삭제" />
+          </div>
         </div>
       </div>
     </>
   );
 };
 
-export default MeetingPage;
+export default MeetingDetailPage;

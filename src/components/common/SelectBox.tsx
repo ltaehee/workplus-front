@@ -2,7 +2,7 @@ import React, { ChangeEvent, useState } from "react";
 
 type SelectProps = {
   value: string;
-
+  id?: string;
   optionText0: string;
   optionText1: string;
   optionText2: string;
@@ -17,10 +17,16 @@ const SelectBox: React.FC<SelectProps> = ({
   optionText2,
   className,
   onChange,
+  id,
 }) => {
   return (
     <>
       <form className={`${className}`}>
+        {id ? (
+          <label className={"text-sm"} htmlFor={id}>
+            {id}
+          </label>
+        ) : null}
         <select
           defaultValue={optionText0}
           onChange={onChange}
