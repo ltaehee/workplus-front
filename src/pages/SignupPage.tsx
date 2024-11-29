@@ -58,7 +58,10 @@ const SignupPage = () => {
         console.log(response);
         setIsclick(true);
       } catch (err) {
-        console.log("handleClickEmailVerify 오류", err);
+        console.log("handleClickEmailSend 오류", err);
+        if (axios.isAxiosError(err)) {
+          alert(err.response?.data.message);
+        }
       }
     }
   };
