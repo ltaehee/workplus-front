@@ -16,14 +16,14 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
       <p className="font-bold pb-2">{title}</p>
       <div
         onClick={onClick}
-        className="border border-[#DFDFDF] bg-white rounded-md p-6"
+        className={`border border-[#DFDFDF] bg-white rounded-md p-6 ${className}`}
       >
         {data ? (
           <ul>
             {data.map((item, index) => (
               <li
                 key={index}
-                className="mb-1 flex justify-between items-center border-b border-gray-300 last:border-none py-2 "
+                className="mb-1 flex justify-between items-center border-b border-gray-300 last:border-none py-2 cursor-pointer hover:text-gray-500"
               >
                 <p>{item.label}</p>
                 <p>{item.name}</p>

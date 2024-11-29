@@ -6,7 +6,7 @@ import MainPage from "./pages/MainPage.tsx";
 import VacationPage from "./pages/vacationPage.tsx";
 import ErrorPage from "./pages/ErrorPage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
-import ProfilePage from "./pages/profilePage.tsx";
+import ProfilePage from "./pages/ProfilePage.tsx";
 import SignupPage from "./pages/SignupPage.tsx";
 import MeetingPage from "./pages/MeetingPage.tsx";
 
