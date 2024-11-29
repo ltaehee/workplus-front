@@ -18,6 +18,7 @@ const SignupPage = () => {
   const [emailInputValue, setEmailInputValue] = useState("");
   const [isclick, setIsclick] = useState(false);
   const [ifVerifyOk, setIsVerifyOk] = useState(false);
+  const [isloading, setIsLoading] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ const SignupPage = () => {
       alert("메일에@넣어주세요");
     } else {
       try {
+        setIsLoading(true);
         const response = await axios.post("/api/auth/send-email", {
           email,
         });
@@ -62,6 +64,8 @@ const SignupPage = () => {
         if (axios.isAxiosError(err)) {
           alert(err.response?.data.message);
         }
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -96,6 +100,7 @@ const SignupPage = () => {
           password,
         });
         console.log(response);
+        alert("회원가입이 완료되었습니다.");
         navigate("/login");
       } catch (err) {
         console.log("handleClickSignup 오류", err);
@@ -127,7 +132,9 @@ const SignupPage = () => {
                   <Button
                     className={"bg-blue-400"}
                     onClick={handleClickEmailSend}
-                    btnText={"이메일 보내기"}
+                    btnText={
+                      isloading ? "잠시만 기다려주세요" : "이메일 보내기"
+                    }
                   />
                 ) : (
                   <h3 className={"text-l"}>이메일을 확인해주세요</h3>
