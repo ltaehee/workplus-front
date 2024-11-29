@@ -4,21 +4,24 @@ import MainProfile from "../components/profile/MainProfile";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-/*  */
 type UserInfo = {
-  phone: string;
-  birth: string;
-  address: string;
+  email?: string;
+  name?: string;
+  _id?: string;
+  userImage?: string;
+  phone?: string;
+  birth?: string;
+  address?: string;
 };
 
 const ProfilePage = () => {
   /*  */
-  const initialUserInfo: UserInfo = {
+  /* const initialUserInfo: UserInfo = {
     phone: "",
     birth: "",
     address: "",
-  };
-  const [userInfo, setUserInfo] = useState<UserInfo>(initialUserInfo);
+  }; */
+  const [isLoading, setIsLoading] = useState(false);
   const meetingData = [
     { label: "회의", name: "엘리스", date: "2024-12-01" },
     { label: "회의", name: "엘리스", date: "2024-12-01" },
