@@ -3,7 +3,7 @@ import React, { ChangeEvent, useState } from "react";
 type SelectProps = {
   value: string;
   id?: string;
-  optionText0: string;
+  optionText0?: string;
   optionText1: string;
   optionText2: string;
   className?: string;

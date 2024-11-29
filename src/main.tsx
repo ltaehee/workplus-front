@@ -40,11 +40,11 @@ const router = createBrowserRouter([
         element: <AdminPage />,
       },
       {
-        path: "/vacationDetail",
+        path: "/vacationDetail/:vacationId",
         element: <VacationDetailPage />,
       },
       {
-        path: "/meetingDetail",
+        path: "/meetingDetail/:meetingId",
         element: <MeetingDetailPage />,
       },
     ],
