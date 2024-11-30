@@ -1,9 +1,9 @@
 import Logo from "../components/common/Logo";
 import Input from "../components/common/Input";
 import Button from "../components/common/Button";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -36,9 +36,36 @@ const LoginPage = () => {
     }
   };
 
-  const handleClickGoogleLogin = async () => {
-    window.location.href = "http://localhost:8080/google-oauth";
+  const GOOGLE_CLIENT_ID =
+    "173791504368-gejkrld2318u7f7v5ept4bj2oqovueqh.apps.googleusercontent.com";
+  const GOOGLE_OAUTH_REDIRECT_URL =
+    "http://localhost:8080/api/auth/google-oauth-redirect";
+  const googleOauthEntryUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_OAUTH_REDIRECT_URL}&response_type=code&scope=email profile`;
+
+  const handleClickGoogleLogin = () => {
+    window.location.href = googleOauthEntryUrl;
   };
+
+  const location = useLocation();
+
+  const googleRedirect = async (code: string) => {
+    try {
+      const response = await axios.post("/api/auth/google-oauth-redirect", {
+        code,
+      });
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+    } catch (err) {
+      console.log("handleClickGoogleLogin", err);
+    }
+  };
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const code = urlParams.get("code");
+    if (code) {
+      googleRedirect(code);
+    }
+  }, [location]);
 
   return (
     <>
@@ -81,7 +108,6 @@ const LoginPage = () => {
               <div className={"flex-1 border-t border-gray-400 ml-4"}></div>
             </div>
             <Button onClick={handleClickGoogleLogin} btnText={"구글 로그인"} />
-            <Button btnText={"카카오 로그인"} />
           </div>
         </div>
       </div>
