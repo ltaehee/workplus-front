@@ -99,7 +99,6 @@ const VacationPage = () => {
             id={"종류"}
             className=""
             value={isOption}
-            optionText0="종류"
             optionText1="연차"
             optionText2="반차"
             onChange={handleChangeSelect}

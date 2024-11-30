@@ -1,9 +1,9 @@
 import React, { ChangeEvent, useState } from "react";
 
 type SelectProps = {
-  value: string;
+  value?: string;
+  defaultValue?: string;
   id?: string;
-  optionText0?: string;
   optionText1: string;
   optionText2: string;
   className?: string;
@@ -12,7 +12,7 @@ type SelectProps = {
 
 const SelectBox: React.FC<SelectProps> = ({
   value,
-  optionText0,
+  defaultValue,
   optionText1,
   optionText2,
   className,
@@ -28,14 +28,12 @@ const SelectBox: React.FC<SelectProps> = ({
           </label>
         ) : null}
         <select
-          defaultValue={optionText0}
+          defaultValue={defaultValue}
           onChange={onChange}
+          value={value}
           className={`px-4 py-2 border text-gray-900 rounded-md w-full
              focus:outline-none focus:ring-2 ${className}`}
         >
-          <option value={optionText0} disabled hidden>
-            {optionText0}
-          </option>
           <option value={optionText1}>{optionText1}</option>
           <option value={optionText2}>{optionText2}</option>
         </select>

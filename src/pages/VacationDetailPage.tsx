@@ -30,7 +30,7 @@ const VacationDetailPage = () => {
   };
 
   const param = useParams(); // 6749977732e657c9a75da74d
-
+  console.log("param.vacationId ", param.vacationId);
   const getUserInfo = async () => {
     try {
       const request = await axios.get(`/api/vacation/${param.vacationId}`, {
@@ -40,19 +40,25 @@ const VacationDetailPage = () => {
       });
       const vacation = request.data.data.vacation;
       console.log("getUser data ", vacation);
+
       setIsOption(vacation.vacationType);
       setReason(vacation.reason);
       const [year, month, day] = vacation.startDate
         .split(". ")
         .map((part: string) => parseInt(part, 10));
-      const dateObject = new Date(year, month - 1, day);
-      setStartDate(dateObject);
+      const startDateObject = new Date(year, month - 1, day);
+      const [year1, month1, day1] = vacation.endDate
+        .split(". ")
+        .map((part: string) => parseInt(part, 10));
+      const endDateObject = new Date(year1, month1 - 1, day1);
+      setStartDate(startDateObject);
+      setEndDate(endDateObject);
     } catch (err) {
       console.log("Error getUserInfo ", err);
     }
   };
 
-  const handleClickFix = () => {
+  const handleClickFix = async () => {
     const data = {
       username: userName.username,
       userId: userName.id,
@@ -63,8 +69,31 @@ const VacationDetailPage = () => {
     };
 
     try {
+      const request = await axios.put(
+        `/api/vacation/${param.vacationId}`,
+        data,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      console.log("Fix vacationDetail data ", request.data);
     } catch (err) {
       console.log("Error vacationDetail Fix ", err);
+    }
+  };
+
+  const handleClickDelete = async () => {
+    try {
+      const request = await axios.delete(`/api/vacation/${param.vacationId}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      console.log("Delte vacationDetail data ", request.data);
+    } catch (err) {
+      console.log("Error vacationDetail delete ", err);
     }
   };
 
@@ -130,7 +159,7 @@ const VacationDetailPage = () => {
             <Button btnText="수정" onClick={handleClickFix} />
           </div>
           <div className="w-1/3">
-            <Button btnText="삭제" />
+            <Button btnText="삭제" onClick={handleClickDelete} />
           </div>
         </div>
       </div>
