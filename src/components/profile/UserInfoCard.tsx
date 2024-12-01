@@ -22,14 +22,16 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title }) => {
     birth: "",
     address: "",
   });
+
   const [editUserId, setEditUserId] = useState("");
+
   const handleChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = target;
     setAddInfo((prev) => ({ ...prev, [name]: value }));
   };
 
   /* 전화번호 수정 하기*/
-  const handleClickPhone = async () => {
+  /* const handleClickPhone = async () => {
     try {
       const response = await axios.patch(
         "/api/user/profile/phone",
@@ -53,17 +55,16 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title }) => {
     } catch (err) {
       console.error(err);
     }
-  };
-  useEffect(() => {
+  }; */
+  /* useEffect(() => {
     const storedUser = localStorage.getItem("user");
 
     if (storedUser) {
       const userData = JSON.parse(storedUser);
 
       setEditUserId(userData.id);
-      console.log("부가정보관리", userData);
     }
-  }, []);
+  }, []); */
   return (
     <div>
       <p className="font-bold pb-2">{title}</p>
@@ -79,7 +80,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title }) => {
           <Button
             btnText="수정"
             className="!w-[20%]"
-            onClick={handleClickPhone}
+            // onClick={handleClickPhone}
           />
         </div>
         <div className="w-full flex gap-2 mb-1 flex justify-between items-center border-b border-gray-300 last:border-none py-2">

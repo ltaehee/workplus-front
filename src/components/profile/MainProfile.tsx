@@ -2,24 +2,29 @@ import Button from "../common/Button";
 import profileImg from "/img/profileImg.png";
 import Modal from "../common/Modal";
 import Input from "../common/Input";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import axios from "axios";
 
-type MainProfileProps = {
+type UserInfo = {
+  id?: string;
   email?: string;
   name?: string;
+  username?: string;
   userImage?: string;
-  onClick?: () => void;
-  className?: string;
 };
 
-const MainProfile: React.FC<MainProfileProps> = () => {
-  const [user, setUser] = useState<MainProfileProps>({
-    email: "",
-    name: "",
-  });
-  const [userEditId, setEditUserId] = useState();
+type MainProfileProps = {
+  user: UserInfo;
+  onEdit: (updatedUser: UserInfo) => void;
+};
 
+const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
+  /* 이미지 업로드 */
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  /* 이름 수정 */
+  const [editName, setEditName] = useState(user.name || "");
+
+  /* 모달 */
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -31,74 +36,44 @@ const MainProfile: React.FC<MainProfileProps> = () => {
     agenda: "회의 안건 내용",
   };
 
-  /* 회원 정보 불러오기(이메일,이름) */
-  const fetchUserData = async (userId: string) => {
-    try {
-      const response = await axios.get(`/api/user/profile/${userId}`, {
-        headers: {
-          authorization: `${localStorage.getItem("token")}`,
-        },
-      });
-
-      if (response.status === 200) {
-        console.log("성공");
-
-        const { email, username, userImage } = response.data.data.user;
-        setUser({
-          email: email,
-          name: username,
-          userImage: userImage,
-        });
-      } else {
-        console.log("Fail Check!");
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    console.log("체크용", storedUser);
-
-    if (storedUser) {
-      const userData = JSON.parse(storedUser);
-      const userId = userData.id;
-      setEditUserId(userId);
-
-      fetchUserData(userId);
-    }
-  }, []);
-
   const handleChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = target;
-    setUser((prev) => ({ ...prev, [name]: value }));
+    setEditName(target.value);
   };
-
   /* 이름 수정 하기*/
   const handleClickEdit = async () => {
+    console.log("이름 수정 요청 시작");
+
     try {
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) return;
+      const { id } = JSON.parse(storedUser);
       const response = await axios.patch(
-        "/api/user/profile/username",
-        { username: user.name, id: userEditId },
+        `/api/user/profile/username`,
         {
-          headers: {
-            authorization: `${localStorage.getItem("token")}`,
-          },
+          username: editName,
+          id: id,
+        },
+        {
+          headers: { authorization: `${localStorage.getItem("token")}` },
         }
       );
 
-      if (response.status === 204) {
-        setUser((prevUser) => ({
-          ...prevUser,
-          username: user.name, // 새로운 이름으로만 업데이트
-        }));
-
-        console.log("이름 수정 성공", user.name);
-      } else {
-        console.log("이름 수정 실패");
+      if (response.status === 200 || response.status === 204) {
+        onEdit({ ...user, name: editName });
       }
     } catch (err) {
-      console.log(err);
+      console.error("Error updating name:", err);
+    }
+  };
+  /* input에도 현재 이름 보이게 */
+  useEffect(() => {
+    setEditName(user.name || "");
+  }, [user.name]);
+
+  /* 이미지 업로드 */
+  const handleImageClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click(); // 이미지 클릭 시 파일 선택창 열기
     }
   };
 
@@ -106,7 +81,12 @@ const MainProfile: React.FC<MainProfileProps> = () => {
     <div>
       <h2 className="font-bold text-lg">Profile</h2>
       <div className="flex flex-col justify-center items-center mt-20">
-        <img src={profileImg} alt="프로필 사진" className="cursor-pointer" />
+        <img
+          src={user.userImage || profileImg}
+          alt="프로필 사진"
+          className="cursor-pointer"
+          onClick={handleImageClick}
+        />
         <h3 className="text-xl font-semibold">{user.name}</h3>
         <p className="text-sm">{user.email}</p>
       </div>
@@ -123,7 +103,7 @@ const MainProfile: React.FC<MainProfileProps> = () => {
         <Input
           type="text"
           name="name"
-          value={user.name}
+          value={editName}
           className="mt-2"
           onChange={handleChange}
         />
