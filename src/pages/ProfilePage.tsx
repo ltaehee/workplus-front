@@ -8,7 +8,7 @@ type UserInfo = {
   email?: string;
   name?: string;
   userImage?: string;
-  phone?: string;
+  phone?: string | undefined;
   birth?: string;
   address?: string;
 };
@@ -43,10 +43,21 @@ const ProfilePage = () => {
       const response = await axios.get(`/api/user/profile/${id}`, {
         headers: { authorization: `${localStorage.getItem("token")}` },
       });
+      console.log("현재 데이터:", response.data.data.user);
 
       if (response.status === 200 || response.status === 204) {
-        const { email, username, userImage } = response.data.data.user;
-        setUser({ email, name: username, userImage });
+        const userData = response.data.data.user;
+        setUser({
+          email: userData.email,
+          name: userData.username,
+          userImage: userData.userImage,
+          phone: userData.phone,
+          birth: userData.birth,
+          address: userData.address,
+        });
+
+        // 로컬 스토리지에 최신 데이터 저장
+        localStorage.setItem("user", JSON.stringify(userData));
       }
     } catch (err) {
       console.error(err);
@@ -79,7 +90,11 @@ const ProfilePage = () => {
               data={vacationData}
               className="min-h-[400px]"
             />
-            <UserInfoCard title="부가 정보 관리" />
+            <UserInfoCard
+              title="부가 정보 관리"
+              user={user}
+              onEdit={handleEdit}
+            />
           </div>
         </div>
       </div>

@@ -20,7 +20,9 @@ type MainProfileProps = {
 
 const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
   /* 이미지 업로드 */
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [imgFile, setImgFile] = useState<File>();
+  const inputFileRef = useRef<HTMLInputElement | null>(null);
+
   /* 이름 수정 */
   const [editName, setEditName] = useState(user.name || "");
 
@@ -72,8 +74,46 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
 
   /* 이미지 업로드 */
   const handleImageClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click(); // 이미지 클릭 시 파일 선택창 열기
+    // 이미지 클릭 시 input 요소 클릭
+    inputFileRef.current?.click();
+  };
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setImgFile(file);
+    console.log("파일이름", file);
+
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) return;
+    const { id } = JSON.parse(storedUser);
+
+    try {
+      const formData = new FormData();
+      if (file) {
+        formData.append("image", file); // 파일이 있을 경우에만 추가
+      } else {
+        // 파일이 없으면 추가하지 않음
+        console.error("No file selected");
+        return;
+      }
+      const response = await axios.put(
+        `/api/user/profile/image/${id}`,
+        formData,
+        {
+          headers: {
+            authorization: `${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      console.log("응답2", response);
+      if (response.status === 200 || response.status === 204) {
+        console.log("파일 업로드 성공");
+        // 업로드 후 처리 로직 (예: 이미지 URL 업데이트)
+        const uploadedImageUrl = response.data.data.userImage;
+        console.log(uploadedImageUrl);
+        onEdit({ ...user, userImage: uploadedImageUrl });
+      }
+    } catch (err) {
+      console.error("Error uploading file:", err);
     }
   };
 
@@ -81,12 +121,20 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
     <div>
       <h2 className="font-bold text-lg">Profile</h2>
       <div className="flex flex-col justify-center items-center mt-20">
-        <img
-          src={user.userImage || profileImg}
-          alt="프로필 사진"
-          className="cursor-pointer"
-          onClick={handleImageClick}
-        />
+        <div>
+          <input
+            type="file"
+            ref={inputFileRef}
+            className="hidden"
+            onChange={handleFileChange}
+          />
+          <img
+            src={user.userImage || profileImg}
+            alt="프로필 사진"
+            className="cursor-pointer"
+            onClick={handleImageClick}
+          />
+        </div>
         <h3 className="text-xl font-semibold">{user.name}</h3>
         <p className="text-sm">{user.email}</p>
       </div>
