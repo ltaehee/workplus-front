@@ -12,6 +12,7 @@ import MeetingPage from "./pages/MeetingPage.tsx";
 import AdminPage from "./pages/AdminPage.tsx";
 import VacationDetailPage from "./pages/VacationDetailPage.tsx";
 import MeetingDetailPage from "./pages/MeetingDetailPage.tsx";
+import FindPasswordPage from "./pages/FindPasswordPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -56,6 +57,10 @@ const router = createBrowserRouter([
   {
     path: "/signup",
     element: <SignupPage />,
+  },
+  {
+    path: "/find-password",
+    element: <FindPasswordPage />,
   },
   {
     path: "*",

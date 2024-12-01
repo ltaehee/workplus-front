@@ -36,11 +36,9 @@ const LoginPage = () => {
     }
   };
 
-  const GOOGLE_CLIENT_ID =
-    "173791504368-gejkrld2318u7f7v5ept4bj2oqovueqh.apps.googleusercontent.com";
-  const GOOGLE_OAUTH_REDIRECT_URL =
-    "http://localhost:8080/api/auth/google-oauth-redirect";
-  const googleOauthEntryUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_OAUTH_REDIRECT_URL}&response_type=code&scope=email profile`;
+  const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+  const googleRedirectUrl = process.env.REACT_APP_GOOGLE_OAUTH_REDIRECT_URL;
+  const googleOauthEntryUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleClientId}&redirect_uri=${googleRedirectUrl}&response_type=code&scope=email profile`;
 
   const handleClickGoogleLogin = () => {
     window.location.href = googleOauthEntryUrl;
@@ -50,10 +48,11 @@ const LoginPage = () => {
 
   const googleRedirect = async (code: string) => {
     try {
-      const response = await axios.post("/api/auth/google-oauth-redirect", {
+      const response = await axios.post("/api/auth/google-oauth", {
         code,
       });
       localStorage.setItem("user", JSON.stringify(response.data.user));
+      navigate("/");
     } catch (err) {
       console.log("handleClickGoogleLogin", err);
     }
@@ -98,7 +97,9 @@ const LoginPage = () => {
             >
               <button onClick={() => navigate("/signup")}>회원가입</button>
               <p className={"px-1"}> | </p>
-              <button onClick={() => navigate("/signup")}>비밀번호 찾기</button>
+              <button onClick={() => navigate("/find-password")}>
+                비밀번호 찾기
+              </button>
             </div>
           </div>
           <div className={"flex flex-col gap-4 w-8/12 min-w-80"}>
