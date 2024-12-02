@@ -143,36 +143,38 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="flex justify-center bg-[#F9FBFC] min-h-screen overflow-y-hidden">
-      <div className="flex pr-8 w-1280">
-        <div className="w-4/12 bg-white px-8 py-12 shadow-[10px_0_10px_-10px_rgba(0,0,0,0.1)] relative z-10">
-          <MainProfile user={user} onEdit={handleEdit} />
-        </div>
-        <div className="flex gap-10 bg-[#F9FBFC]  w-8/12  pl-8 py-12 ">
-          <div className="w-6/12">
-            <ProfileSection
-              title="알림"
-              data={meetingData.map((meeting) => ({
-                label: meeting.agenda,
-                date: `${meeting.date}-${meeting.startTime}`,
-              }))}
-              className="min-h-[730px] max-h-[730px] overflow-y-auto"
-            />
+    <div className="bg-[#F9FBFC] h-screen ">
+      <div className="flex justify-center">
+        <div className="flex pr-8 w-1280">
+          <div className="w-4/12 h-[100%] bg-white px-8 py-12 shadow-[10px_0_10px_-10px_rgba(0,0,0,0.1)]  z-10">
+            <MainProfile user={user} onEdit={handleEdit} />
           </div>
-          <div className="flex flex-col gap-10 w-6/12">
-            <ProfileSection
-              title="연차 사용 내역"
-              className="h-[400px] overflow-y-auto"
-              data={vacationData.map((vacation) => ({
-                label: vacation.vacationType,
-                date: `${vacation.startDate} ~ ${vacation.endDate}`,
-              }))}
-            />
-            <UserInfoCard
-              title="부가 정보 관리"
-              user={user}
-              onEdit={handleEdit}
-            />
+          <div className="flex gap-10 bg-[#F9FBFC]  w-8/12  pl-8 py-12 ">
+            <div className="w-6/12">
+              <ProfileSection
+                title="알림"
+                data={meetingData.map((meeting) => ({
+                  label: meeting.agenda,
+                  date: `${meeting.date}-${meeting.startTime}`,
+                }))}
+                className="min-h-[730px] max-h-[730px] overflow-y-auto "
+              />
+            </div>
+            <div className="flex flex-col gap-10 w-6/12">
+              <ProfileSection
+                title="연차 사용 내역"
+                className="h-[400px] overflow-y-auto"
+                data={vacationData.map((vacation) => ({
+                  label: vacation.vacationType,
+                  date: `${vacation.startDate} ~ ${vacation.endDate}`,
+                }))}
+              />
+              <UserInfoCard
+                title="부가 정보 관리"
+                user={user}
+                onEdit={handleEdit}
+              />
+            </div>
           </div>
         </div>
       </div>

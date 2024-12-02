@@ -58,7 +58,7 @@ const Modal: React.FC<ModalProps> = ({
   return (
     <div
       onClick={handleBackgroundClick}
-      className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50"
+      className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50 border-2 border-blue-500"
     >
       <div
         onClick={handleModalClick}

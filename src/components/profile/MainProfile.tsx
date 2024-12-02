@@ -1,5 +1,6 @@
 import Button from "../common/Button";
 import profileImg from "/img/profileImg.png";
+import profileEditImg from "/img/profileEditImg.png";
 import Modal from "../common/Modal";
 import Input from "../common/Input";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
@@ -123,12 +124,21 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
             className="hidden"
             onChange={handleFileChange}
           />
-          <img
-            src={user.userImage || profileImg}
-            alt="프로필 사진"
-            className="cursor-pointer w-36 h-36 object-cover rounded-full"
+          <div
+            className="relative rounded-full border-transparent border-2  hover:border-blue-500"
             onClick={handleImageClick}
-          />
+          >
+            <img
+              src={user.userImage || profileImg}
+              alt="프로필 사진"
+              className="cursor-pointer w-36 h-36 object-cover rounded-full"
+            />
+            <img
+              src={profileEditImg}
+              alt="수정 이미지"
+              className="absolute bottom-0 w-8 h-8 right-1 cursor-pointer"
+            />
+          </div>
         </div>
         <h3 className="text-xl font-semibold pt-3">{user.name}</h3>
         <p className="text-sm">{user.email}</p>
