@@ -89,7 +89,7 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
     try {
       const formData = new FormData();
       if (file) {
-        formData.append("imageFile", file); // 파일이 있을 경우에만 추가
+        formData.append("image", file); // 파일이 있을 경우에만 추가
       } else {
         // 파일이 없으면 추가하지 않음
         console.error("No file selected");
@@ -131,7 +131,7 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
           <img
             src={user.userImage || profileImg}
             alt="프로필 사진"
-            className="cursor-pointer"
+            className="cursor-pointer w-36 h-36 object-cover rounded-full"
             onClick={handleImageClick}
           />
         </div>

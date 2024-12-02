@@ -36,6 +36,7 @@ const ProfilePage = () => {
   });
 
   const fetchUserData = async () => {
+    setIsLoading(true);
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
@@ -61,6 +62,8 @@ const ProfilePage = () => {
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
   useEffect(() => {
@@ -69,6 +72,14 @@ const ProfilePage = () => {
   const handleEdit = (updatedUser: UserInfo) => {
     setUser(updatedUser); // 수정된 사용자 정보를 상태에 반영
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen text-3xl font-bold">
+        <div className="spinner">로딩 중...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex justify-center bg-[#F9FBFC] min-h-screen overflow-y-hidden">

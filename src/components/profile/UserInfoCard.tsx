@@ -19,18 +19,14 @@ type InfoCardProps = {
 };
 
 const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
-  const [editPhone, setEditPhone] = useState(user.phone || "");
-  const [editBirth, setEditBirth] = useState(user.birth || "");
-  const [editAddress, setEditAddress] = useState(user.address || "");
+  const [editInput, setEditInput] = useState({
+    phone: user.phone || "",
+    birth: user.birth || "",
+    address: user.address || "",
+  });
 
   const handleChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-    if (target.name === "phone") {
-      setEditPhone(target.value);
-    } else if (target.name === "birth") {
-      setEditBirth(target.value);
-    } else if (target.name === "address") {
-      setEditAddress(target.value);
-    }
+    setEditInput((prev) => ({ ...prev, [target.name]: target.value }));
   };
 
   /* 전화번호 수정 하기*/
@@ -41,7 +37,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
       const { id } = JSON.parse(storedUser);
       const response = await axios.patch(
         "/api/user/profile/phone",
-        { phone: editPhone, id: id },
+        { phone: editInput.phone, id: id },
         {
           headers: {
             authorization: `${localStorage.getItem("token")}`,
@@ -50,8 +46,8 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
       );
 
       if (response.status === 204) {
-        onEdit({ ...user, phone: editPhone });
-        console.log("수정 성공", editPhone);
+        onEdit({ ...user, phone: editInput.phone });
+        console.log("수정 성공", editInput.phone);
       }
     } catch (err) {
       console.error("Error updating phone:", err);
@@ -66,7 +62,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
       const { id } = JSON.parse(storedUser);
       const response = await axios.patch(
         "/api/user/profile/birth",
-        { birth: editBirth, id: id },
+        { birth: editInput.birth, id: id },
         {
           headers: {
             authorization: `${localStorage.getItem("token")}`,
@@ -75,8 +71,8 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
       );
 
       if (response.status === 204) {
-        onEdit({ ...user, birth: editBirth });
-        console.log("수정 성공", editBirth);
+        onEdit({ ...user, birth: editInput.birth });
+        console.log("수정 성공", editInput.birth);
       }
     } catch (err) {
       console.error("Error updating birth:", err);
@@ -91,7 +87,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
       const { id } = JSON.parse(storedUser);
       const response = await axios.patch(
         "/api/user/profile/address",
-        { address: editAddress, id: id },
+        { address: editInput.address, id: id },
         {
           headers: {
             authorization: `${localStorage.getItem("token")}`,
@@ -100,8 +96,8 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
       );
 
       if (response.status === 204) {
-        onEdit({ ...user, address: editAddress });
-        console.log("수정 성공", editAddress);
+        onEdit({ ...user, address: editInput.address });
+        console.log("수정 성공", editInput.address);
       }
     } catch (err) {
       console.error("Error updating address:", err);
@@ -112,9 +108,11 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const userData = JSON.parse(storedUser);
-      setEditPhone(userData.phone || "");
-      setEditBirth(userData.birth || "");
-      setEditAddress(userData.address || "");
+      setEditInput({
+        phone: userData.phone || "",
+        birth: userData.birth || "",
+        address: userData.address || "",
+      });
     }
   }, []);
   return (
@@ -125,7 +123,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
           <img src={phoneImg} alt="휴대폰이미지" />
           <Input
             onChange={handleChange}
-            value={editPhone}
+            value={editInput.phone}
             placeholder="010-0000-0000"
             name="phone"
           />
@@ -139,7 +137,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
           <img src={birthImg} alt="케이크이미지" />
           <Input
             onChange={handleChange}
-            value={editBirth}
+            value={editInput.birth}
             placeholder="2000.12.23"
             name="birth"
           />
@@ -153,7 +151,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
           <img src={homeImg} alt="홈이미지" />
           <Input
             onChange={handleChange}
-            value={editAddress}
+            value={editInput.address}
             placeholder="경기도 수원시 장안구"
             name="address"
           />
