@@ -6,6 +6,7 @@ import ReactDatePiker from "react-datepicker";
 import AutoComplete from "../components/common/AutoComplete";
 import axios from "axios";
 import { UserData } from "../types";
+import { useSelectedUserStore } from "../store/useUserStore";
 
 const MeetingPage: React.FC = () => {
   const [userName, setUserName] = useState<{
@@ -15,7 +16,7 @@ const MeetingPage: React.FC = () => {
   }>({ id: "", email: "", username: "" });
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [selectedTime, setSelectedTime] = useState<Date | null>(new Date());
-  const [selectedUsers, setSelectedUsers] = useState<UserData[]>([]);
+  const { selectedUsers, setSelectedUsers } = useSelectedUserStore();
   const [agenda, setAgenda] = useState("");
 
   const loginUser = localStorage.getItem("user");
@@ -27,29 +28,22 @@ const MeetingPage: React.FC = () => {
   const minutes = selectedTime?.getMinutes().toString().padStart(2, "0");
   const selectedTimeString = `${hours}:${minutes}`;
 
-  const UserDataList = [
-    { userName: "강아지", id: "dog" },
-    { userName: "강아지2", id: "dog2" },
-    { userName: "고양이", id: "cat" },
-    { userName: "고양이2", id: "cat2" },
-    { userName: "오리", id: "duck" },
-  ];
+  const selectedUserName = selectedUsers.map((user) => user.username);
+  console.log("selectedUsers ", selectedUserName);
 
-  const availableUsers = UserDataList.filter(
-    (user) => !selectedUsers.some((selected) => selected.id === user.id)
-  );
   const handleUserSelect = (user: UserData) => {
-    setSelectedUsers((prevUsers) => [...prevUsers, user]);
+    setSelectedUsers(user);
   };
   const handleClickAgenda = (e: ChangeEvent<HTMLInputElement>) => {
     setAgenda(e.target.value);
   };
   const handleClickSubmit = async () => {
     const data = {
-      userId: userName.id,
+      creatorId: userName.id,
       date: startDateString,
       startTime: selectedTimeString,
       agenda: agenda,
+      attendant: selectedUserName,
     };
 
     try {
@@ -99,18 +93,14 @@ const MeetingPage: React.FC = () => {
           />
         </div>
         <div className="w-1/6">
-          <AutoComplete
-            data={availableUsers}
-            onSelect={handleUserSelect}
-            id={"참여자"}
-          />
+          <AutoComplete onSelect={handleUserSelect} id={"참여자"} />
           <div className="mt-5">
             {selectedUsers.map((user) => (
               <span
-                key={user.id}
+                key={user._id}
                 className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
               >
-                {user.userName}
+                {user.username}
               </span>
             ))}
           </div>

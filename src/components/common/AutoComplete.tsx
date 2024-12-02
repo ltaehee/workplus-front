@@ -2,57 +2,75 @@ import { useEffect, useState } from "react";
 import { UserData } from "../../types";
 import axios from "axios";
 import UseDebounce from "../../hooks/useDebounce";
+import { useSelectedUserStore, useUserStore } from "../../store/useUserStore";
 
 type AutoCompleteProps = {
-  data: UserData[];
+  value?: UserData[];
   onSelect: (user: UserData) => void;
   id?: string;
 };
 
-const AutoComplete: React.FC<AutoCompleteProps> = ({ data, onSelect, id }) => {
+const AutoComplete: React.FC<AutoCompleteProps> = ({ onSelect, id }) => {
   const [query, setQuery] = useState("");
-  const [filteredData, setFilteredData] = useState<UserData[]>([]);
+  const { filteredData, setFilteredData } = useUserStore();
+  const { selectedUsers } = useSelectedUserStore();
   const token = localStorage.getItem("token");
 
-  const debouncedSearchInputValue = UseDebounce(query, 1000);
+  const debouncedSearchInputValue = UseDebounce(query, 500);
 
   const getUserName = async () => {
     try {
-      const request = await axios.get(`/api/user/search?username=${query}`, {
-        headers: {
-          Authorization: token,
-        },
-      });
+      const request = await axios.get(
+        `/api/user/search?username=${debouncedSearchInputValue}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
       console.log("getUserName data ", request.data);
+      setFilteredData(request.data.users);
     } catch (err) {
       console.log("Error getUserName ", err);
     }
   };
 
   useEffect(() => {
-    getUserName();
+    console.log("filteredData : ", filteredData);
+  }, [filteredData]);
+
+  useEffect(() => {
+    console.log("selectedUsers : ", selectedUsers);
+  }, [selectedUsers]);
+
+  useEffect(() => {
+    if (debouncedSearchInputValue) {
+      getUserName();
+    } else {
+      setFilteredData([]);
+    }
   }, [debouncedSearchInputValue]);
+
+  // useEffect(() => {
+  //   console.log("query: ", query);
+  //   console.log("filteredData: ", filteredData);
+  // }, [query, filteredData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
-
-    if (value) {
-      const filtered = data.filter(
-        (user) => user.userName.toLowerCase().includes(value.toLowerCase()) // 입력할때마다 소문자변환
-      );
-      setFilteredData(filtered);
-    } else {
-      setFilteredData([]);
-    }
   };
 
   const handleSelect = (user: UserData) => {
-    setQuery(user.userName);
+    setQuery(user.username);
     setFilteredData([]);
     onSelect(user);
   };
 
+  const availablueUsers = filteredData.filter(
+    (user) =>
+      !selectedUsers.some((selected) => selected.username === user.username)
+  );
   return (
     <div className="">
       {id ? (
@@ -69,9 +87,9 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({ data, onSelect, id }) => {
       />
       {filteredData.length > 0 && (
         <ul className=" z-10 w-full bg-white border border-gray-300 rounded">
-          {filteredData.map((user) => (
-            <li key={user.id} className="" onClick={() => handleSelect(user)}>
-              {user.userName}
+          {availablueUsers.map((user) => (
+            <li key={user._id} className="" onClick={() => handleSelect(user)}>
+              {user.username}
             </li>
           ))}
         </ul>
