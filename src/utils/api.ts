@@ -10,7 +10,10 @@ const api = axios.create({
 // 요청 인터셉터: 모든 요청에 token을 자동으로 추가
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    const { token } = user && JSON.parse(user);
+    console.log({ token });
+    console.log({ user });
     if (token) {
       config.headers.authorization = `${token}`;
     }

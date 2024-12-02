@@ -35,10 +35,10 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
-      const { id } = JSON.parse(storedUser);
+      const { userId } = JSON.parse(storedUser);
       const response = await api.patch(`${ENDPOINT.USER_PROFILE}/phone`, {
         phone: editInput.phone,
-        id: id,
+        id: userId,
       });
 
       if (response.status === 204) {
@@ -55,10 +55,10 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
-      const { id } = JSON.parse(storedUser);
+      const { userId } = JSON.parse(storedUser);
       const response = await api.patch(`${ENDPOINT.USER_PROFILE}/birth`, {
         birth: editInput.birth,
-        id: id,
+        id: userId,
       });
 
       if (response.status === 204) {
@@ -75,10 +75,10 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
-      const { id } = JSON.parse(storedUser);
+      const { userId } = JSON.parse(storedUser);
       const response = await api.patch(`${ENDPOINT.USER_PROFILE}/address`, {
         address: editInput.address,
-        id: id,
+        id: userId,
       });
 
       if (response.status === 204) {

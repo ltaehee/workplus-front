@@ -66,12 +66,13 @@ const ProfilePage = () => {
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
-      const { id } = JSON.parse(storedUser);
-      const response = await api.get(`${ENDPOINT.USER_PROFILE}/${id}`);
+      const { userId, token, isAdmin } = JSON.parse(storedUser);
+      const response = await api.get(`${ENDPOINT.USER_PROFILE}/${userId}`);
       console.log("현재 데이터:", response.data.data.user);
 
       if (response.status === 200 || response.status === 204) {
         const userData = response.data.data.user;
+        const newData = { ...userData, token, isAdmin, userId };
         setUser({
           email: userData.email,
           name: userData.username,
@@ -82,7 +83,8 @@ const ProfilePage = () => {
         });
 
         // 로컬 스토리지에 최신 데이터 저장
-        localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("user", JSON.stringify(newData));
+        console.log("뉴데이터:", newData);
       }
     } catch (err) {
       console.error(err);
@@ -127,7 +129,7 @@ const ProfilePage = () => {
               className="min-h-[400px]"
               data={vacationData.map((vacation) => ({
                 label: vacation.vacationType,
-                name: vacation.username,
+                // name: vacation.username,
                 date: `${vacation.startDate} ~ ${vacation.endDate}`,
               }))}
             />

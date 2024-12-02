@@ -51,10 +51,10 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
-      const { id } = JSON.parse(storedUser);
+      const { userId } = JSON.parse(storedUser);
       const response = await api.patch(`${ENDPOINT.USER_PROFILE}/username`, {
         username: editName,
-        id: id,
+        id: userId,
       });
 
       if (response.status === 200 || response.status === 204) {
@@ -84,7 +84,7 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
 
     const storedUser = localStorage.getItem("user");
     if (!storedUser) return;
-    const { id } = JSON.parse(storedUser);
+    const { userId } = JSON.parse(storedUser);
 
     try {
       const formData = new FormData();
@@ -96,7 +96,7 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
         return;
       }
       const response = await api.put(
-        `${ENDPOINT.USER_PROFILE_IMAGE}/${id}`,
+        `${ENDPOINT.USER_PROFILE_IMAGE}/${userId}`,
         formData
       );
       console.log("응답2", response);
