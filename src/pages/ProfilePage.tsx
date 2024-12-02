@@ -2,7 +2,8 @@ import ProfileSection from "../components/profile/ProfileSection";
 import UserInfoCard from "../components/profile/UserInfoCard";
 import MainProfile from "../components/profile/MainProfile";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
+import { ENDPOINT } from "../utils/endpoints";
 
 type UserInfo = {
   email?: string;
@@ -13,6 +14,13 @@ type UserInfo = {
   address?: string;
 };
 
+type VacationInfo = {
+  vacationType: string;
+  username: string;
+  startDate: string;
+  endDate: string;
+};
+
 const ProfilePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const meetingData = [
@@ -21,12 +29,7 @@ const ProfilePage = () => {
     { label: "회의", name: "엘리스", date: "2024-12-01" },
   ];
 
-  const vacationData = [
-    { label: "연차", date: "2024-12-01" },
-    { label: "연차", date: "2024-12-01" },
-    { label: "연차", date: "2024-12-01" },
-  ];
-
+  const [vacationData, setVacationData] = useState<VacationInfo[]>([]);
   const [user, setUser] = useState<UserInfo>({
     email: "",
     name: "",
@@ -35,15 +38,36 @@ const ProfilePage = () => {
     address: "",
   });
 
+  /* 연차 사용 내역 불러오기 */
+  const vacationFetchData = async () => {
+    setIsLoading(true);
+    try {
+      const storedUser = localStorage.getItem("user");
+      console.log("이게뭐임:", storedUser);
+      if (!storedUser) return;
+      const { id } = JSON.parse(storedUser);
+      const response = await api.get(
+        `${ENDPOINT.VACATION_POST_SUBMIT}/user/${id}`
+      );
+      console.log("연차:", response);
+      if (response.status === 200 || response.status === 204) {
+        const vacations = response.data.data.vacations;
+        setVacationData(vacations);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  /* 회원정보 불러오기 */
   const fetchUserData = async () => {
     setIsLoading(true);
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
       const { id } = JSON.parse(storedUser);
-      const response = await axios.get(`/api/user/profile/${id}`, {
-        headers: { authorization: `${localStorage.getItem("token")}` },
-      });
+      const response = await api.get(`${ENDPOINT.USER_PROFILE}/${id}`);
       console.log("현재 데이터:", response.data.data.user);
 
       if (response.status === 200 || response.status === 204) {
@@ -68,6 +92,7 @@ const ProfilePage = () => {
   };
   useEffect(() => {
     fetchUserData();
+    vacationFetchData();
   }, []);
   const handleEdit = (updatedUser: UserInfo) => {
     setUser(updatedUser); // 수정된 사용자 정보를 상태에 반영
@@ -98,8 +123,13 @@ const ProfilePage = () => {
           <div className="flex flex-col gap-10 w-6/12">
             <ProfileSection
               title="연차 사용 내역"
-              data={vacationData}
+              // data={vacationData}
               className="min-h-[400px]"
+              data={vacationData.map((vacation) => ({
+                label: vacation.vacationType,
+                name: vacation.username,
+                date: `${vacation.startDate} ~ ${vacation.endDate}`,
+              }))}
             />
             <UserInfoCard
               title="부가 정보 관리"

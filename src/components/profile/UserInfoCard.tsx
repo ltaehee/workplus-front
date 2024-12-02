@@ -36,7 +36,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
       const { id } = JSON.parse(storedUser);
-      const response = await api.patch(ENDPOINT.USER_PROFILE_PHONE, {
+      const response = await api.patch(`${ENDPOINT.USER_PROFILE}/phone`, {
         phone: editInput.phone,
         id: id,
       });
@@ -56,7 +56,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
       const { id } = JSON.parse(storedUser);
-      const response = await api.patch(ENDPOINT.USER_PROFILE_BIRTH, {
+      const response = await api.patch(`${ENDPOINT.USER_PROFILE}/birth`, {
         birth: editInput.birth,
         id: id,
       });
@@ -76,7 +76,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
       const { id } = JSON.parse(storedUser);
-      const response = await api.patch(ENDPOINT.USER_PROFILE_ADDRESS, {
+      const response = await api.patch(`${ENDPOINT.USER_PROFILE}/address`, {
         address: editInput.address,
         id: id,
       });

@@ -3,7 +3,8 @@ import profileImg from "/img/profileImg.png";
 import Modal from "../common/Modal";
 import Input from "../common/Input";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import axios from "axios";
+import api from "../../utils/api";
+import { ENDPOINT } from "../../utils/endpoints";
 // import ToastNotification from "../common/ToastNotification";
 
 type UserInfo = {
@@ -51,16 +52,10 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
       const { id } = JSON.parse(storedUser);
-      const response = await axios.patch(
-        `/api/user/profile/username`,
-        {
-          username: editName,
-          id: id,
-        },
-        {
-          headers: { authorization: `${localStorage.getItem("token")}` },
-        }
-      );
+      const response = await api.patch(`${ENDPOINT.USER_PROFILE}/username`, {
+        username: editName,
+        id: id,
+      });
 
       if (response.status === 200 || response.status === 204) {
         onEdit({ ...user, name: editName });
@@ -100,14 +95,9 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
         console.error("No file selected");
         return;
       }
-      const response = await axios.put(
-        `/api/user/profile/image/${id}`,
-        formData,
-        {
-          headers: {
-            authorization: `${localStorage.getItem("token")}`,
-          },
-        }
+      const response = await api.put(
+        `${ENDPOINT.USER_PROFILE_IMAGE}/${id}`,
+        formData
       );
       console.log("응답2", response);
       if (response.status === 200 || response.status === 204) {
