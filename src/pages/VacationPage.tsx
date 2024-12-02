@@ -5,6 +5,8 @@ import Button from "../components/common/Button";
 import Datepicker from "../components/common/DatePicker";
 import axios from "axios";
 import { data } from "react-router-dom";
+import api from "../utils/api";
+import { ENDPOINT } from "../utils/endpoints";
 const VacationPage = () => {
   const [userName, setUserName] = useState<{
     id: string;
@@ -17,7 +19,7 @@ const VacationPage = () => {
   const [reason, setReason] = useState("");
 
   const loginUser = localStorage.getItem("user");
-  const token = localStorage.getItem("token");
+  // const token = localStorage.getItem("token");
   const startDateString = startDate?.toLocaleDateString("ko-KR");
   const endDateString = endDate?.toLocaleDateString("ko-KR");
   const handleChangeSelect = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -38,11 +40,13 @@ const VacationPage = () => {
       reason: reason,
     };
     try {
-      const request = await axios.post("/api/vacation", data, {
-        headers: {
-          authorization: token,
-        },
-      });
+      // const request = await axios.post("/api/vacation", data, {
+      //   headers: {
+      //     authorization: token,
+      //   },
+      // });
+
+      const request = await api.post(ENDPOINT.VACATION_POST_SUBMIT, data);
       console.log("vacateion data ", request.data);
     } catch (err) {
       console.log("Error submit vacation data ", err);
