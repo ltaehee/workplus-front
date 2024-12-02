@@ -2,7 +2,7 @@ import axios from "axios";
 import { API_BASE_URL } from "./constants";
 
 const api = axios.create({
-  baseURL: API_BASE_URL, // baseURL 설정 (constants.ts에서 가져옴)
+  baseURL: API_BASE_URL,
   timeout: 3000,
   headers: {},
 });
@@ -25,7 +25,6 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     console.error("API 요청 오류:", error);
-    // 응답 에러 처리
     return Promise.reject(error);
   }
 );

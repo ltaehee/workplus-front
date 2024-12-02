@@ -1,6 +1,6 @@
 export const ENDPOINT = {
-  USER_PROFILE_PHONE: "/user/profile/phone",
-  USER_PROFILE_BIRTH: "/user/profile/birth",
-  USER_PROFILE_ADDRESS: "/user/profile/address",
+  USER_PROFILE: "/user/profile",
+  USER_PROFILE_IMAGE: "/user/profile/image",
   VACATION_POST_SUBMIT: "/vacation",
+  METTING: "/meeting",
 };
