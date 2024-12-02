@@ -89,7 +89,7 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
     try {
       const formData = new FormData();
       if (file) {
-        formData.append("image", file); // 파일이 있을 경우에만 추가
+        formData.append("imageFile", file); // 파일이 있을 경우에만 추가
       } else {
         // 파일이 없으면 추가하지 않음
         console.error("No file selected");
@@ -108,7 +108,7 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
       if (response.status === 200 || response.status === 204) {
         console.log("파일 업로드 성공");
         // 업로드 후 처리 로직 (예: 이미지 URL 업데이트)
-        const uploadedImageUrl = response.data.data.userImage;
+        const uploadedImageUrl = response.data.data.imgUrl;
         console.log(uploadedImageUrl);
         onEdit({ ...user, userImage: uploadedImageUrl });
       }
@@ -135,18 +135,19 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
             onClick={handleImageClick}
           />
         </div>
-        <h3 className="text-xl font-semibold">{user.name}</h3>
+        <h3 className="text-xl font-semibold pt-3">{user.name}</h3>
         <p className="text-sm">{user.email}</p>
       </div>
       <div className="pt-14">
         {/* 잠시 주석 처리 */}
-        {/* <p className="text-sm">성</p>
+        <p className="text-sm">성</p>
         <Input
-          value={user.name}
+          type="text"
           name="name"
-          onChange={handleChange}
+          value={editName}
           className="mt-2"
-        /> */}
+          onChange={handleChange}
+        />
         <p className="text-sm pt-4">이름</p>
         <Input
           type="text"
