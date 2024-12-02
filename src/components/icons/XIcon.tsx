@@ -1,9 +1,8 @@
-interface XIconProps {
-  width: string;
-  className?: string;
-}
+import { FC, SVGProps } from "react";
 
-const XIcon = (props: XIconProps) => {
+type SVGIconProps = FC<SVGProps<SVGSVGElement>>;
+
+const XIcon: SVGIconProps = (props) => {
   const { width, className } = props;
   return (
     <svg

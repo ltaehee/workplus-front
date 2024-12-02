@@ -22,6 +22,19 @@ const FindPasswordPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const isLogin = !!localStorage.getItem("user");
+
+  useEffect(() => {
+    if (isLogin) {
+      navigate("/");
+      alert("로그인이 되어있습니다.");
+    }
+  }, [isLogin, navigate]);
+
+  if (isLogin) {
+    return null;
+  }
+
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const emailValue = urlParams.get("email");
