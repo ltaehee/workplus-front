@@ -135,14 +135,14 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
       </div>
       <div className="pt-14">
         {/* 잠시 주석 처리 */}
-        <p className="text-sm">성</p>
+        {/* <p className="text-sm">성</p>
         <Input
           type="text"
           name="name"
           value={editName}
           className="mt-2"
           onChange={handleChange}
-        />
+        /> */}
         <p className="text-sm pt-4">이름</p>
         <Input
           type="text"

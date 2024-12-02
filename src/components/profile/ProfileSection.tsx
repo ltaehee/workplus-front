@@ -25,8 +25,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
                 key={index}
                 className="mb-1 flex justify-between items-center border-b border-gray-300 last:border-none py-2 cursor-pointer hover:text-gray-500"
               >
-                <p>{item.label}</p>
-                <p>{item.name}</p>
+                <p className="truncate w-[100px]">{item.label}</p>
                 <p>{item.date}</p>
               </li>
             ))}

@@ -21,14 +21,25 @@ type VacationInfo = {
   endDate: string;
 };
 
+type MeetingInfo = {
+  creator: string;
+  attendant: string[];
+  date: string;
+  startTime: string;
+  agenda: string;
+  meetingId: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 const ProfilePage = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const meetingData = [
+  /* const meetingData = [
     { label: "회의", name: "엘리스", date: "2024-12-01" },
     { label: "회의", name: "엘리스", date: "2024-12-01" },
     { label: "회의", name: "엘리스", date: "2024-12-01" },
-  ];
-
+  ]; */
+  const [meetingData, setMeetingData] = useState<MeetingInfo[]>([]);
   const [vacationData, setVacationData] = useState<VacationInfo[]>([]);
   const [user, setUser] = useState<UserInfo>({
     email: "",
@@ -38,18 +49,37 @@ const ProfilePage = () => {
     address: "",
   });
 
+  /* 알림 내역 불러오기 */
+  const meetingFetchData = async () => {
+    setIsLoading(true);
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) return;
+      const { username } = JSON.parse(storedUser);
+      const response = await api.get(`${ENDPOINT.METTING}/user/${username}`);
+      console.log({ response });
+      if (response.status === 200 || response.status === 204) {
+        const meetings = response.data.data.meetings;
+        setMeetingData(meetings);
+        console.log("미팅 데이터:", meetings);
+        console.log({ meetingData });
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   /* 연차 사용 내역 불러오기 */
   const vacationFetchData = async () => {
     setIsLoading(true);
     try {
       const storedUser = localStorage.getItem("user");
-      console.log("이게뭐임:", storedUser);
       if (!storedUser) return;
-      const { id } = JSON.parse(storedUser);
+      const { userId } = JSON.parse(storedUser);
       const response = await api.get(
-        `${ENDPOINT.VACATION_POST_SUBMIT}/user/${id}`
+        `${ENDPOINT.VACATION_POST_SUBMIT}/user/${userId}`
       );
-      console.log("연차:", response);
       if (response.status === 200 || response.status === 204) {
         const vacations = response.data.data.vacations;
         setVacationData(vacations);
@@ -68,7 +98,7 @@ const ProfilePage = () => {
       if (!storedUser) return;
       const { userId, token, isAdmin } = JSON.parse(storedUser);
       const response = await api.get(`${ENDPOINT.USER_PROFILE}/${userId}`);
-      console.log("현재 데이터:", response.data.data.user);
+      console.log("현재 유저 데이터:", response.data.data.user);
 
       if (response.status === 200 || response.status === 204) {
         const userData = response.data.data.user;
@@ -84,7 +114,6 @@ const ProfilePage = () => {
 
         // 로컬 스토리지에 최신 데이터 저장
         localStorage.setItem("user", JSON.stringify(newData));
-        console.log("뉴데이터:", newData);
       }
     } catch (err) {
       console.error(err);
@@ -93,8 +122,13 @@ const ProfilePage = () => {
     }
   };
   useEffect(() => {
-    fetchUserData();
-    vacationFetchData();
+    const fetchData = async () => {
+      /* 새로고침 했을 때 순서 */
+      await fetchUserData();
+      await vacationFetchData();
+      await meetingFetchData();
+    };
+    fetchData();
   }, []);
   const handleEdit = (updatedUser: UserInfo) => {
     setUser(updatedUser); // 수정된 사용자 정보를 상태에 반영
@@ -118,18 +152,19 @@ const ProfilePage = () => {
           <div className="w-6/12">
             <ProfileSection
               title="알림"
-              data={meetingData}
-              className="min-h-[730px]"
+              data={meetingData.map((meeting) => ({
+                label: meeting.agenda,
+                date: `${meeting.date}-${meeting.startTime}`,
+              }))}
+              className="min-h-[730px] max-h-[730px] overflow-y-auto"
             />
           </div>
           <div className="flex flex-col gap-10 w-6/12">
             <ProfileSection
               title="연차 사용 내역"
-              // data={vacationData}
-              className="min-h-[400px]"
+              className="h-[400px] overflow-y-auto"
               data={vacationData.map((vacation) => ({
                 label: vacation.vacationType,
-                // name: vacation.username,
                 date: `${vacation.startDate} ~ ${vacation.endDate}`,
               }))}
             />
