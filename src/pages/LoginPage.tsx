@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import GoogleIcon from "../components/icons/GoogleIcon";
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-const googleRedirectUrl = import.meta.env.VITE_GOOGLE_OAUTH_REDIRECT_URL;
+const googleRedirectUrl = import.meta.env.VITE_GOOGLE_OAUTH_SIGNIN_REDIRECT_URL;
 const googleOauthEntryUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleClientId}&redirect_uri=${googleRedirectUrl}&response_type=code&scope=email profile`;
 
 const LoginPage = () => {
@@ -62,13 +62,16 @@ const LoginPage = () => {
 
   const googleRedirect = async (code: string) => {
     try {
-      const response = await axios.post("/api/auth/google-oauth", {
+      const response = await axios.post("/api/auth/google-oauth-signin", {
         code,
       });
       localStorage.setItem("user", JSON.stringify(response.data.user));
       navigate("/");
     } catch (err) {
-      console.log("handleClickGoogleLogin", err);
+      console.log("googleRedirect 오류", err);
+      if (axios.isAxiosError(err)) {
+        alert(err.response?.data.message);
+      }
     }
   };
 

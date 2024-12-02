@@ -42,16 +42,16 @@ const Header = () => {
               !idAdmin ? "md:flex hidden" : "hidden"
             }  gap-8 w-full text-slate-900 `}
           >
-            <button>메인페이지</button>
-            <button>회의 일정 생성</button>
-            <button>휴가 신청</button>
+            <button onClick={() => navigate("/")}>메인페이지</button>
+            <button onClick={() => navigate("/meeting")}>회의 일정 생성</button>
+            <button onClick={() => navigate("/vacation")}>휴가 신청</button>
           </div>
           <div
             className={`${
               idAdmin ? "md:flex hidden" : "hidden"
             }  gap-8 w-full text-slate-900 `}
           >
-            <button>관리자페이지</button>
+            <button onClick={() => navigate("/admin")}>관리자페이지</button>
           </div>
           <div className={"flex gap-4"}>
             <button>
@@ -62,10 +62,11 @@ const Header = () => {
                 />
               </a>
             </button>
-            <button>
-              <a className={"flex justify-between items-center"} href="">
-                <Avatar className={"md:block hidden"} width={"40px"} />
-              </a>
+            <button
+              className={"flex justify-between items-center"}
+              onClick={() => navigate("/profile")}
+            >
+              <Avatar className={"md:block hidden"} width={"40px"} />
             </button>
             <button
               className={
@@ -99,23 +100,27 @@ const Header = () => {
         >
           <button
             className={"py-4 border-b border-slate-300 w-11/12 text-slate-900 "}
+            onClick={() => navigate("/")}
           >
-            <a href="">메인페이지</a>
+            메인페이지
           </button>
           <button
             className={"py-4 border-b border-slate-300 w-11/12 text-slate-900"}
+            onClick={() => navigate("/meeting")}
           >
-            <a href="">회의 일정 생성</a>
+            회의 일정 생성
           </button>
           <button
             className={"py-4 border-b border-slate-300 w-11/12 text-slate-900"}
+            onClick={() => navigate("/vacation")}
           >
-            <a href="">휴가 신청</a>
+            휴가 신청
           </button>
           <button
             className={"py-4 border-b border-slate-300 w-11/12 text-slate-900"}
+            onClick={() => navigate("/profile")}
           >
-            <a href="">프로필</a>
+            프로필
           </button>
           <button
             className={"py-4 border-b border-slate-300 w-11/12 text-slate-900"}
@@ -136,13 +141,15 @@ const Header = () => {
         >
           <button
             className={"py-4 border-b border-slate-300 w-11/12 text-slate-900 "}
+            onClick={() => navigate("/admin")}
           >
-            <a href="">관리자페이지</a>
+            관리자 페이지
           </button>
           <button
             className={"py-4 border-b border-slate-300 w-11/12 text-slate-900"}
+            onClick={() => navigate("/profile")}
           >
-            <a href="">프로필</a>
+            프로필
           </button>
           <button
             className={"py-4 border-b border-slate-300 w-11/12 text-slate-900"}
