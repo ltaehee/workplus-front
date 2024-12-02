@@ -1,9 +1,8 @@
-interface BellProps {
-  width: string;
-  className?: string;
-}
+import { FC, SVGProps } from "react";
 
-const Bell = (props: BellProps) => {
+type SVGIconProps = FC<SVGProps<SVGSVGElement>>;
+
+const Bell: SVGIconProps = (props) => {
   const { width, className } = props;
   return (
     <svg

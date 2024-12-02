@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Logo from "./Logo";
 import Avatar from "./Avatar";
 import Bell from "../icons/Bell";
@@ -6,14 +6,28 @@ import MenuIcon from "../icons/MenuIcon";
 import XIcon from "../icons/XIcon";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import defaultImg from "../../../public/img/profileImg.png";
 
 const Header = () => {
   const [isMenu, setIsMenu] = useState(false);
   const [idAdmin, setIsAdmin] = useState(false);
   const [isAlarm, setIsAlarm] = useState(false);
   const [AvatarImage, setAvatarImage] = useState("");
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem("user");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      setIsAdmin(user.isAdmin);
+      user.userImage
+        ? setAvatarImage(user.userImage)
+        : setAvatarImage(defaultImg);
+    }
+  }, [user]);
 
   const handleClickMenu = () => {
     setIsMenu(!isMenu);
@@ -32,10 +46,12 @@ const Header = () => {
       >
         <div
           className={
-            "flex  justify-between items-center gap-8 px-8 py-2  h-16 w-1280"
+            "flex  justify-between items-center gap-8 px-8 py-2 h-16 w-1280"
           }
         >
-          <Logo className={"shrink-0"} width={"110px"} />
+          <button onClick={() => navigate("/")}>
+            <Logo width={"110px"} />
+          </button>
 
           <div
             className={`${
@@ -63,10 +79,14 @@ const Header = () => {
               </a>
             </button>
             <button
-              className={"flex justify-between items-center"}
+              className="md:flex hidden justify-center items-center w-8 h-8"
               onClick={() => navigate("/profile")}
             >
-              <Avatar className={"md:block hidden"} width={"40px"} />
+              <img
+                className="object-cover w-full h-full rounded-full cursor-pointer"
+                src={AvatarImage}
+                alt="Profile image"
+              />
             </button>
             <button
               className={
