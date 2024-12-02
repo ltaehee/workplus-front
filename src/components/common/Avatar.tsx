@@ -1,9 +1,8 @@
-interface AvatarProps {
-  width: string;
-  className?: string;
-}
+import { FC, SVGProps } from "react";
 
-const Avatar = (props: AvatarProps) => {
+type SVGIconProps = FC<SVGProps<SVGSVGElement>>;
+
+const Avatar: SVGIconProps = (props) => {
   const { width, className } = props;
   return (
     <svg

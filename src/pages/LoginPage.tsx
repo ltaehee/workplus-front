@@ -5,6 +5,10 @@ import { ChangeEvent, useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const googleRedirectUrl = import.meta.env.VITE_GOOGLE_OAUTH_REDIRECT_URL;
+const googleOauthEntryUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleClientId}&redirect_uri=${googleRedirectUrl}&response_type=code&scope=email profile`;
+
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,10 +39,6 @@ const LoginPage = () => {
       }
     }
   };
-
-  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-  const googleRedirectUrl = import.meta.env.VITE_GOOGLE_OAUTH_REDIRECT_URL;
-  const googleOauthEntryUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleClientId}&redirect_uri=${googleRedirectUrl}&response_type=code&scope=email profile`;
 
   const handleClickGoogleLogin = () => {
     window.location.href = googleOauthEntryUrl;

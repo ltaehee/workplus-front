@@ -1,9 +1,8 @@
-interface MailIconProps {
-  width: string;
-  className?: string;
-}
+import { FC, SVGProps } from "react";
 
-const MailIcon = (props: MailIconProps) => {
+type SVGIconProps = FC<SVGProps<SVGSVGElement>>;
+
+const MailIcon: SVGIconProps = (props) => {
   const { width, className } = props;
   return (
     <svg
