@@ -43,8 +43,7 @@ const LoginPage = () => {
         email,
         password,
       });
-      localStorage.setItem("token", response.headers.token);
-      localStorage.setItem("user", JSON.stringify(response.data.data.user));
+      localStorage.setItem("user", JSON.stringify(response.data.user));
       navigate("/");
     } catch (err) {
       console.log("handleClickLogin 오류", err);
@@ -65,12 +64,15 @@ const LoginPage = () => {
       const response = await axios.post("/api/auth/google-oauth-signin", {
         code,
       });
-      localStorage.setItem("user", JSON.stringify(response.data.user));
-      navigate("/");
+      if (response.data.user) {
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+        navigate("/");
+      }
     } catch (err) {
       console.log("googleRedirect 오류", err);
       if (axios.isAxiosError(err)) {
         alert(err.response?.data.message);
+        navigate("/login");
       }
     }
   };
