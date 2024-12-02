@@ -4,6 +4,7 @@ import Button from "../components/common/Button";
 import { ChangeEvent, useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
+import GoogleIcon from "../components/icons/GoogleIcon";
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const googleRedirectUrl = import.meta.env.VITE_GOOGLE_OAUTH_REDIRECT_URL;
@@ -14,6 +15,19 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
+
+  const isLogin = !!localStorage.getItem("user");
+
+  useEffect(() => {
+    if (isLogin) {
+      navigate("/");
+      alert("로그인이 되어있습니다.");
+    }
+  }, [isLogin, navigate]);
+
+  if (isLogin) {
+    return null;
+  }
 
   const handleChangeEmail = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -108,7 +122,15 @@ const LoginPage = () => {
               <span className={"text-slate-600"}>SNS 간편 로그인</span>
               <div className={"flex-1 border-t border-gray-400 ml-4"}></div>
             </div>
-            <Button onClick={handleClickGoogleLogin} btnText={"구글 로그인"} />
+            <button
+              onClick={handleClickGoogleLogin}
+              className={
+                "flex justify-center px-4 py-3  bg-white text-slate-900 rounded-md border border-gray-400 hover:bg-slate-50 transition duration-10 w-full"
+              }
+            >
+              <GoogleIcon className={"mr-2"} width={"24px"} />
+              구글 로그인
+            </button>
           </div>
         </div>
       </div>

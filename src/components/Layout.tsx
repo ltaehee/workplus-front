@@ -13,6 +13,10 @@ const Layout = () => {
     }
   }, [isLogin, navigate]);
 
+  if (!isLogin) {
+    return null;
+  }
+
   return (
     <>
       <Header />
