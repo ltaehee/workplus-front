@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UserData } from "../../types";
+import axios from "axios";
+import UseDebounce from "../../hooks/useDebounce";
 
 type AutoCompleteProps = {
   data: UserData[];
@@ -8,12 +10,32 @@ type AutoCompleteProps = {
 };
 
 const AutoComplete: React.FC<AutoCompleteProps> = ({ data, onSelect, id }) => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [query, setQuery] = useState("");
   const [filteredData, setFilteredData] = useState<UserData[]>([]);
+  const token = localStorage.getItem("token");
+
+  const debouncedSearchInputValue = UseDebounce(query, 1000);
+
+  const getUserName = async () => {
+    try {
+      const request = await axios.get(`/api/user/search?username=${query}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      console.log("getUserName data ", request.data);
+    } catch (err) {
+      console.log("Error getUserName ", err);
+    }
+  };
+
+  useEffect(() => {
+    getUserName();
+  }, [debouncedSearchInputValue]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setSearchTerm(value);
+    setQuery(value);
 
     if (value) {
       const filtered = data.filter(
@@ -26,7 +48,7 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({ data, onSelect, id }) => {
   };
 
   const handleSelect = (user: UserData) => {
-    setSearchTerm(user.userName);
+    setQuery(user.userName);
     setFilteredData([]);
     onSelect(user);
   };
@@ -41,7 +63,7 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({ data, onSelect, id }) => {
       <input
         type="text"
         className="px-4 py-2 border rounded-md w-full focus:outline-none focus:ring-2"
-        value={searchTerm}
+        value={query}
         onChange={handleChange}
         placeholder="참여자 검색"
       />
