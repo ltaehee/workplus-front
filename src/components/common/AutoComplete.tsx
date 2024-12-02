@@ -1,9 +1,5 @@
 import { useState } from "react";
-
-type UserData = {
-  name: string;
-  id: string;
-};
+import { UserData } from "../../types";
 
 type AutoCompleteProps = {
   data: UserData[];
@@ -21,7 +17,7 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({ data, onSelect, id }) => {
 
     if (value) {
       const filtered = data.filter(
-        (user) => user.name.toLowerCase().includes(value.toLowerCase()) // 입력할때마다 소문자변환
+        (user) => user.userName.toLowerCase().includes(value.toLowerCase()) // 입력할때마다 소문자변환
       );
       setFilteredData(filtered);
     } else {
@@ -30,7 +26,7 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({ data, onSelect, id }) => {
   };
 
   const handleSelect = (user: UserData) => {
-    setSearchTerm(user.name);
+    setSearchTerm(user.userName);
     setFilteredData([]);
     onSelect(user);
   };
@@ -53,7 +49,7 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({ data, onSelect, id }) => {
         <ul className=" z-10 w-full bg-white border border-gray-300 rounded">
           {filteredData.map((user) => (
             <li key={user.id} className="" onClick={() => handleSelect(user)}>
-              {user.name}
+              {user.userName}
             </li>
           ))}
         </ul>

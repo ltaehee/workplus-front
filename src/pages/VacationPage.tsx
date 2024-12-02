@@ -73,7 +73,7 @@ const VacationPage = () => {
             placeholder="이름"
             id={"이름"}
             value={userName.username}
-            readonly
+            readOnly
           />
         </div>
         <div className="w-1/6">
