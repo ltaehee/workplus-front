@@ -4,6 +4,7 @@ import Modal from "../common/Modal";
 import Input from "../common/Input";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import axios from "axios";
+// import ToastNotification from "../common/ToastNotification";
 
 type UserInfo = {
   id?: string;
@@ -25,6 +26,7 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
 
   /* 이름 수정 */
   const [editName, setEditName] = useState(user.name || "");
+  const [toastMessage, setToastMessage] = useState("");
 
   /* 모달 */
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -62,9 +64,12 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
 
       if (response.status === 200 || response.status === 204) {
         onEdit({ ...user, name: editName });
+
+        setToastMessage("이름이 성공적으로 수정되었습니다!");
       }
     } catch (err) {
       console.error("Error updating name:", err);
+      setToastMessage("이름 수정에 실패했습니다. 다시 시도해주세요.");
     }
   };
   /* input에도 현재 이름 보이게 */
@@ -161,6 +166,7 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
           className="mt-16"
           onClick={handleClickEdit}
         />
+        {/* <ToastNotification message={toastMessage} /> */}
         <div>
           <Button
             btnText="모달 테스트 버튼"

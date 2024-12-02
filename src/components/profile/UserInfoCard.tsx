@@ -2,9 +2,10 @@ import homeImg from "/img/addressImg.png";
 import phoneImg from "/img/phone.png";
 import birthImg from "/img/birthImg.png";
 import Button from "../common/Button";
-import axios from "axios";
 import Input from "../common/Input";
 import { ChangeEvent, useEffect, useState } from "react";
+import api from "../../utils/api";
+import { ENDPOINT } from "../../utils/endpoints";
 
 type UserInfo = {
   phone?: string;
@@ -35,15 +36,10 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
       const { id } = JSON.parse(storedUser);
-      const response = await axios.patch(
-        "/api/user/profile/phone",
-        { phone: editInput.phone, id: id },
-        {
-          headers: {
-            authorization: `${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const response = await api.patch(ENDPOINT.USER_PROFILE_PHONE, {
+        phone: editInput.phone,
+        id: id,
+      });
 
       if (response.status === 204) {
         onEdit({ ...user, phone: editInput.phone });
@@ -60,15 +56,10 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
       const { id } = JSON.parse(storedUser);
-      const response = await axios.patch(
-        "/api/user/profile/birth",
-        { birth: editInput.birth, id: id },
-        {
-          headers: {
-            authorization: `${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const response = await api.patch(ENDPOINT.USER_PROFILE_BIRTH, {
+        birth: editInput.birth,
+        id: id,
+      });
 
       if (response.status === 204) {
         onEdit({ ...user, birth: editInput.birth });
@@ -85,15 +76,10 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
       const { id } = JSON.parse(storedUser);
-      const response = await axios.patch(
-        "/api/user/profile/address",
-        { address: editInput.address, id: id },
-        {
-          headers: {
-            authorization: `${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const response = await api.patch(ENDPOINT.USER_PROFILE_ADDRESS, {
+        address: editInput.address,
+        id: id,
+      });
 
       if (response.status === 204) {
         onEdit({ ...user, address: editInput.address });
