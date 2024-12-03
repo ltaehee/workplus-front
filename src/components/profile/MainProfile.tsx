@@ -33,19 +33,18 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
   };
   /* 이름 수정 하기*/
   const handleClickEdit = async () => {
-    console.log("이름 수정 요청 시작");
-
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
       const { userId } = JSON.parse(storedUser);
-      const response = await api.patch(`${ENDPOINT.USER_PROFILE}/username`, {
+      const response = await api.patch(`${ENDPOINT.USER_PROFILE}/${userId}`, {
         username: editName,
         id: userId,
       });
 
       if (response.status === 200 || response.status === 204) {
         onEdit({ ...user, name: editName });
+        console.log("이름 수정 성공:", editName);
         alert("이름 수정 완료");
       }
     } catch (err) {

@@ -27,7 +27,7 @@ type MeetingAndVacation = {
   vacationType?: string;
   username?: string;
   // 회의 관련 속성
-  creatorName?: string;
+  creatorUsername?: string;
   meetingId?: string;
   startTime?: string;
   agenda?: string;
@@ -64,7 +64,9 @@ const ProfilePage = () => {
       if (!storedUser) return;
       const { username } = JSON.parse(storedUser);
       const response = await api.get(`${ENDPOINT.METTING}/user/${username}`);
+
       if (response.status === 200 || response.status === 204) {
+        console.log({ response });
         const meetings = response.data.data.meetings;
         setMeetingData(meetings);
         console.log("미팅 데이터:", meetings);
@@ -104,7 +106,6 @@ const ProfilePage = () => {
       const { userId, token, isAdmin } = JSON.parse(storedUser);
       const response = await api.get(`${ENDPOINT.USER_PROFILE}/${userId}`);
       console.log("현재 유저 데이터:", response.data.data.user);
-
       if (response.status === 200 || response.status === 204) {
         const userData = response.data.data.user;
         const newData = { ...userData, token, isAdmin, userId };
@@ -163,7 +164,7 @@ const ProfilePage = () => {
                   label: meeting.agenda,
                   date: `${meeting.date}-${meeting.startTime}`,
                   onClick: () => openModal(meeting),
-                  creator: meeting.creator,
+                  creatorUsername: meeting.creatorUsername,
                   agenda: meeting.agenda,
                   attendant: meeting.attendant,
                 }))}
@@ -195,7 +196,7 @@ const ProfilePage = () => {
                 onClose={closeModal}
                 title={modalData.label || ""}
                 date={modalData.date || ""}
-                creator={modalData.creator}
+                creatorUsername={modalData.creatorUsername}
                 agenda={modalData.agenda}
                 reason={modalData.reason}
                 attendant={modalData.attendant}

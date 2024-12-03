@@ -31,19 +31,34 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
   };
 
   /* 전화번호 수정 하기*/
-  const handleClickPhone = async () => {
+  const handleClickInfoChange = async () => {
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
       const { userId } = JSON.parse(storedUser);
-      const response = await api.patch(`${ENDPOINT.USER_PROFILE}/phone`, {
+      const response = await api.patch(`${ENDPOINT.USER_PROFILE}/${userId}`, {
         phone: editInput.phone,
+        birth: editInput.birth,
+        address: editInput.address,
         id: userId,
       });
 
-      if (response.status === 204) {
-        onEdit({ ...user, phone: editInput.phone });
-        console.log("수정 성공", editInput.phone);
+      if (response.status === 204 || response.status === 200) {
+        onEdit({
+          ...user,
+          phone: editInput.phone,
+          birth: editInput.birth,
+          address: editInput.address,
+        });
+        console.log(
+          "수정 성공",
+          "휴대폰:",
+          editInput.phone,
+          "생일:",
+          editInput.birth,
+          "주소:",
+          editInput.address
+        );
         alert("수정 완료");
       }
     } catch (err) {
@@ -52,7 +67,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
   };
 
   /* 생일 수정 하기 */
-  const handleClickBirth = async () => {
+  /* const handleClickBirth = async () => {
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
@@ -70,10 +85,10 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
     } catch (err) {
       console.error("Error updating birth:", err);
     }
-  };
+  }; */
 
   /* 주소 수정하기 */
-  const handleClickAddress = async () => {
+  /* const handleClickAddress = async () => {
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
@@ -91,7 +106,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
     } catch (err) {
       console.error("Error updating address:", err);
     }
-  };
+  }; */
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -119,7 +134,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
           <Button
             btnText="수정"
             className="!w-[20%]"
-            onClick={handleClickPhone}
+            onClick={handleClickInfoChange}
           />
         </div>
         <div className="w-full flex gap-2 mb-1 flex justify-between items-center border-b border-gray-300 last:border-none py-2">
@@ -133,7 +148,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
           <Button
             btnText="수정"
             className="!w-[20%]"
-            onClick={handleClickBirth}
+            onClick={handleClickInfoChange}
           />
         </div>
         <div className="w-full flex gap-2 mb-1 flex justify-between items-center border-b border-gray-300 last:border-none py-2">
@@ -147,7 +162,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
           <Button
             btnText="수정"
             className="!w-[20%]"
-            onClick={handleClickAddress}
+            onClick={handleClickInfoChange}
           />
         </div>
       </div>

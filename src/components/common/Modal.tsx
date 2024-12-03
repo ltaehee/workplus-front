@@ -5,7 +5,7 @@ type ModalProps = {
   onClose: () => void;
   title: string;
   date: string;
-  creator?: string;
+  creatorUsername?: string;
   agenda?: string;
   vacationType?: string;
   startDate?: string;
@@ -19,7 +19,7 @@ const Modal: React.FC<ModalProps> = ({
   onClose,
   title,
   date,
-  creator,
+  creatorUsername,
   agenda,
   reason,
   attendant,
@@ -44,17 +44,19 @@ const Modal: React.FC<ModalProps> = ({
     >
       <div
         onClick={handleModalClick}
-        className="flex flex-col justify-center items-center w-96  bg-white p-6 rounded-lg shadow-xl border-2 border-blue-500"
+        className="flex flex-col justify-center items-center w-96  bg-white p-6 rounded-lg shadow-xl"
       >
-        <h2 className="text-2xl font-bold">{title}</h2>
+        <h2 className="text-2xl font-bold truncate w-[300px] text-center">
+          {title}
+        </h2>
         <p className="mt-1 text-sm text-gray-500">일자: {date}</p>
         <div className="w-full h-px my-4 bg-gray-300"></div>
         <div className="w-full flex flex-col justify-left text-sm">
           {/* 알림 모달 내용 */}
-          {creator && (
+          {creatorUsername && (
             <>
               <p className="mt-4 text-gray-500">주최자</p>
-              <p className="mt-2">{creator}</p>
+              <p className="mt-2">{creatorUsername}</p>
             </>
           )}
 
@@ -74,7 +76,7 @@ const Modal: React.FC<ModalProps> = ({
           )}
           {agenda && (
             <>
-              <p className="mt-10 text-gray-500">회의 안건</p>
+              <p className="mt-4 text-gray-500">회의 안건</p>
               <p className="mt-2">{agenda}</p>
             </>
           )}
