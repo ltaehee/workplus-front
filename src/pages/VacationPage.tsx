@@ -9,11 +9,12 @@ import api from "../utils/api";
 import { ENDPOINT } from "../utils/endpoints";
 const VacationPage = () => {
   const [userName, setUserName] = useState<{
-    id: string;
+    userId: string;
     email: string;
     username: string;
-  }>({ id: "", email: "", username: "" });
-  const [isOption, setIsOption] = useState("");
+    token?: string;
+  }>({ userId: "", email: "", username: "" });
+  const [isOption, setIsOption] = useState("연차");
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [endDate, setEndDate] = useState<Date | null>(new Date());
   const [reason, setReason] = useState("");
@@ -33,7 +34,7 @@ const VacationPage = () => {
   const handelClickSubmit = async () => {
     const data = {
       username: userName.username,
-      userId: userName.id,
+      userId: userName.userId,
       startDate: startDateString,
       endDate: endDateString,
       vacationType: isOption,
@@ -42,7 +43,7 @@ const VacationPage = () => {
     try {
       // const request = await axios.post("/api/vacation", data, {
       //   headers: {
-      //     authorization: token,
+      //     authorization: userName.token,
       //   },
       // });
 
@@ -55,7 +56,7 @@ const VacationPage = () => {
 
   useEffect(() => {
     console.log("user  ", loginUser);
-    console.log("userName._id ", userName.id);
+    console.log("userName._id ", userName.userId);
 
     if (loginUser) {
       setUserName(JSON.parse(loginUser));

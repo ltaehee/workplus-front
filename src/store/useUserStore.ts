@@ -9,6 +9,7 @@ interface UserState {
 interface SelectedUserState {
   selectedUsers: UserData[];
   setSelectedUsers: (user: UserData) => void;
+  setDeleteUsers: (user: UserData) => void;
 }
 
 export const useUserStore = create<UserState>((set) => ({
@@ -18,6 +19,12 @@ export const useUserStore = create<UserState>((set) => ({
 
 export const useSelectedUserStore = create<SelectedUserState>((set) => ({
   selectedUsers: [],
-  setSelectedUsers: (user) =>
+  setSelectedUsers: (user: UserData) =>
     set((state) => ({ selectedUsers: [...state.selectedUsers, user] })),
+  setDeleteUsers: (user: UserData) =>
+    set((state) => ({
+      selectedUsers: state.selectedUsers.filter(
+        (selectedUser) => selectedUser !== user
+      ),
+    })),
 }));

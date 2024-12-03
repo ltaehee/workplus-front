@@ -10,17 +10,18 @@ import { useSelectedUserStore } from "../store/useUserStore";
 
 const MeetingPage: React.FC = () => {
   const [userName, setUserName] = useState<{
-    id: string;
+    userId: string;
     email: string;
     username: string;
-  }>({ id: "", email: "", username: "" });
+    token?: string;
+  }>({ userId: "", email: "", username: "" });
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [selectedTime, setSelectedTime] = useState<Date | null>(new Date());
-  const { selectedUsers, setSelectedUsers } = useSelectedUserStore();
+  const { selectedUsers, setSelectedUsers, setDeleteUsers } =
+    useSelectedUserStore();
   const [agenda, setAgenda] = useState("");
 
   const loginUser = localStorage.getItem("user");
-  const token = localStorage.getItem("token");
   const startDateString = startDate?.toLocaleDateString("ko-KR"); // date에서 날짜만 string변환
 
   // date에서 시간만 string변환
@@ -29,7 +30,7 @@ const MeetingPage: React.FC = () => {
   const selectedTimeString = `${hours}:${minutes}`;
 
   const selectedUserName = selectedUsers.map((user) => user.username);
-  console.log("selectedUsers ", selectedUserName);
+  // console.log("selectedUsers ", selectedUserName);
 
   const handleUserSelect = (user: UserData) => {
     setSelectedUsers(user);
@@ -37,19 +38,23 @@ const MeetingPage: React.FC = () => {
   const handleClickAgenda = (e: ChangeEvent<HTMLInputElement>) => {
     setAgenda(e.target.value);
   };
+  const handleClickCancel = (user: UserData) => {
+    setDeleteUsers(user);
+  };
   const handleClickSubmit = async () => {
     const data = {
-      creatorId: userName.id,
+      creatorId: userName.userId,
       date: startDateString,
       startTime: selectedTimeString,
       agenda: agenda,
       attendant: selectedUserName,
+      username: userName.username,
     };
 
     try {
       const request = await axios.post("/api/meeting", data, {
         headers: {
-          Authorization: token,
+          Authorization: userName.token,
         },
       });
       console.log("meeting data ", request.data);
@@ -61,9 +66,16 @@ const MeetingPage: React.FC = () => {
   useEffect(() => {
     if (loginUser) {
       setUserName(JSON.parse(loginUser));
-      console.log("user 토큰 ", userName);
     }
   }, []);
+
+  // useEffect(() => {
+  //   if (userName) {
+  //     console.log("user 토큰 ", userName);
+  //   }
+  // }, [userName]);
+
+  // console.log("selected", selectedUsers);
   return (
     <>
       <div className="w-full flex flex-col space-y-5 items-center">
@@ -95,9 +107,10 @@ const MeetingPage: React.FC = () => {
         <div className="w-1/6">
           <AutoComplete onSelect={handleUserSelect} id={"참여자"} />
           <div className="mt-5">
-            {selectedUsers.map((user) => (
+            {selectedUsers.map((user, index) => (
               <span
-                key={user._id}
+                key={index}
+                onClick={() => handleClickCancel(user)}
                 className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
               >
                 {user.username}

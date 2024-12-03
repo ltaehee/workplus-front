@@ -1,31 +1,86 @@
-import { useState } from "react";
-import { UserData } from "./MeetingPage";
+import { ChangeEvent, useEffect, useState } from "react";
 import Datepicker from "../components/common/DatePicker";
 import Input from "../components/common/Input";
 import AutoComplete from "../components/common/AutoComplete";
 import ReactDatePiker from "react-datepicker";
 import Button from "../components/common/Button";
+import { UserData } from "../types";
+import { useSelectedUserStore } from "../store/useUserStore";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
 const MeetingDetailPage: React.FC = () => {
+  const [userName, setUserName] = useState<{
+    id: string;
+    email: string;
+    username: string;
+    token?: string;
+  }>({ id: "", email: "", username: "" });
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [selectedTime, setSelectedTime] = useState<Date | null>(new Date());
+  const [agenda, setAgenda] = useState("");
+  const { selectedUsers, setSelectedUsers, setDeleteUsers } =
+    useSelectedUserStore();
+  const loginUser = localStorage.getItem("user");
 
-  const [selectedUsers, setSelectedUsers] = useState<UserData[]>([]);
-
-  const UserDataList = [
-    { name: "강아지", id: "dog" },
-    { name: "강아지2", id: "dog2" },
-    { name: "고양이", id: "cat" },
-    { name: "고양이2", id: "cat2" },
-    { name: "오리", id: "duck" },
-  ];
-
-  const availableUsers = UserDataList.filter(
-    (user) => !selectedUsers.some((selected) => selected.id === user.id)
-  );
   const handleUserSelect = (user: UserData) => {
-    setSelectedUsers((prevUsers) => [...prevUsers, user]);
+    setSelectedUsers(user);
   };
+  const handleClickAgenda = (e: ChangeEvent<HTMLInputElement>) => {
+    setAgenda(e.target.value);
+  };
+  const handleClickCancel = (user: UserData) => {
+    setDeleteUsers(user);
+  };
+  const param = useParams(); // 674e67fa398108dc4e520f93
+  console.log("param.meetingId ", param.meetingId);
+
+  const getUserInfo = async (token: string) => {
+    try {
+      const request = await axios.get(`/api/meeting/${param.meetingId}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      const meeting = request.data.data.meeting;
+      console.log("getUser data ", meeting.attendant);
+      let newSelectedUsers = [...selectedUsers];
+      meeting.attendant.forEach((username: string) => {
+        const user: UserData = {
+          username: username,
+        };
+        newSelectedUsers.push(user);
+      });
+
+      // setSelectedUsers(newSelectedUsers);
+      setAgenda(meeting.agenda);
+      const [year, month, day] = meeting.date
+        .split(". ")
+        .map((part: string) => parseInt(part, 10));
+      const startDateObject = new Date(year, month - 1, day);
+      setStartDate(startDateObject);
+
+      const DateTime = new Date();
+      const [hours, minutes] = meeting.startTime.split(":");
+      DateTime?.setHours(parseInt(hours, 10));
+      DateTime?.setMinutes(parseInt(minutes, 10));
+      DateTime?.setSeconds(0);
+      DateTime?.setMilliseconds(0);
+      setSelectedTime(DateTime);
+    } catch (err) {
+      console.log("Error getUserInfo ", err);
+    }
+  };
+
+  useEffect(() => {
+    if (loginUser) {
+      const user = JSON.parse(loginUser);
+      setUserName(user);
+      getUserInfo(user.token);
+    }
+  }, []);
+
+  console.log("selected", selectedUsers);
 
   return (
     <>
@@ -41,24 +96,31 @@ const MeetingDetailPage: React.FC = () => {
           />
         </div>
         <div className="w-1/6">
-          <Input placeholder="회의 안건" id={"회의 안건"} />
-        </div>
-        <div className="w-1/6">
-          <Input placeholder="생성자" id={"생성자"} />
-        </div>
-        <div className="w-1/6">
-          <AutoComplete
-            data={availableUsers}
-            onSelect={handleUserSelect}
-            id={"참여자"}
+          <Input
+            placeholder="회의 안건"
+            id={"회의 안건"}
+            value={agenda}
+            onChange={handleClickAgenda}
           />
+        </div>
+        <div className="w-1/6">
+          <Input
+            placeholder="생성자"
+            id={"생성자"}
+            value={userName.username}
+            readOnly
+          />
+        </div>
+        <div className="w-1/6">
+          <AutoComplete onSelect={handleUserSelect} id={"참여자"} />
           <div className="mt-5">
-            {selectedUsers.map((user) => (
+            {selectedUsers.map((user, index) => (
               <span
-                key={user.id}
+                key={index}
+                onClick={() => handleClickCancel(user)}
                 className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
               >
-                {user.name}
+                {user.username}
               </span>
             ))}
           </div>

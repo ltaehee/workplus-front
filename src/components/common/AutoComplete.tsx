@@ -14,9 +14,12 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({ onSelect, id }) => {
   const [query, setQuery] = useState("");
   const { filteredData, setFilteredData } = useUserStore();
   const { selectedUsers } = useSelectedUserStore();
-  const token = localStorage.getItem("token");
+  const [user, setUser] = useState<{
+    token: string;
+  }>({ token: "" });
+  const loginUser = localStorage.getItem("user");
 
-  const debouncedSearchInputValue = UseDebounce(query, 500);
+  const debouncedSearchInputValue = UseDebounce(query, 700);
 
   const getUserName = async () => {
     try {
@@ -24,7 +27,7 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({ onSelect, id }) => {
         `/api/user/search?username=${debouncedSearchInputValue}`,
         {
           headers: {
-            Authorization: token,
+            Authorization: user.token,
           },
         }
       );
@@ -35,13 +38,13 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({ onSelect, id }) => {
     }
   };
 
-  useEffect(() => {
-    console.log("filteredData : ", filteredData);
-  }, [filteredData]);
+  // useEffect(() => {
+  //   console.log("filteredData : ", filteredData);
+  // }, [filteredData]);
 
-  useEffect(() => {
-    console.log("selectedUsers : ", selectedUsers);
-  }, [selectedUsers]);
+  // useEffect(() => {
+  //   console.log("selectedUsers : ", selectedUsers);
+  // }, [selectedUsers]);
 
   useEffect(() => {
     if (debouncedSearchInputValue) {
@@ -50,6 +53,12 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({ onSelect, id }) => {
       setFilteredData([]);
     }
   }, [debouncedSearchInputValue]);
+
+  useEffect(() => {
+    if (loginUser) {
+      setUser(JSON.parse(loginUser));
+    }
+  }, []);
 
   // useEffect(() => {
   //   console.log("query: ", query);
@@ -87,8 +96,8 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({ onSelect, id }) => {
       />
       {filteredData.length > 0 && (
         <ul className=" z-10 w-full bg-white border border-gray-300 rounded">
-          {availablueUsers.map((user) => (
-            <li key={user._id} className="" onClick={() => handleSelect(user)}>
+          {availablueUsers.map((user, index) => (
+            <li key={index} className="" onClick={() => handleSelect(user)}>
               {user.username}
             </li>
           ))}

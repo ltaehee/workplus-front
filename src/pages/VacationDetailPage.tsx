@@ -13,14 +13,14 @@ const VacationDetailPage = () => {
   const [reason, setReason] = useState("");
 
   const loginUser = localStorage.getItem("user");
-  const token = localStorage.getItem("token");
   const startDateString = startDate?.toLocaleDateString("ko-KR");
   const endDateString = endDate?.toLocaleDateString("ko-KR");
   const [userName, setUserName] = useState<{
-    id: string;
+    userId: string;
     email: string;
     username: string;
-  }>({ id: "", email: "", username: "" });
+    token: string;
+  }>({ userId: "", email: "", username: "", token: "" });
   const handleChangeSelect = (e: ChangeEvent<HTMLSelectElement>) => {
     setIsOption(e.target.value);
     console.log(e.target.value);
@@ -29,17 +29,18 @@ const VacationDetailPage = () => {
     setReason(e.target.value);
   };
 
-  const param = useParams(); // 6749977732e657c9a75da74d
-  console.log("param.vacationId ", param.vacationId);
-  const getUserInfo = async () => {
+  const param = useParams(); // 674eadd9b4eb347380a9f024
+  // console.log("param.vacationId ", param.vacationId);
+  // console.log("userName.token ", userName.token);
+  const getUserInfo = async (token: string) => {
     try {
       const request = await axios.get(`/api/vacation/${param.vacationId}`, {
         headers: {
-          Authorization: token,
+          authorization: token,
         },
       });
       const vacation = request.data.data.vacation;
-      console.log("getUser data ", vacation);
+      // console.log("getUser data ", vacation);
 
       setIsOption(vacation.vacationType);
       setReason(vacation.reason);
@@ -61,7 +62,7 @@ const VacationDetailPage = () => {
   const handleClickFix = async () => {
     const data = {
       username: userName.username,
-      userId: userName.id,
+      userId: userName.userId,
       startDate: startDateString,
       endDate: endDateString,
       vacationType: isOption,
@@ -74,7 +75,7 @@ const VacationDetailPage = () => {
         data,
         {
           headers: {
-            Authorization: token,
+            Authorization: userName.token,
           },
         }
       );
@@ -88,24 +89,26 @@ const VacationDetailPage = () => {
     try {
       const request = await axios.delete(`/api/vacation/${param.vacationId}`, {
         headers: {
-          Authorization: token,
+          Authorization: userName.token,
         },
       });
-      console.log("Delte vacationDetail data ", request.data);
+      console.log("Delete vacationDetail data ", request.data);
     } catch (err) {
       console.log("Error vacationDetail delete ", err);
     }
   };
 
   useEffect(() => {
-    getUserInfo();
-
     if (loginUser) {
       const user = JSON.parse(loginUser);
       setUserName(user);
-      console.log("user 토큰 ", user.id);
+      getUserInfo(user.token);
     }
   }, []);
+
+  // useEffect(() => {
+  //   // console.log("userName ", userName.token);
+  // }, [userName]);
   return (
     <>
       <div className="w-full flex flex-col space-y-5 items-center">
