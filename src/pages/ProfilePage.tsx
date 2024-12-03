@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import api from "../utils/api";
 import { ENDPOINT } from "../utils/endpoints";
 import Modal from "../components/common/Modal";
-import VacationHistory from "../components/profile/VacationHistory";
+import ProfileSection from "../components/profile/ProfileSection";
 
 type UserInfo = {
   email?: string;
@@ -15,40 +15,29 @@ type UserInfo = {
   address?: string;
 };
 
-type VacationInfo = {
-  vacationType: string;
-  username: string;
-  startDate: string;
-  endDate: string;
+type MeetingAndVacation = {
+  // 공통적인 속성
+  label?: string;
   date?: string;
-  label?: string;
-  creator?: string;
-  agenda?: string;
+  reason?: string;
+  startDate?: string;
+  endDate?: string;
   attendant?: string[];
-  reason?: string;
-};
-
-type MeetingInfo = {
-  creatorName: string;
-  attendant: string[];
-  date: string;
-  startTime: string;
-  agenda: string;
-  meetingId: string;
+  // 연차 관련 속성
   vacationType?: string;
-  label?: string;
+  username?: string;
+  // 회의 관련 속성
+  creatorName?: string;
+  meetingId?: string;
+  startTime?: string;
+  agenda?: string;
   creator?: string;
-  startDate: string;
-  endDate: string;
-  reason?: string;
 };
 
 const ProfilePage = () => {
   /* 모달 */
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalData, setModalData] = useState<VacationInfo | MeetingInfo | null>(
-    null
-  ); // 모달에 전달할 데이터
+  const [modalData, setModalData] = useState<MeetingAndVacation | null>(null); // 모달에 전달할 데이터
   const openModal = (data: any) => {
     setModalData(data); // 모달에 필요한 데이터 설정
     setIsModalOpen(true);
@@ -57,8 +46,8 @@ const ProfilePage = () => {
 
   /* 로딩 */
   const [isLoading, setIsLoading] = useState(false);
-  const [meetingData, setMeetingData] = useState<MeetingInfo[]>([]);
-  const [vacationData, setVacationData] = useState<VacationInfo[]>([]);
+  const [meetingData, setMeetingData] = useState<MeetingAndVacation[]>([]);
+  const [vacationData, setVacationData] = useState<MeetingAndVacation[]>([]);
   const [user, setUser] = useState<UserInfo>({
     email: "",
     name: "",
@@ -75,12 +64,10 @@ const ProfilePage = () => {
       if (!storedUser) return;
       const { username } = JSON.parse(storedUser);
       const response = await api.get(`${ENDPOINT.METTING}/user/${username}`);
-      console.log({ response });
       if (response.status === 200 || response.status === 204) {
         const meetings = response.data.data.meetings;
         setMeetingData(meetings);
         console.log("미팅 데이터:", meetings);
-        console.log({ meetingData });
       }
     } catch (err) {
       console.error(err);
@@ -170,7 +157,7 @@ const ProfilePage = () => {
           </div>
           <div className="flex gap-10 bg-[#F9FBFC]  w-8/12  pl-8 py-12 ">
             <div className="w-6/12">
-              <VacationHistory
+              <ProfileSection
                 title="회의 알림"
                 data={meetingData.map((meeting) => ({
                   label: meeting.agenda,
@@ -185,7 +172,7 @@ const ProfilePage = () => {
               />
             </div>
             <div className="flex flex-col gap-10 w-6/12">
-              <VacationHistory
+              <ProfileSection
                 title="연차 사용 내역"
                 className="h-[400px] overflow-y-auto"
                 data={vacationData.map((vacation) => ({

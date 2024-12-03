@@ -1,8 +1,8 @@
-type VacationHistoryProps = {
+type ProfileSectionProps = {
   onClick?: () => void;
   className?: string;
   title?: string;
-  data?: { label: string; name?: string; date: string }[];
+  data?: { label?: string; name?: string; date?: string }[];
   onListClick?: (item: {
     label?: string;
     date?: string;
@@ -10,7 +10,7 @@ type VacationHistoryProps = {
   }) => void;
 };
 
-const VacationHistory: React.FC<VacationHistoryProps> = ({
+const ProfileSection: React.FC<ProfileSectionProps> = ({
   onListClick,
   className,
   title,
@@ -43,4 +43,4 @@ const VacationHistory: React.FC<VacationHistoryProps> = ({
   );
 };
 
-export default VacationHistory;
+export default ProfileSection;

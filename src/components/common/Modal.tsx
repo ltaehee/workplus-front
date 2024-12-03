@@ -40,11 +40,11 @@ const Modal: React.FC<ModalProps> = ({
   return (
     <div
       onClick={handleBackgroundClick}
-      className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50 "
+      className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50"
     >
       <div
         onClick={handleModalClick}
-        className=" flex flex-col justify-center items-center w-96  bg-white p-6 rounded-lg shadow-xl"
+        className="flex flex-col justify-center items-center w-96  bg-white p-6 rounded-lg shadow-xl border-2 border-blue-500"
       >
         <h2 className="text-2xl font-bold">{title}</h2>
         <p className="mt-1 text-sm text-gray-500">일자: {date}</p>
