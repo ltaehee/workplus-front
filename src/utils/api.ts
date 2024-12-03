@@ -3,7 +3,7 @@ import { API_BASE_URL } from "./constants";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 3000,
+  timeout: 5000,
   headers: {},
 });
 
@@ -11,7 +11,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const user = localStorage.getItem("user");
-    const { token } = user && JSON.parse(user);
+    const { token } = user && JSON.parse(user); /* try catch */
     if (token) {
       config.headers.authorization = `${token}`;
     }

@@ -1,5 +1,3 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
 import Button from "./Button";
 
 type ModalProps = {
@@ -7,8 +5,13 @@ type ModalProps = {
   onClose: () => void;
   title: string;
   date: string;
-  organizer: string;
-  agenda: string;
+  creator?: string;
+  agenda?: string;
+  vacationType?: string;
+  startDate?: string;
+  endDate?: string;
+  reason?: string;
+  attendant?: string[];
 };
 
 const Modal: React.FC<ModalProps> = ({
@@ -16,32 +19,11 @@ const Modal: React.FC<ModalProps> = ({
   onClose,
   title,
   date,
-  organizer,
+  creator,
   agenda,
+  reason,
+  attendant,
 }) => {
-  const [modalData, setModalData] = useState<{
-    title: string;
-    date: string;
-    organizer: string;
-    agenda: string;
-  } | null>();
-
-  const fetchData = async () => {
-    try {
-      const response = await axios.get("api/meeting");
-      const data = response.data;
-
-      setModalData({
-        title: data.title,
-        date: data.date,
-        organizer: data.organizer,
-        agenda: data.agenda,
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   if (!isOpen) return;
 
   /* 모달 밖부분 클릭해도 모달 닫히게  */
@@ -58,7 +40,7 @@ const Modal: React.FC<ModalProps> = ({
   return (
     <div
       onClick={handleBackgroundClick}
-      className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50 border-2 border-blue-500"
+      className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50 "
     >
       <div
         onClick={handleModalClick}
@@ -68,10 +50,41 @@ const Modal: React.FC<ModalProps> = ({
         <p className="mt-1 text-sm text-gray-500">일자: {date}</p>
         <div className="w-full h-px my-4 bg-gray-300"></div>
         <div className="w-full flex flex-col justify-left text-sm">
-          <p className="mt-4 text-gray-500">주최자</p>
-          <p className="mt-2">{organizer}</p>
-          <p className="mt-10 text-gray-500">회의 안건</p>
-          <p className="mt-2">{agenda}</p>
+          {/* 알림 모달 내용 */}
+          {creator && (
+            <>
+              <p className="mt-4 text-gray-500">주최자</p>
+              <p className="mt-2">{creator}</p>
+            </>
+          )}
+
+          {attendant && (
+            <>
+              <p className="mt-4 text-gray-500">참여자</p>
+              <p className="mt-2">
+                {attendant.map((name, index) => (
+                  <span key={index}>
+                    {name}
+                    {index < attendant.length - 1 && ","}
+                    {/* 마지막 이름 뒤에는 마침표를 추가하지 않음 */}
+                  </span>
+                ))}
+              </p>
+            </>
+          )}
+          {agenda && (
+            <>
+              <p className="mt-10 text-gray-500">회의 안건</p>
+              <p className="mt-2">{agenda}</p>
+            </>
+          )}
+          {/* 연차 모달 내용 */}
+          {reason && (
+            <>
+              <p className="mt-4 text-gray-500">휴가 사유</p>
+              <p className="mt-2">{reason}</p>
+            </>
+          )}
         </div>
         <Button onClick={onClose} btnText="확인" className="mt-8" />
       </div>

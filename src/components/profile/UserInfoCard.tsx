@@ -44,6 +44,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
       if (response.status === 204) {
         onEdit({ ...user, phone: editInput.phone });
         console.log("수정 성공", editInput.phone);
+        alert("수정 완료");
       }
     } catch (err) {
       console.error("Error updating phone:", err);
@@ -64,6 +65,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
       if (response.status === 204) {
         onEdit({ ...user, birth: editInput.birth });
         console.log("수정 성공", editInput.birth);
+        alert("수정 완료");
       }
     } catch (err) {
       console.error("Error updating birth:", err);
@@ -84,6 +86,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
       if (response.status === 204) {
         onEdit({ ...user, address: editInput.address });
         console.log("수정 성공", editInput.address);
+        alert("수정 완료");
       }
     } catch (err) {
       console.error("Error updating address:", err);

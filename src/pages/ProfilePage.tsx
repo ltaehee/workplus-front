@@ -1,9 +1,10 @@
-import ProfileSection from "../components/profile/ProfileSection";
 import UserInfoCard from "../components/profile/UserInfoCard";
 import MainProfile from "../components/profile/MainProfile";
 import { useEffect, useState } from "react";
 import api from "../utils/api";
 import { ENDPOINT } from "../utils/endpoints";
+import Modal from "../components/common/Modal";
+import VacationHistory from "../components/profile/VacationHistory";
 
 type UserInfo = {
   email?: string;
@@ -19,26 +20,43 @@ type VacationInfo = {
   username: string;
   startDate: string;
   endDate: string;
+  date?: string;
+  label?: string;
+  creator?: string;
+  agenda?: string;
+  attendant?: string[];
+  reason?: string;
 };
 
 type MeetingInfo = {
-  creator: string;
+  creatorName: string;
   attendant: string[];
   date: string;
   startTime: string;
   agenda: string;
   meetingId: string;
-  createdAt: string;
-  updatedAt: string;
+  vacationType?: string;
+  label?: string;
+  creator?: string;
+  startDate: string;
+  endDate: string;
+  reason?: string;
 };
 
 const ProfilePage = () => {
+  /* 모달 */
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalData, setModalData] = useState<VacationInfo | MeetingInfo | null>(
+    null
+  ); // 모달에 전달할 데이터
+  const openModal = (data: any) => {
+    setModalData(data); // 모달에 필요한 데이터 설정
+    setIsModalOpen(true);
+  };
+  const closeModal = () => setIsModalOpen(false);
+
+  /* 로딩 */
   const [isLoading, setIsLoading] = useState(false);
-  /* const meetingData = [
-    { label: "회의", name: "엘리스", date: "2024-12-01" },
-    { label: "회의", name: "엘리스", date: "2024-12-01" },
-    { label: "회의", name: "엘리스", date: "2024-12-01" },
-  ]; */
   const [meetingData, setMeetingData] = useState<MeetingInfo[]>([]);
   const [vacationData, setVacationData] = useState<VacationInfo[]>([]);
   const [user, setUser] = useState<UserInfo>({
@@ -143,31 +161,40 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="bg-[#F9FBFC] h-screen ">
+    /* h-screen 을 두군데 넣어줫음 근데 이러면 스크롤이 생김 근데 이걸 지우면 배경색이 밑에 부분이 짤림 */
+    <div className="bg-[#F9FBFC] h-screen overflow-y-hidden">
       <div className="flex justify-center">
         <div className="flex pr-8 w-1280">
-          <div className="w-4/12 h-[100%] bg-white px-8 py-12 shadow-[10px_0_10px_-10px_rgba(0,0,0,0.1)]  z-10">
+          <div className="w-4/12 h-screen  bg-white px-8 py-12 shadow-[10px_0_10px_-10px_rgba(0,0,0,0.1)]  z-10">
             <MainProfile user={user} onEdit={handleEdit} />
           </div>
           <div className="flex gap-10 bg-[#F9FBFC]  w-8/12  pl-8 py-12 ">
             <div className="w-6/12">
-              <ProfileSection
-                title="알림"
+              <VacationHistory
+                title="회의 알림"
                 data={meetingData.map((meeting) => ({
                   label: meeting.agenda,
                   date: `${meeting.date}-${meeting.startTime}`,
+                  onClick: () => openModal(meeting),
+                  creator: meeting.creator,
+                  agenda: meeting.agenda,
+                  attendant: meeting.attendant,
                 }))}
+                onListClick={openModal}
                 className="min-h-[730px] max-h-[730px] overflow-y-auto "
               />
             </div>
             <div className="flex flex-col gap-10 w-6/12">
-              <ProfileSection
+              <VacationHistory
                 title="연차 사용 내역"
                 className="h-[400px] overflow-y-auto"
                 data={vacationData.map((vacation) => ({
                   label: vacation.vacationType,
                   date: `${vacation.startDate} ~ ${vacation.endDate}`,
+                  reason: vacation.reason,
+                  onClick: () => openModal(vacation),
                 }))}
+                onListClick={openModal}
               />
               <UserInfoCard
                 title="부가 정보 관리"
@@ -175,6 +202,18 @@ const ProfilePage = () => {
                 onEdit={handleEdit}
               />
             </div>
+            {isModalOpen && modalData && (
+              <Modal
+                isOpen={isModalOpen}
+                onClose={closeModal}
+                title={modalData.label || ""}
+                date={modalData.date || ""}
+                creator={modalData.creator}
+                agenda={modalData.agenda}
+                reason={modalData.reason}
+                attendant={modalData.attendant}
+              />
+            )}
           </div>
         </div>
       </div>

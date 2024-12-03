@@ -1,21 +1,15 @@
-type ProfileSectionProps = {
+type AlarmListProps = {
   onClick?: () => void;
   className?: string;
   title?: string;
   data?: { label: string; name?: string; date: string }[];
 };
 
-const ProfileSection: React.FC<ProfileSectionProps> = ({
-  onClick,
-  className,
-  title,
-  data,
-}) => {
+const AlarmList: React.FC<AlarmListProps> = ({ className, title, data }) => {
   return (
     <div>
       <p className="font-bold pb-2">{title}</p>
       <div
-        onClick={onClick}
         className={`border border-[#DFDFDF] bg-white rounded-md p-6 ${className}`}
       >
         {data ? (
@@ -38,4 +32,4 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   );
 };
 
-export default ProfileSection;
+export default AlarmList;
