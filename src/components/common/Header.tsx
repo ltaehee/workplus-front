@@ -6,7 +6,7 @@ import MenuIcon from "../icons/MenuIcon";
 import XIcon from "../icons/XIcon";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import defaultImg from "../../../public/img/profileImg.png";
+import defaultImg from "../icons/profileImg.svg";
 
 const Header = () => {
   const [isMenu, setIsMenu] = useState(false);
@@ -38,11 +38,9 @@ const Header = () => {
   }, 5000);
 
   return (
-    <header>
+    <header className="sticky top-0 bg-white">
       <div
-        className={
-          "flex justify-center items-center border-b border-slate-300 sticky top-0"
-        }
+        className={"flex justify-center items-center border-b border-slate-300"}
       >
         <div
           className={

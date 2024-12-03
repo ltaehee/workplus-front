@@ -1,7 +1,7 @@
 import Logo from "../components/common/Logo";
 import Input from "../components/common/Input";
 import Button from "../components/common/Button";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -48,16 +48,23 @@ const FindPasswordPage = () => {
     }
   }, [location]);
 
-  const handleChangeEmail = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChangeEmail = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-  };
-  const handleChangePassword = (e: ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
-  const handleChangePasswordCheck = (e: ChangeEvent<HTMLInputElement>) => {
-    setPasswordCheck(e.target.value);
-  };
-  const handleClickEmailSend = async () => {
+  }, []);
+  const handleChangePassword = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setPassword(e.target.value);
+    },
+    []
+  );
+  const handleChangePasswordCheck = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setPasswordCheck(e.target.value);
+    },
+    []
+  );
+
+  const handleClickEmailSend = useCallback(async () => {
     if (!email.includes("@")) {
       alert("메일에@넣어주세요");
     } else {
@@ -77,9 +84,9 @@ const FindPasswordPage = () => {
         setIsLoading(false);
       }
     }
-  };
+  }, [email]);
 
-  const handleClickEmailVerify = async () => {
+  const handleClickEmailVerify = useCallback(async () => {
     try {
       const response = await axios.post("/api/auth/verify-email", {
         email: emailInputValue,
@@ -93,9 +100,9 @@ const FindPasswordPage = () => {
         alert(err.response?.data.message);
       }
     }
-  };
+  }, [emailInputValue, token]);
 
-  const handleClickPassword = async () => {
+  const handleClickPassword = useCallback(async () => {
     if (!regex.test(password)) {
       alert(
         "password는 8글자 이상 + 영문, 특수문자는 꼭 하나씩 들어가야됩니다."
@@ -118,7 +125,7 @@ const FindPasswordPage = () => {
         }
       }
     }
-  };
+  }, [password, passwordCheck, emailInputValue, navigate]);
 
   return (
     <>
