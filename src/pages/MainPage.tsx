@@ -25,7 +25,10 @@ const MainPage = () => {
           </div>
           <CheckInOut />
         </div>
-        <div className="calendarStyle">
+        <div
+          style={{ display: "flex", height: "calc(100% - 2rem)" }}
+          className="calendarStyle"
+        >
           <Calendar
             onChange={onChange}
             value={value}

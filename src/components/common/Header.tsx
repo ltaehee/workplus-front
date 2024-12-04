@@ -33,9 +33,9 @@ const Header = () => {
     setIsMenu(!isMenu);
   };
 
-  const alarmCheck = setInterval(async () => {
-    const fetchData = await axios.get("", {});
-  }, 5000);
+  // const alarmCheck = setInterval(async () => {
+  //   const fetchData = await axios.get("", {});
+  // }, 5000);
 
   return (
     <header className="sticky top-0 bg-white">
