@@ -3,4 +3,5 @@ export const ENDPOINT = {
   USER_PROFILE_IMAGE: "/user/profile/image",
   VACATION_POST_SUBMIT: "/vacation",
   METTING: "/meeting",
+  ADMIN: "/admin",
 };

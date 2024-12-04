@@ -3,21 +3,30 @@ import SideMenu from "../components/admin/SideMenu";
 import ListWrap from "../components/admin/ListWrap";
 import { ENDPOINT } from "../utils/endpoints";
 import api from "../utils/api";
+import Button from "../components/common/Button";
 
+interface Vacation {
+  vacationId: string; // vacationId 추가
+  username: string;
+  startDate: string;
+  endDate: string;
+  vacationType: string;
+  reason: string;
+  status: string;
+}
 interface User {
-  id: number;
-  name: string;
-  phone?: string;
-  birth?: string;
-  vacationType?: string;
-  start?: string;
-  end?: string;
-  clockIn?: string;
-  clockOut?: string;
+  username: string;
+  phone: string;
+  birth: string;
+  email: string;
+  address: string;
 }
 const AdminPage = () => {
+  /* 새로고침시 현재 탭메뉴 그대로 */
+  const [tabValue, setTabValue] = useState("");
   const [activePage, setActivePage] = useState<string>("home");
-  const [vacationData, setVacationData] = useState<any>([]);
+  const [vacationData, setVacationData] = useState<Vacation[]>([]);
+  const [userData, setUserData] = useState<User[]>([]);
 
   // 더미 데이터
   const userList = [
@@ -58,19 +67,19 @@ const AdminPage = () => {
   };
 
   // 테이블 헤더와 각 페이지에 맞는 행 렌더링 함수
-  const renderUserRow = (user: {
-    name: string;
+  const renderUserRow = (userData: {
+    username: string;
     phone: string;
     birth: string;
     email: string;
     address: string;
   }) => (
     <>
-      <td className="p-2 pl-4">{user.name}</td>
-      <td className="p-2 pl-4">{user.email}</td>
-      <td className="p-2 pl-4">{user.phone}</td>
-      <td className="p-2 pl-4">{user.birth}</td>
-      <td className="p-2 pl-4">{user.address}</td>
+      <td className="p-2 pl-4">{userData?.username}</td>
+      <td className="p-2 pl-4">{userData.email}</td>
+      <td className="p-2 pl-4">{userData.phone}</td>
+      <td className="p-2 pl-4">{userData.birth}</td>
+      <td className="p-2 pl-4">{userData.address}</td>
     </>
   );
 
@@ -93,25 +102,39 @@ const AdminPage = () => {
     vacationType: string;
     reason: string;
     status: string;
-  }) => (
-    <>
-      <td className="p-2 pl-4">{vacation.username}</td>
-      <td className="p-2 pl-4">{vacation.vacationType}</td>
-      <td className="p-2 pl-4">{vacation.startDate}</td>
-      <td className="p-2 pl-4">{vacation.endDate}</td>
-      <td className="p-2 pl-4">{vacation.reason}</td>
-      <td className="p-2 pl-4">
-        <button
-          className={`px-3 py-2 rounded-md text-sm cursor-pointer ${
-            vacation.status === "승인" ? "bg-blue-500" : "bg-gray-500"
-          } text-white`}
-          disabled
-        >
-          {vacation.status}
-        </button>
-      </td>
-    </>
-  );
+    vacationId: string;
+  }) => {
+    const startDate = vacation.startDate.split("T")[0];
+    const endDate = vacation.endDate.split("T")[0];
+
+    return (
+      <>
+        <td className="p-2 pl-4">{vacation.username}</td>
+        <td className="p-2 pl-4">{vacation.vacationType}</td>
+        <td className="p-2 pl-4">{startDate}</td>
+        <td className="p-2 pl-4">{endDate}</td>
+        <td className="p-2 pl-4">{vacation.reason}</td>
+        <td className="p-2 pl-4">
+          {vacation.status === "대기중" ? (
+            <div className="w-[150px]">
+              <Button
+                btnText="승인"
+                className="w-auto text-sm  bg-blue-500 hover:bg-blue-600 !py-2 "
+                onClick={() => vacationApproveData(vacation.vacationId, "승인")}
+              />
+              <Button
+                btnText="미승인"
+                className="w-auto text-sm  bg-gray-500 ml-2 hover:bg-gray-600 !py-2"
+                onClick={() => vacationApproveData(vacation.vacationId, "거부")}
+              />
+            </div>
+          ) : (
+            <button disabled>{vacation.status}</button>
+          )}
+        </td>
+      </>
+    );
+  };
 
   /* 모든 회원 연차 내역 불러오기 */
   const vacationFetchData = async () => {
@@ -121,9 +144,41 @@ const AdminPage = () => {
       const response = await api.get(`${ENDPOINT.VACATION_POST_SUBMIT}`);
       if (response.status === 200 || response.status === 204) {
         const vacations = response.data.vacations;
+        setVacationData(vacations);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  /* 휴가 승인,미승인 업데이트 */
+  const vacationApproveData = async (vacationId: string, status: string) => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      console.log({ storedUser });
+      if (!storedUser) return;
+      const response = await api.patch(
+        `${ENDPOINT.ADMIN}/vacation/${vacationId}/status`,
+        { status }
+      );
+      if (response.status === 200 || response.status === 204) {
+        const vacations = response.data.vacations;
         console.log({ vacations });
         setVacationData(vacations);
-        console.log("휴가목록 확인용", vacationData);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  /* 전체 유저 목록 업데이트 */
+  const userTotalData = async () => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) return;
+      const response = await api.get(`${ENDPOINT.ADMIN}/users`);
+      if (response.status === 200) {
+        const users = response.data.users;
+        setUserData(users);
       }
     } catch (err) {
       console.error(err);
@@ -134,18 +189,20 @@ const AdminPage = () => {
     const fetchData = async () => {
       /* 새로고침 했을 때 순서 */
       await vacationFetchData();
+      await userTotalData();
     };
     fetchData();
   }, []);
+
   return (
     <div className="w-full flex justify-center">
       <div className="flex w-[1280px] h-screen px-8">
-        <SideMenu setActivePage={setActivePage} />
+        <SideMenu setActivePage={setActivePage} key={tabValue} />
         <div className="w-[80%]">
           {activePage === "home" && (
             <ListWrap
               headers={headers.home}
-              data={userList}
+              data={userData}
               renderRow={renderUserRow}
             />
           )}

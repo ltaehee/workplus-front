@@ -89,6 +89,7 @@ const ProfilePage = () => {
       );
       if (response.status === 200 || response.status === 204) {
         const vacations = response.data.data.vacations;
+
         setVacationData(vacations);
       }
     } catch (err) {
@@ -160,14 +161,17 @@ const ProfilePage = () => {
             <div className="w-6/12">
               <ProfileSection
                 title="회의 알림"
-                data={meetingData.map((meeting) => ({
-                  label: meeting.agenda,
-                  date: `${meeting.date}-${meeting.startTime}`,
-                  onClick: () => openModal(meeting),
-                  creatorUsername: meeting.creatorUsername,
-                  agenda: meeting.agenda,
-                  attendant: meeting.attendant,
-                }))}
+                data={meetingData.map((meeting) => {
+                  const meetingDate = meeting.date?.split("T")[0];
+                  return {
+                    label: meeting.agenda,
+                    date: `${meetingDate}-${meeting.startTime}`,
+                    onClick: () => openModal(meeting),
+                    creatorUsername: meeting.creatorUsername,
+                    agenda: meeting.agenda,
+                    attendant: meeting.attendant,
+                  };
+                })}
                 onListClick={openModal}
                 className="min-h-[730px] max-h-[730px] overflow-y-auto "
               />
@@ -176,12 +180,16 @@ const ProfilePage = () => {
               <ProfileSection
                 title="연차 사용 내역"
                 className="h-[400px] overflow-y-auto"
-                data={vacationData.map((vacation) => ({
-                  label: vacation.vacationType,
-                  date: `${vacation.startDate} ~ ${vacation.endDate}`,
-                  reason: vacation.reason,
-                  onClick: () => openModal(vacation),
-                }))}
+                data={vacationData.map((vacation) => {
+                  const startDate = vacation.startDate?.split("T")[0];
+                  const endDate = vacation.endDate?.split("T")[0];
+                  return {
+                    label: vacation.vacationType,
+                    date: `${startDate} ~ ${endDate}`,
+                    reason: vacation.reason,
+                    onClick: () => openModal(vacation),
+                  };
+                })}
                 onListClick={openModal}
               />
               <UserInfoCard

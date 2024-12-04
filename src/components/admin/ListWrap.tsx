@@ -3,7 +3,11 @@ type ListWrapProps = {
   data: any[];
   renderRow: (item: any) => React.ReactNode;
 };
-const ListWrap: React.FC<ListWrapProps> = ({ headers, data, renderRow }) => {
+const ListWrap: React.FC<ListWrapProps> = ({
+  headers,
+  data = [],
+  renderRow,
+}) => {
   return (
     <>
       <div className="w-full">
