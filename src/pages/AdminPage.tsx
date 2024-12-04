@@ -26,9 +26,7 @@ interface User {
   address: string;
 }
 const AdminPage = () => {
-  /* 새로고침시 현재 탭메뉴 그대로 */
-  const [tabValue, setTabValue] = useState("");
-  const [activePage, setActivePage] = useState<string>("home");
+  const [activePage, setActivePage] = useState<string>();
   const [vacationData, setVacationData] = useState<Vacation[]>([]);
   const [userData, setUserData] = useState<User[]>([]);
   const [attendData, setAttendData] = useState<User[]>([]);
@@ -67,7 +65,6 @@ const AdminPage = () => {
       );
       if (response.status === 200 || response.status === 204) {
         const vacations = response.data.vacations;
-        console.log({ vacations });
         setVacationData(vacations);
       }
     } catch (err) {
@@ -97,6 +94,8 @@ const AdminPage = () => {
       if (!storedUser) return;
       const response = await api.get(`${ENDPOINT.ADMIN}/users/attendance`);
       console.log("근태", response);
+      console.log(response.data.users);
+
       if (response.status === 200) {
         const users = response.data.users;
         setAttendData(users);
@@ -107,15 +106,24 @@ const AdminPage = () => {
   };
 
   useEffect(() => {
+    const savedTab = localStorage.getItem("activePage");
+    if (savedTab) {
+      setActivePage(savedTab);
+    }
     vacationFetchData();
     userTotalData();
     attendanceData();
   }, []);
+  /* 탭 변경 시 `localStorage`에 현재 탭 상태 저장 */
+  const onChangeTab = (tab: string) => {
+    setActivePage(tab);
+    localStorage.setItem("activePage", tab); // 탭 상태를 localStorage에 저장
+  };
 
   return (
     <div className="w-full flex justify-center">
       <div className="flex w-[1280px] h-screen px-8">
-        <SideMenu setActivePage={setActivePage} />
+        <SideMenu setActivePage={onChangeTab} />
         <div className="w-[80%]">
           {activePage === "home" && (
             <ListWrap
