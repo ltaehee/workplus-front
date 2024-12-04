@@ -8,7 +8,6 @@ const CheckInOut = () => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
   });
-  const [userId, setUserId] = useState("");
   const [isCheckIn, setIsCheckIn] = useState(false);
   const [checkinTime, setCheckinTime] = useState("");
   const [checkoutTime, setCheckoutTime] = useState("");
@@ -22,11 +21,8 @@ const CheckInOut = () => {
     hour12: false,
   };
 
-  useEffect(() => {
-    if (user) {
-      setUserId(user.userId);
-    }
-  }, [userId]);
+  const userId = user.userId;
+  const token = user.token;
 
   const getCheckinOutTime = async () => {
     try {
@@ -52,14 +48,6 @@ const CheckInOut = () => {
     }
   };
 
-  useEffect(() => {
-    if (userId) {
-      getCheckinOutTime();
-    }
-  }, [userId]);
-
-  const token = user.token;
-
   const arrDayStr = ["일", "월", "화", "수", "목", "금", "토"];
   const dt = new Date();
   const today =
@@ -79,6 +67,7 @@ const CheckInOut = () => {
   };
 
   useEffect(() => {
+    getCheckinOutTime();
     updateCurrentTime();
     const intervalId = setInterval(updateCurrentTime, 1000);
     return () => clearInterval(intervalId);
@@ -114,29 +103,6 @@ const CheckInOut = () => {
     }
   };
 
-  const handleClickCheckOut = async () => {
-    try {
-      const response = await axios.post(
-        `/api/user/checkout/${userId}`,
-        {},
-        {
-          headers: {
-            authorization: `${token}`,
-          },
-        }
-      );
-      const { timestamps, status } = response.data.data.attendance;
-      const now = new Date(timestamps).toLocaleTimeString("ko-KR", options);
-      setCheckoutTime(now);
-      setIsCheckIn(status);
-    } catch (err) {
-      console.log("handleClickCheckOut 오류", err);
-      if (axios.isAxiosError(err)) {
-        alert(err.response?.data.messsage);
-      }
-    }
-  };
-
   return (
     <div className="bg-white flex items-center border border-slate-400 rounded-lg shadow-lg px-4 h-1/3 min-h-64">
       <div className="flex flex-col justify-evenly gap-4 w-full h-4/6">
@@ -166,11 +132,7 @@ const CheckInOut = () => {
         </div>
         <div className="flex gap-4">
           <Button
-            className={
-              isCheckOutClick
-                ? "bg-blue-100 hover:bg-blue-100 text-slate-800"
-                : ""
-            }
+            className={isCheckOutClick ? "bg-blue-200 hover:bg-blue-200" : ""}
             disabled={isCheckOutClick}
             onClick={handleClickCheckInOut}
             btnText={
