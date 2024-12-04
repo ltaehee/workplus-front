@@ -7,6 +7,9 @@ import AutoComplete from "../components/common/AutoComplete";
 import axios from "axios";
 import { UserData } from "../types";
 import { useSelectedUserStore } from "../store/useUserStore";
+import api from "../utils/api";
+import { ENDPOINT } from "../utils/endpoints";
+import { useNavigate } from "react-router-dom";
 
 const MeetingPage: React.FC = () => {
   const [userName, setUserName] = useState<{
@@ -20,9 +23,10 @@ const MeetingPage: React.FC = () => {
   const { selectedUsers, setSelectedUsers, setDeleteUsers } =
     useSelectedUserStore();
   const [agenda, setAgenda] = useState("");
+  const navigate = useNavigate();
 
   const loginUser = localStorage.getItem("user");
-  const startDateString = startDate?.toLocaleDateString("ko-KR"); // date에서 날짜만 string변환
+  // const startDateString = startDate?.toLocaleDateString("ko-KR"); // date에서 날짜만 string변환
 
   // date에서 시간만 string변환
   const hours = selectedTime?.getHours().toString().padStart(2, "0");
@@ -30,7 +34,7 @@ const MeetingPage: React.FC = () => {
   const selectedTimeString = `${hours}:${minutes}`;
 
   const selectedUserName = selectedUsers.map((user) => user.username);
-  // console.log("selectedUsers ", selectedUserName);
+  console.log("selectedUsers ", selectedUsers);
 
   const handleUserSelect = (user: UserData) => {
     setSelectedUsers(user);
@@ -41,10 +45,12 @@ const MeetingPage: React.FC = () => {
   const handleClickCancel = (user: UserData) => {
     setDeleteUsers(user);
   };
+
+  // 등록버튼
   const handleClickSubmit = async () => {
     const data = {
       creatorId: userName.userId,
-      date: startDateString,
+      date: startDate,
       startTime: selectedTimeString,
       agenda: agenda,
       attendant: selectedUserName,
@@ -52,14 +58,24 @@ const MeetingPage: React.FC = () => {
     };
 
     try {
-      const request = await axios.post("/api/meeting", data, {
-        headers: {
-          Authorization: userName.token,
-        },
-      });
-      console.log("meeting data ", request.data);
+      // const request = await axios.post("/api/meeting", data, {
+      //   headers: {
+      //     Authorization: userName.token,
+      //   },
+      // });
+      const request = await api.post(ENDPOINT.METTING, data);
+      if (agenda === "") {
+        alert("회의 안건을 입력해주세요");
+      } else if (selectedUserName.length === 0) {
+        alert("참여자를 입력해주세요");
+      } else {
+        console.log("meeting data ", request.data);
+        alert("회의 신청 완료");
+        navigate("/");
+      }
     } catch (err) {
       console.log("Error submit meeting data", err);
+      alert("회의 신청 실패");
     }
   };
 
@@ -82,7 +98,7 @@ const MeetingPage: React.FC = () => {
         <p className="mt-20">회의 일정 생성 페이지</p>
         <div className="w-1/6">
           <Datepicker
-            className="w-full"
+            className="w-full px-4 py-2 border rounded-md"
             dateFormat="yyyy/MM/dd"
             selected={startDate}
             onChange={(date) => setStartDate(date)}

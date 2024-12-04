@@ -4,7 +4,7 @@ import Input from "../components/common/Input";
 import Button from "../components/common/Button";
 import Datepicker from "../components/common/DatePicker";
 import axios from "axios";
-import { data } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import { ENDPOINT } from "../utils/endpoints";
 const VacationPage = () => {
@@ -18,11 +18,11 @@ const VacationPage = () => {
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [endDate, setEndDate] = useState<Date | null>(new Date());
   const [reason, setReason] = useState("");
-
+  const navigate = useNavigate();
   const loginUser = localStorage.getItem("user");
   // const token = localStorage.getItem("token");
-  const startDateString = startDate?.toLocaleDateString("ko-KR");
-  const endDateString = endDate?.toLocaleDateString("ko-KR");
+  // const startDateString = startDate?.toLocaleDateString("ko-KR");
+  // const endDateString = endDate?.toLocaleDateString("ko-KR");
   const handleChangeSelect = (e: ChangeEvent<HTMLSelectElement>) => {
     setIsOption(e.target.value);
     console.log(e.target.value);
@@ -35,8 +35,8 @@ const VacationPage = () => {
     const data = {
       username: userName.username,
       userId: userName.userId,
-      startDate: startDateString,
-      endDate: endDateString,
+      startDate: startDate,
+      endDate: endDate,
       vacationType: isOption,
       reason: reason,
     };
@@ -47,10 +47,13 @@ const VacationPage = () => {
       //   },
       // });
 
-      const request = await api.post(ENDPOINT.VACATION_POST_SUBMIT, data);
+      const request = await api.post(ENDPOINT.VACATION, data);
       console.log("vacateion data ", request.data);
+      alert("휴가 신청 완료");
+      navigate("/");
     } catch (err) {
       console.log("Error submit vacation data ", err);
+      alert("휴가 신청 실패: 사유를 입력해주세요");
     }
   };
 
@@ -84,7 +87,7 @@ const VacationPage = () => {
         <div className="w-1/6">
           <Datepicker
             id={"시작 날짜"}
-            className="w-full"
+            className="w-full px-4 py-2 border rounded-md"
             dateFormat="yyyy/MM/dd"
             selected={startDate}
             onChange={(date) => setStartDate(date)}
@@ -93,7 +96,7 @@ const VacationPage = () => {
         <div className="w-1/6">
           <Datepicker
             id={"종료 날짜"}
-            className="w-full"
+            className="w-full px-4 py-2 border rounded-md"
             dateFormat="yyyy/MM/dd"
             selected={endDate}
             onChange={(date) => setEndDate(date)}

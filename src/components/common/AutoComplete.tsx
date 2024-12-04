@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { UserData } from "../../types";
 import axios from "axios";
 import UseDebounce from "../../hooks/useDebounce";
@@ -12,14 +12,14 @@ type AutoCompleteProps = {
 
 const AutoComplete: React.FC<AutoCompleteProps> = ({ onSelect, id }) => {
   const [query, setQuery] = useState("");
-  const { filteredData, setFilteredData } = useUserStore();
+  const { filteredData, setFilteredData } = useUserStore(); // 자동완성 데이터
   const { selectedUsers } = useSelectedUserStore();
-  const [user, setUser] = useState<{
-    token: string;
+  const [token, setToken] = useState<{
+    token?: string;
   }>({ token: "" });
   const loginUser = localStorage.getItem("user");
 
-  const debouncedSearchInputValue = UseDebounce(query, 700);
+  const debouncedSearchInputValue = UseDebounce(query, 500);
 
   const getUserName = async () => {
     try {
@@ -27,51 +27,57 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({ onSelect, id }) => {
         `/api/user/search?username=${debouncedSearchInputValue}`,
         {
           headers: {
-            Authorization: user.token,
+            Authorization: token.token,
           },
         }
       );
-      console.log("getUserName data ", request.data);
+      // console.log("getUserName data ", request.data);
       setFilteredData(request.data.users);
     } catch (err) {
       console.log("Error getUserName ", err);
     }
   };
-
-  // useEffect(() => {
-  //   console.log("filteredData : ", filteredData);
-  // }, [filteredData]);
-
-  // useEffect(() => {
-  //   console.log("selectedUsers : ", selectedUsers);
-  // }, [selectedUsers]);
-
+  const queryRef = useRef(sessionStorage.getItem("query") || "");
   useEffect(() => {
+    console.log("마운트");
+    setQuery(queryRef.current);
+
     if (debouncedSearchInputValue) {
       getUserName();
-    } else {
-      setFilteredData([]);
     }
+
+    return () => {
+      setFilteredData([]);
+      console.log("언마운트");
+    };
+    //  else {
+    //   setFilteredData([]);
+    // }
   }, [debouncedSearchInputValue]);
 
   useEffect(() => {
     if (loginUser) {
-      setUser(JSON.parse(loginUser));
+      setToken(JSON.parse(loginUser));
     }
   }, []);
 
+  useEffect(() => {
+    queryRef.current = query;
+    sessionStorage.setItem("query", query);
+    console.log(`Session storage set: ${query}`);
+  }, [query]);
   // useEffect(() => {
-  //   console.log("query: ", query);
-  //   console.log("filteredData: ", filteredData);
-  // }, [query, filteredData]);
+  //   sessionStorage.setItem("query", query);
+  // }, [query]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    console.log(`Query updated to: ${value}`);
     setQuery(value);
   };
 
   const handleSelect = (user: UserData) => {
-    setQuery(user.username);
+    setQuery("");
     setFilteredData([]);
     onSelect(user);
   };
@@ -88,7 +94,7 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({ onSelect, id }) => {
         </label>
       ) : null}
       <input
-        type="text"
+        type="search"
         className="px-4 py-2 border rounded-md w-full focus:outline-none focus:ring-2"
         value={query}
         onChange={handleChange}
