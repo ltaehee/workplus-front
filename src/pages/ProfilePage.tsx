@@ -84,12 +84,9 @@ const ProfilePage = () => {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
       const { userId } = JSON.parse(storedUser);
-      const response = await api.get(
-        `${ENDPOINT.VACATION_POST_SUBMIT}/user/${userId}`
-      );
+      const response = await api.get(`${ENDPOINT.VACATION}/user/${userId}`);
       if (response.status === 200 || response.status === 204) {
         const vacations = response.data.data.vacations;
-
         setVacationData(vacations);
       }
     } catch (err) {
