@@ -38,34 +38,34 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({ onSelect, id }) => {
     }
   };
   const queryRef = useRef(sessionStorage.getItem("query") || "");
-  useEffect(() => {
-    console.log("마운트");
-    setQuery(queryRef.current);
+  // useEffect(() => {
+  //   console.log("마운트");
+  //   setQuery(queryRef.current);
 
-    if (debouncedSearchInputValue) {
-      getUserName();
-    }
+  //   if (debouncedSearchInputValue) {
+  //     getUserName();
+  //   }
 
-    return () => {
-      setFilteredData([]);
-      console.log("언마운트");
-    };
-    //  else {
-    //   setFilteredData([]);
-    // }
-  }, [debouncedSearchInputValue]);
+  //   return () => {
+  //     setFilteredData([]);
+  //     console.log("언마운트");
+  //   };
+  //   //  else {
+  //   //   setFilteredData([]);
+  //   // }
+  // }, [debouncedSearchInputValue]);
 
-  useEffect(() => {
-    if (loginUser) {
-      setToken(JSON.parse(loginUser));
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (loginUser) {
+  //     setToken(JSON.parse(loginUser));
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    queryRef.current = query;
-    sessionStorage.setItem("query", query);
-    console.log(`Session storage set: ${query}`);
-  }, [query]);
+  // useEffect(() => {
+  //   queryRef.current = query;
+  //   sessionStorage.setItem("query", query);
+  //   console.log(`Session storage set: ${query}`);
+  // }, [query]);
   // useEffect(() => {
   //   sessionStorage.setItem("query", query);
   // }, [query]);

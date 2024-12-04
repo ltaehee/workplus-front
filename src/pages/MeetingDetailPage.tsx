@@ -172,13 +172,13 @@ const MeetingDetailPage: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    if (loginUser) {
-      const user = JSON.parse(loginUser);
-      setUserName(user);
-      getUserInfo();
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (loginUser) {
+  //     const user = JSON.parse(loginUser);
+  //     setUserName(user);
+  //     getUserInfo();
+  //   }
+  // }, []);
 
   // useEffect(() => {
   //   console.log("selectedUsers ", selectedUsers);
@@ -187,6 +187,7 @@ const MeetingDetailPage: React.FC = () => {
     <>
       <div className="w-full flex flex-col space-y-5 items-center">
         <p className="mt-20">회의 일정 상세 페이지</p>
+
         <div className="w-1/6">
           <Datepicker
             className="w-full px-4 py-2 border rounded-md"
