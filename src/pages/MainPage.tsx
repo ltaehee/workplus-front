@@ -1,23 +1,27 @@
 import { useEffect, useState } from "react";
 import CheckInOut from "../components/main/CheckInOut";
 import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
+dayjs.extend(isBetween);
 
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "../components/main/calendarStyle.css";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 const MainPage = () => {
   const [value, onChange] = useState<Value>(new Date());
-  const [user, setUser] = useState(() => {
+  const [user, _setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
   });
   const [meetingList, setMeetingList] = useState([
     {
+      _id: "",
       meeting: "",
       creatorId: "",
       attendant: [],
@@ -30,6 +34,7 @@ const MainPage = () => {
 
   const [selectMeetingList, setSelectMeetingList] = useState([
     {
+      _id: "",
       meeting: "",
       creatorId: "",
       attendant: [],
@@ -40,11 +45,43 @@ const MainPage = () => {
     },
   ]);
 
+  const [vacationList, setVacationList] = useState([
+    {
+      createdAt: "",
+      endDate: "",
+      reason: "",
+      requesterId: "",
+      startDate: "",
+      status: "",
+      username: "",
+      vacationType: "",
+      _id: "",
+    },
+  ]);
+
+  const [selectVacationList, setSelectVacationList] = useState([
+    {
+      createdAt: "",
+      endDate: "",
+      reason: "",
+      requesterId: "",
+      startDate: "",
+      status: "",
+      username: "",
+      vacationType: "",
+      _id: "",
+    },
+  ]);
+
+  const [isDayclick, setisDayClick] = useState(false);
+
   const selectDay = Array.isArray(value)
     ? dayjs(value[0]).format("YYYY년 MM월 DD일")
     : dayjs(value).format("YYYY년 MM월 DD일");
 
   const currentMonth = dayjs(value as Date).format("YYYY-MM");
+
+  const navigate = useNavigate();
 
   const token = user.token;
 
@@ -64,26 +101,87 @@ const MainPage = () => {
     }
   };
 
+  const fetchVacation = async () => {
+    try {
+      const response = await axios.get(`/api/vacation/month/${currentMonth}`, {
+        headers: {
+          authorization: `${token}`,
+        },
+      });
+      setVacationList(response.data.vacations);
+    } catch (err) {
+      console.log("fetchVacation 오류", err);
+      if (axios.isAxiosError(err)) {
+        alert(err.response?.data.message);
+      }
+    }
+  };
+
   const handleClickDay = (value: Date) => {
     const meetingDate = meetingList.filter(
       (obj) => obj.date.split("T")[0] === dayjs(value).format("YYYY-MM-DD")
     );
-    setSelectMeetingList(meetingDate);
-  };
+    const vacationDate = vacationList.filter((obj) => {
+      const start = dayjs(obj.startDate.split("T")[0]);
+      const end = dayjs(obj.endDate.split("T")[0]);
+      const selected = dayjs(value).startOf("day");
 
-  console.log("selectMeetingList", selectMeetingList);
+      return selected.isBetween(start, end, null, "[]");
+    });
+    setSelectMeetingList(meetingDate);
+    setSelectVacationList(vacationDate);
+    setisDayClick(true);
+  };
 
   const currentDayMeetingList = selectMeetingList.map((item) => {
     return (
-      <li>
-        <h4>{item.agenda}</h4>
-        <p>{item.startTime}</p>
+      <li key={item._id}>
+        <button
+          onClick={() => navigate(`/meeting-detail/${item._id}`)}
+          className="transition ease-in-out flex items-center w-full border-b hover:bg-teal-50"
+        >
+          <div className="bg-teal-500 rounded-lg p-2 text-white text-sm text-nowrap ml-4">
+            회의
+          </div>
+          <div className="flex justify-between w-full p-4">
+            <h4>{item.agenda}</h4>
+            <p>{item.startTime}</p>
+          </div>
+        </button>
       </li>
     );
   });
 
+  const currentDayVacationList = selectVacationList.map((item) => {
+    return (
+      <li key={item._id}>
+        <button
+          onClick={() => navigate(`/vacation-detail/${item._id}`)}
+          className="transition ease-in-out flex items-center w-full border-b hover:bg-pink-50"
+        >
+          <div className="bg-pink-500 rounded-lg p-2 text-white text-sm text-nowrap ml-4">
+            휴가
+          </div>
+          <div className="flex justify-between w-full p-4">
+            <h4>{item.reason}</h4>
+            <p>{item.vacationType}</p>
+          </div>
+        </button>
+      </li>
+    );
+  });
+
+  const handleActiveStartDateChange = ({
+    activeStartDate,
+  }: {
+    activeStartDate: Date | null;
+  }) => {
+    onChange(activeStartDate);
+  };
+
   useEffect(() => {
     fetchMeeting();
+    fetchVacation();
   }, [currentMonth]);
 
   return (
@@ -93,11 +191,20 @@ const MainPage = () => {
         className="grid grid-cols-[1fr_2fr] w-[1280px] gap-4 p-8"
       >
         <div className=" flex flex-col gap-4">
-          <div className="bg-white border border-slate-400 rounded-lg shadow-lg h-2/3">
-            <div className="bg-slate-500 flex justify-center items-center h-14">
+          <div className="bg-white border border-slate-400 rounded-lg shadow-lg h-2/3 overflow-scroll scrollbar-hide">
+            <div className="bg-slate-500 flex justify-center items-center h-14 sticky top-0">
               <div className="text-white text-lg">{selectDay}</div>
             </div>
-            <ul>{currentDayMeetingList}</ul>
+            {isDayclick ? (
+              <>
+                <ul>{currentDayMeetingList}</ul>
+                <ul>{currentDayVacationList}</ul>
+              </>
+            ) : (
+              <div className="flex justify-center items-center w-full h-[calc(100%-3.5rem)]">
+                <p className="text-lg">날짜를 선택해주세요</p>
+              </div>
+            )}
           </div>
           <CheckInOut />
         </div>
@@ -116,14 +223,40 @@ const MainPage = () => {
             next2Label={null} // +1년 & +10년 이동 버튼 숨기기
             prev2Label={null} // -1년 & -10년 이동 버튼 숨기기
             minDetail="year" // 10년단위 년도 숨기기
+            onActiveStartDateChange={handleActiveStartDateChange} //네비게이션 클릭해도 fetchMeeting 실행되게
             onClickDay={handleClickDay}
-            tileContent={({ activeStartDate, date, view }) =>
-              view === "month" && date.getDay() === 0 ? (
-                <div className="bg-pink-500 rounded-full p-2 text-white">
-                  일요일
-                </div>
-              ) : null
-            }
+            tileContent={({ date, view }) => {
+              if (view === "month") {
+                const meetingCount = meetingList.filter((meeting) =>
+                  dayjs(meeting.date.split("T")[0]).isSame(dayjs(date), "day")
+                ).length;
+
+                const vacationCount = vacationList.filter((vacation) => {
+                  const start = dayjs(vacation.startDate.split("T")[0]);
+                  const end = dayjs(vacation.endDate.split("T")[0]);
+                  const current = dayjs(date).startOf("day");
+                  return current.isBetween(start, end, null, "[]");
+                }).length;
+
+                if (meetingCount > 0 || vacationCount > 0) {
+                  return (
+                    <div className="flex flex-col items-center mt-1">
+                      {meetingCount > 0 && (
+                        <span className="bg-teal-500 text-white rounded-full px-2 py-1 text-xs">
+                          회의 {meetingCount}건
+                        </span>
+                      )}
+                      {vacationCount > 0 && (
+                        <span className="bg-pink-500 text-white rounded-full px-2 py-1 text-xs mt-1">
+                          휴가 {vacationCount}건
+                        </span>
+                      )}
+                    </div>
+                  );
+                }
+              }
+              return null;
+            }}
           />
         </div>
       </div>
