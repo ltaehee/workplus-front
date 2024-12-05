@@ -88,9 +88,12 @@ const LoginPage = () => {
   return (
     <>
       <div className={"grid grid-cols-2"}>
-        <div className={"flex justify-center items-center  h-screen"}>
+        <button
+          onClick={() => navigate("/login")}
+          className={"flex justify-center items-center  h-screen"}
+        >
           <Logo className={"w-6/12"} />
-        </div>
+        </button>
         <div
           className={"flex flex-col justify-center items-center gap-8 h-screen"}
         >
