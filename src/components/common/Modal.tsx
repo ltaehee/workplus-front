@@ -12,6 +12,7 @@ type ModalProps = {
   endDate?: string;
   reason?: string;
   attendant?: string[];
+  children?: React.ReactNode;
 };
 
 const Modal: React.FC<ModalProps> = ({
@@ -23,6 +24,7 @@ const Modal: React.FC<ModalProps> = ({
   agenda,
   reason,
   attendant,
+  children,
 }) => {
   if (!isOpen) return;
 
@@ -88,6 +90,7 @@ const Modal: React.FC<ModalProps> = ({
             </>
           )}
         </div>
+        {children}
         <Button onClick={onClose} btnText="확인" className="mt-8" />
       </div>
     </div>
