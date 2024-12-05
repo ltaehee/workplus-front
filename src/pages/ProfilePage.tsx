@@ -101,7 +101,7 @@ const ProfilePage = () => {
       if (!storedUser) return;
       const { userId, token, isAdmin } = JSON.parse(storedUser);
       const response = await api.get(`${ENDPOINT.USER_PROFILE}/${userId}`);
-      // console.log("현재 유저 데이터:", response.data.data.user);
+      console.log("현재 유저 데이터:", response.data.data.user);
       if (response.status === 200 || response.status === 204) {
         const userData = response.data.data.user;
         const newData = { ...userData, token, isAdmin, userId };
