@@ -129,7 +129,6 @@ const AdminPage = () => {
     setIsLoading(true);
     try {
       const storedUser = localStorage.getItem("user");
-      console.log({ storedUser });
       if (!storedUser) return;
       const response = await api.patch(
         `${ENDPOINT.ADMIN}/vacation/${vacationId}/status`,
@@ -166,6 +165,8 @@ const AdminPage = () => {
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
+      const { userId } = JSON.parse(storedUser);
+
       const response = await api.get(`${ENDPOINT.ADMIN_USERS}/attendance`);
 
       if (response.status === 200) {
@@ -178,17 +179,17 @@ const AdminPage = () => {
   };
 
   /* 유저 삭제 */
-  const userDelete = async () => {
+  const userDelete = async (userId: string) => {
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
-      const { userId } = JSON.parse(storedUser);
       const response = await api.delete(`${ENDPOINT.ADMIN_USERS}/${userId}`);
 
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 204) {
         const users = response.data.users;
         setAttendData(users);
         console.log("유저 삭제 완료");
+        alert("유저 삭제 완료");
       }
     } catch (err) {
       console.error(err);
@@ -228,7 +229,14 @@ const AdminPage = () => {
             <ListWrap
               headers={headers.home}
               data={userData}
-              renderRow={(userData) => <UserRow userData={userData} />}
+              renderRow={(userData) => (
+                <UserRow
+                  userData={userData}
+                  userDelete={() => {
+                    userDelete(userData._id);
+                  }}
+                />
+              )}
             />
           )}
           {activePage === "attendance" && (
