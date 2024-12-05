@@ -1,6 +1,4 @@
-import { useState } from "react";
 import Button from "../common/Button";
-import Modal from "../common/Modal";
 
 interface UserRowProps {
   userData: {
@@ -9,10 +7,13 @@ interface UserRowProps {
     birth: string;
     email: string;
     address: string;
+    _id: string;
   };
+
+  userDelete: (userId: string) => void;
 }
 /* 전체 유저 목록 관리 테이블 */
-export const UserRow = ({ userData }: UserRowProps) => {
+export const UserRow = ({ userData, userDelete }: UserRowProps) => {
   return (
     <>
       <td className="p-2 pl-4">{userData.username}</td>
@@ -22,6 +23,9 @@ export const UserRow = ({ userData }: UserRowProps) => {
       <td className="p-2 pl-4">{userData.address}</td>
       <div className="flex items-center justify-center  h-[50px] ">
         <Button
+          onClick={() => {
+            userDelete(userData._id);
+          }}
           btnText="삭제"
           className="!py-1 px-2 bg-gray-500 hover:bg-gray-600"
         />

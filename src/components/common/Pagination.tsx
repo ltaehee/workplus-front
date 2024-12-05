@@ -8,7 +8,7 @@ const Pagination = () => {
         </button>
 
         {/* 페이지 번호 */}
-        {Array.from({ length: 10 }, (_, index) => (
+        {Array.from({ length: 5 }, (_, index) => (
           <button
             key={index + 1}
             className={`px-4 py-2 rounded ${
