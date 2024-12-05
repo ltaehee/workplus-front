@@ -10,6 +10,7 @@ type DatepickerProps = {
   selected: Date | null;
   onChange: (date: Date | null) => void;
   id?: string;
+  readOnly?: boolean;
 };
 
 const Datepicker: React.FC<DatepickerProps> = ({
@@ -18,6 +19,7 @@ const Datepicker: React.FC<DatepickerProps> = ({
   className,
   dateFormat,
   id,
+  readOnly,
 }) => {
   return (
     <div>
@@ -32,6 +34,7 @@ const Datepicker: React.FC<DatepickerProps> = ({
         dateFormat={dateFormat}
         selected={selected}
         onChange={onChange}
+        readOnly={readOnly}
       />
     </div>
   );

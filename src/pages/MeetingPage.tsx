@@ -4,7 +4,6 @@ import Input from "../components/common/Input";
 import Button from "../components/common/Button";
 import ReactDatePiker from "react-datepicker";
 import AutoComplete from "../components/common/AutoComplete";
-import axios from "axios";
 import { UserData } from "../types";
 import { useSelectedUserStore } from "../store/useUserStore";
 import api from "../utils/api";
@@ -127,7 +126,7 @@ const MeetingPage: React.FC = () => {
               <span
                 key={index}
                 onClick={() => handleClickCancel(user)}
-                className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
+                className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 hover:bg-[#a3aee6] transition duration-10"
               >
                 {user.username}
               </span>

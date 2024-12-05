@@ -1,9 +1,6 @@
 import { create } from "zustand";
 import { UserData } from "../types";
-interface QueryState {
-  query: string;
-  setQuery: (query: string) => void;
-}
+
 interface UserState {
   filteredData: UserData[];
   setFilteredData: (data: UserData[]) => void;
@@ -15,13 +12,6 @@ interface SelectedUserState {
   setDeleteUsers: (user: UserData) => void;
   setGetUsers: (users: UserData[]) => void;
 }
-export const useQueryStore = create<QueryState>((set) => ({
-  query: sessionStorage.getItem("query") || "",
-  setQuery: (query) => {
-    sessionStorage.setItem("query", query);
-    set({ query });
-  },
-}));
 
 export const useUserStore = create<UserState>((set) => ({
   filteredData: [],

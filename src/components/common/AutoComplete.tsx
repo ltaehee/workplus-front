@@ -8,9 +8,14 @@ type AutoCompleteProps = {
   value?: UserData[];
   onSelect: (user: UserData) => void;
   id?: string;
+  readOnly?: boolean;
 };
 
-const AutoComplete: React.FC<AutoCompleteProps> = ({ onSelect, id }) => {
+const AutoComplete: React.FC<AutoCompleteProps> = ({
+  onSelect,
+  id,
+  readOnly,
+}) => {
   const [query, setQuery] = useState("");
   const { filteredData, setFilteredData } = useUserStore(); // 자동완성 데이터
   const { selectedUsers } = useSelectedUserStore();
@@ -18,8 +23,7 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({ onSelect, id }) => {
     token?: string;
   }>({ token: "" });
   const loginUser = localStorage.getItem("user");
-
-  const debouncedSearchInputValue = UseDebounce(query, 500);
+  const debouncedSearchInputValue = UseDebounce(query, 700);
 
   const getUserName = async () => {
     try {
@@ -37,42 +41,24 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({ onSelect, id }) => {
       console.log("Error getUserName ", err);
     }
   };
-  const queryRef = useRef(sessionStorage.getItem("query") || "");
-  // useEffect(() => {
-  //   console.log("마운트");
-  //   setQuery(queryRef.current);
 
-  //   if (debouncedSearchInputValue) {
-  //     getUserName();
-  //   }
+  useEffect(() => {
+    if (debouncedSearchInputValue) {
+      getUserName();
+    }
+    return () => {
+      setFilteredData([]);
+    };
+  }, [debouncedSearchInputValue]);
 
-  //   return () => {
-  //     setFilteredData([]);
-  //     console.log("언마운트");
-  //   };
-  //   //  else {
-  //   //   setFilteredData([]);
-  //   // }
-  // }, [debouncedSearchInputValue]);
-
-  // useEffect(() => {
-  //   if (loginUser) {
-  //     setToken(JSON.parse(loginUser));
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   queryRef.current = query;
-  //   sessionStorage.setItem("query", query);
-  //   console.log(`Session storage set: ${query}`);
-  // }, [query]);
-  // useEffect(() => {
-  //   sessionStorage.setItem("query", query);
-  // }, [query]);
+  useEffect(() => {
+    if (loginUser) {
+      setToken(JSON.parse(loginUser));
+    }
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    console.log(`Query updated to: ${value}`);
     setQuery(value);
   };
 
@@ -99,6 +85,7 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({ onSelect, id }) => {
         value={query}
         onChange={handleChange}
         placeholder="참여자 검색"
+        readOnly={readOnly}
       />
       {filteredData.length > 0 && (
         <ul className=" z-10 w-full bg-white border border-gray-300 rounded">

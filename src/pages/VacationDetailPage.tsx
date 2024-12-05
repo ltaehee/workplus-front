@@ -13,6 +13,8 @@ const VacationDetailPage = () => {
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [endDate, setEndDate] = useState<Date | null>(new Date());
   const [reason, setReason] = useState("");
+  const [requesterId, setRequesterId] = useState("");
+  const [requesterUsername, setRequesterUsername] = useState("");
   const navigate = useNavigate();
 
   const loginUser = localStorage.getItem("user");
@@ -47,20 +49,14 @@ const VacationDetailPage = () => {
       const request = await api.get(`${ENDPOINT.VACATION}/${param.vacationId}`);
 
       const vacation = request.data.data.vacation;
-      // console.log("getUser data ", vacation);
+      console.log("getUser data ", vacation);
 
       setIsOption(vacation.vacationType);
       setReason(vacation.reason);
-      // const [year, month, day] = vacation.startDate
-      //   .split(". ")
-      //   .map((part: string) => parseInt(part, 10));
-      // const startDateObject = new Date(year, month - 1, day);
-      // const [year1, month1, day1] = vacation.endDate
-      //   .split(". ")
-      //   .map((part: string) => parseInt(part, 10));
-      // const endDateObject = new Date(year1, month1 - 1, day1);
       setStartDate(vacation.startDate);
       setEndDate(vacation.endDate);
+      setRequesterId(vacation.requesterId);
+      setRequesterUsername(vacation.username);
     } catch (err) {
       console.log("Error getUserInfo ", err);
     }
@@ -142,56 +138,105 @@ const VacationDetailPage = () => {
           <Input
             placeholder="이름"
             id={"이름"}
-            value={userName.username}
+            value={requesterUsername}
             readOnly
           />
         </div>
         <div className="w-1/6">
-          <Datepicker
-            id={"시작 날짜"}
-            className="w-full px-4 py-2 border rounded-md"
-            dateFormat="yyyy/MM/dd"
-            selected={startDate}
-            onChange={(date) => setStartDate(date)}
-          />
+          {requesterId !== userName.userId ? (
+            <Datepicker
+              id={"시작 날짜"}
+              className="w-full px-4 py-2 border rounded-md"
+              dateFormat="yyyy/MM/dd"
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
+              readOnly
+            />
+          ) : (
+            <Datepicker
+              id={"시작 날짜"}
+              className="w-full px-4 py-2 border rounded-md"
+              dateFormat="yyyy/MM/dd"
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
+            />
+          )}
         </div>
         <div className="w-1/6">
-          <Datepicker
-            id={"종료 날짜"}
-            className="w-full px-4 py-2 border rounded-md"
-            dateFormat="yyyy/MM/dd"
-            selected={endDate}
-            onChange={(date) => setEndDate(date)}
-          />
+          {requesterId !== userName.userId ? (
+            <Datepicker
+              id={"종료 날짜"}
+              className="w-full px-4 py-2 border rounded-md"
+              dateFormat="yyyy/MM/dd"
+              selected={endDate}
+              onChange={(date) => setEndDate(date)}
+              readOnly
+            />
+          ) : (
+            <Datepicker
+              id={"종료 날짜"}
+              className="w-full px-4 py-2 border rounded-md"
+              dateFormat="yyyy/MM/dd"
+              selected={endDate}
+              onChange={(date) => setEndDate(date)}
+            />
+          )}
         </div>
         <div className="w-1/6">
-          <SelectBox
-            id={"종류"}
-            className=""
-            value={isOption}
-            optionText1="연차"
-            optionText2="반차"
-            onChange={handleChangeSelect}
-          />
+          {requesterId !== userName.userId ? (
+            <SelectBox
+              id={"종류"}
+              className=""
+              value={isOption}
+              optionText1="연차"
+              optionText2="반차"
+              onChange={handleChangeSelect}
+              disabled={true}
+            />
+          ) : (
+            <SelectBox
+              id={"종류"}
+              className=""
+              value={isOption}
+              optionText1="연차"
+              optionText2="반차"
+              onChange={handleChangeSelect}
+              disabled={false}
+            />
+          )}
         </div>
         <div className="w-1/6">
-          <Input
-            placeholder="사유"
-            id={"사유"}
-            value={reason}
-            onChange={handleChangeReason}
-          />
+          {requesterId !== userName.userId ? (
+            <Input
+              placeholder="사유"
+              id={"사유"}
+              value={reason}
+              onChange={handleChangeReason}
+              readOnly
+            />
+          ) : (
+            <Input
+              placeholder="사유"
+              id={"사유"}
+              value={reason}
+              onChange={handleChangeReason}
+            />
+          )}
         </div>
         <div className="w-1/6 flex justify-between">
           <div className="w-1/3">
-            <Button btnText="수정" onClick={handleClickFix} />
+            {requesterId !== userName.userId ? null : (
+              <Button btnText="수정" onClick={handleClickFix} />
+            )}
           </div>
           <div className="w-1/3 ">
-            <Button
-              className="px-4 py-3 bg-[#f00] text-white rounded-md hover:bg-[#ba0000] transition duration-10"
-              btnText="삭제"
-              onClick={handleClickDelete}
-            />
+            {requesterId !== userName.userId ? null : (
+              <Button
+                className="px-4 py-3 bg-[#f00] text-white rounded-md hover:bg-[#ba0000] transition duration-10"
+                btnText="삭제"
+                onClick={handleClickDelete}
+              />
+            )}
           </div>
         </div>
       </div>
