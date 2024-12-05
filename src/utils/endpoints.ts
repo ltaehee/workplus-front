@@ -4,4 +4,5 @@ export const ENDPOINT = {
   VACATION: "/vacation",
   METTING: "/meeting",
   ADMIN: "/admin",
+  ADMIN_USERS: "/admin/users",
 };
