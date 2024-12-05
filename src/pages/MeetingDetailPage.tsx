@@ -27,6 +27,7 @@ const MeetingDetailPage: React.FC = () => {
     useSelectedUserStore();
   const loginUser = localStorage.getItem("user");
   const selectedUserName = selectedUsers.map((user) => user.username);
+  const now = new Date();
   const param = useParams(); // 674effc4a19783b2f22fbbea
   // console.log("param.meetingId ", param.meetingId);
 
@@ -158,6 +159,7 @@ const MeetingDetailPage: React.FC = () => {
               selected={startDate}
               onChange={(date) => setStartDate(date)}
               id={"날짜"}
+              minDate={now}
             />
           )}
         </div>
@@ -237,7 +239,17 @@ const MeetingDetailPage: React.FC = () => {
               onChange={(date: Date | null) => setSelectedTime(date)}
               showTimeSelect
               showTimeSelectOnly
-              timeIntervals={10}
+              timeIntervals={30}
+              minTime={now}
+              maxTime={
+                new Date(
+                  now.getFullYear(),
+                  now.getMonth(),
+                  now.getDate(),
+                  23,
+                  59
+                )
+              }
               dateFormat="hh:mm aa"
             />
           )}

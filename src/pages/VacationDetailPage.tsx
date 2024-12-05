@@ -3,7 +3,6 @@ import Datepicker from "../components/common/DatePicker";
 import Input from "../components/common/Input";
 import SelectBox from "../components/common/SelectBox";
 import Button from "../components/common/Button";
-import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../utils/api";
 import { ENDPOINT } from "../utils/endpoints";
@@ -16,10 +15,8 @@ const VacationDetailPage = () => {
   const [requesterId, setRequesterId] = useState("");
   const [requesterUsername, setRequesterUsername] = useState("");
   const navigate = useNavigate();
-
+  const today = new Date();
   const loginUser = localStorage.getItem("user");
-  // const startDateString = startDate?.toLocaleDateString("ko-KR");
-  // const endDateString = endDate?.toLocaleDateString("ko-KR");
   const [userName, setUserName] = useState<{
     userId: string;
     email: string;
@@ -36,16 +33,10 @@ const VacationDetailPage = () => {
 
   const param = useParams(); // 674ff4768001e362ac93297d
   // console.log("param.vacationId ", param.vacationId);
-  // console.log("userName.token ", userName.token);
 
   // 페이지 들어갔을때 입력했던 데이터 받아오기
   const getUserInfo = async () => {
     try {
-      // const request = await axios.get(`/api/vacation/${param.vacationId}`, {
-      //   headers: {
-      //     authorization: token,
-      //   },
-      // });
       const request = await api.get(`${ENDPOINT.VACATION}/${param.vacationId}`);
 
       const vacation = request.data.data.vacation;
@@ -73,15 +64,6 @@ const VacationDetailPage = () => {
     };
 
     try {
-      // const request = await axios.put(
-      //   `/api/vacation/${param.vacationId}`,
-      //   data,
-      //   {
-      //     headers: {
-      //       Authorization: userName.token,
-      //     },
-      //   }
-      // );
       const request = await api.put(
         `${ENDPOINT.VACATION}/${param.vacationId}`,
         data
@@ -102,11 +84,6 @@ const VacationDetailPage = () => {
   // 삭제버튼
   const handleClickDelete = async () => {
     try {
-      // const request = await axios.delete(`/api/vacation/${param.vacationId}`, {
-      //   headers: {
-      //     Authorization: userName.token,
-      //   },
-      // });
       const request = await api.delete(
         `${ENDPOINT.VACATION}/${param.vacationId}`
       );
@@ -159,6 +136,7 @@ const VacationDetailPage = () => {
               dateFormat="yyyy/MM/dd"
               selected={startDate}
               onChange={(date) => setStartDate(date)}
+              minDate={today}
             />
           )}
         </div>
@@ -179,6 +157,7 @@ const VacationDetailPage = () => {
               dateFormat="yyyy/MM/dd"
               selected={endDate}
               onChange={(date) => setEndDate(date)}
+              minDate={today}
             />
           )}
         </div>

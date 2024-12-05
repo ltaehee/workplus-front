@@ -40,6 +40,4 @@ export const useSelectedUserStore = create<SelectedUserState>((set) => ({
         ),
       ],
     })),
-  // setGetUsers: (users: UserData[]) =>
-  //   set((state) => ({ selectedUsers: [...state.selectedUsers, ...users] })),
 }));

@@ -3,10 +3,10 @@ import SelectBox from "../components/common/SelectBox";
 import Input from "../components/common/Input";
 import Button from "../components/common/Button";
 import Datepicker from "../components/common/DatePicker";
-import axios from "axios";
-import { data, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import { ENDPOINT } from "../utils/endpoints";
+
 const VacationPage = () => {
   const [userName, setUserName] = useState<{
     userId: string;
@@ -20,9 +20,8 @@ const VacationPage = () => {
   const [reason, setReason] = useState("");
   const navigate = useNavigate();
   const loginUser = localStorage.getItem("user");
-  // const token = localStorage.getItem("token");
-  // const startDateString = startDate?.toLocaleDateString("ko-KR");
-  // const endDateString = endDate?.toLocaleDateString("ko-KR");
+  const today = new Date();
+
   const handleChangeSelect = (e: ChangeEvent<HTMLSelectElement>) => {
     setIsOption(e.target.value);
     console.log(e.target.value);
@@ -41,12 +40,6 @@ const VacationPage = () => {
       reason: reason,
     };
     try {
-      // const request = await axios.post("/api/vacation", data, {
-      //   headers: {
-      //     authorization: userName.token,
-      //   },
-      // });
-
       const request = await api.post(ENDPOINT.VACATION, data);
       console.log("vacateion data ", request.data);
       alert("휴가 신청 완료");
@@ -67,11 +60,6 @@ const VacationPage = () => {
     }
   }, []);
 
-  // console.log("시작날짜 ", startDateString);
-  // console.log("종료날짜 ", endDateString);
-  // console.log("종류 ", isOption);
-  // console.log("사유 ", reason);
-
   return (
     <>
       <div className="w-full flex flex-col space-y-5 items-center">
@@ -91,6 +79,7 @@ const VacationPage = () => {
             dateFormat="yyyy/MM/dd"
             selected={startDate}
             onChange={(date) => setStartDate(date)}
+            minDate={today}
           />
         </div>
         <div className="w-1/6">
@@ -100,6 +89,7 @@ const VacationPage = () => {
             dateFormat="yyyy/MM/dd"
             selected={endDate}
             onChange={(date) => setEndDate(date)}
+            minDate={today}
           />
         </div>
         <div className="w-1/6">

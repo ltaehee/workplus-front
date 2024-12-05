@@ -5,13 +5,13 @@ const UseDebounce = (value: string, delay: number) => {
 
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
-      console.log(`Debounced value set to: ${value} after ${delay}ms`);
+      // console.log(`Debounced value set to: ${value} after ${delay}ms`);
       setDebounceValue(value);
     }, delay);
 
     return () => {
       clearTimeout(debounceTimer);
-      console.log(`Debounced value cleared: ${value}`);
+      // console.log(`Debounced value cleared: ${value}`);
     };
   }, [value, delay]);
 

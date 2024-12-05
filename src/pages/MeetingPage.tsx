@@ -10,6 +10,17 @@ import api from "../utils/api";
 import { ENDPOINT } from "../utils/endpoints";
 import { useNavigate } from "react-router-dom";
 
+// 현재 시간을 가장 가까운 30분 단위로 반올림
+const getRoundedDate = () => {
+  const date = new Date();
+  const minutes = date.getMinutes();
+  const roundedMinutes = minutes <= 30 ? 30 : 60;
+  date.setMinutes(roundedMinutes);
+  date.setSeconds(0);
+  date.setMilliseconds(0);
+  return date;
+};
+
 const MeetingPage: React.FC = () => {
   const [userName, setUserName] = useState<{
     userId: string;
@@ -18,14 +29,17 @@ const MeetingPage: React.FC = () => {
     token?: string;
   }>({ userId: "", email: "", username: "" });
   const [startDate, setStartDate] = useState<Date | null>(new Date());
-  const [selectedTime, setSelectedTime] = useState<Date | null>(new Date());
+  const [selectedTime, setSelectedTime] = useState<Date | null>(
+    getRoundedDate()
+  );
+
+  const now = new Date();
   const { selectedUsers, setSelectedUsers, setDeleteUsers } =
     useSelectedUserStore();
   const [agenda, setAgenda] = useState("");
   const navigate = useNavigate();
 
   const loginUser = localStorage.getItem("user");
-  // const startDateString = startDate?.toLocaleDateString("ko-KR"); // date에서 날짜만 string변환
 
   // date에서 시간만 string변환
   const hours = selectedTime?.getHours().toString().padStart(2, "0");
@@ -57,11 +71,6 @@ const MeetingPage: React.FC = () => {
     };
 
     try {
-      // const request = await axios.post("/api/meeting", data, {
-      //   headers: {
-      //     Authorization: userName.token,
-      //   },
-      // });
       const request = await api.post(ENDPOINT.METTING, data);
       if (agenda === "") {
         alert("회의 안건을 입력해주세요");
@@ -102,6 +111,7 @@ const MeetingPage: React.FC = () => {
             selected={startDate}
             onChange={(date) => setStartDate(date)}
             id={"날짜"}
+            minDate={now}
           />
         </div>
         <div className="w-1/6">
@@ -140,7 +150,11 @@ const MeetingPage: React.FC = () => {
             onChange={(date: Date | null) => setSelectedTime(date)}
             showTimeSelect
             showTimeSelectOnly
-            timeIntervals={10}
+            timeIntervals={30}
+            minTime={now}
+            maxTime={
+              new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59)
+            }
             dateFormat="hh:mm aa"
           />
         </div>
