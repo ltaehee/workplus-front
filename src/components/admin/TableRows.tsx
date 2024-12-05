@@ -1,4 +1,6 @@
+import { useState } from "react";
 import Button from "../common/Button";
+import Modal from "../common/Modal";
 
 interface UserRowProps {
   userData: {
@@ -10,21 +12,29 @@ interface UserRowProps {
   };
 }
 /* 전체 유저 목록 관리 테이블 */
-export const UserRow = ({ userData }: UserRowProps) => (
-  <>
-    <td className="p-2 pl-4">{userData.username}</td>
-    <td className="p-2 pl-4">{userData.email}</td>
-    <td className="p-2 pl-4">{userData.phone}</td>
-    <td className="p-2 pl-4">{userData.birth}</td>
-    <td className="p-2 pl-4">{userData.address}</td>
-  </>
-);
+export const UserRow = ({ userData }: UserRowProps) => {
+  return (
+    <>
+      <td className="p-2 pl-4">{userData.username}</td>
+      <td className="p-2 pl-4">{userData.email}</td>
+      <td className="p-2 pl-4">{userData.phone}</td>
+      <td className="p-2 pl-4">{userData.birth}</td>
+      <td className="p-2 pl-4">{userData.address}</td>
+      <div className="flex items-center justify-center  h-[50px] ">
+        <Button
+          btnText="삭제"
+          className="!py-1 px-2 bg-gray-500 hover:bg-gray-600"
+        />
+      </div>
+    </>
+  );
+};
 
 interface AttendanceRowProps {
   attendData: {
     username: string;
     attendance: {
-      status: string;
+      status: boolean;
       timestamps: string;
     };
   };
@@ -44,10 +54,12 @@ export const AttendanceRow = ({ attendData }: AttendanceRowProps) => {
     <>
       <td className="p-2 pl-4">{attendData.username}</td>
       <td className="p-2 pl-4">
-        {attendData.attendance.status === "true" ? "출근" : "퇴근"}
+        {attendData.attendance.status === true ? "출근" : "퇴근"}
       </td>
       <td className="p-2 pl-4">
-        {formatTime(attendData.attendance.timestamps)}
+        {attendData.attendance?.timestamps
+          ? formatTime(attendData.attendance.timestamps)
+          : "시간 정보 없음"}
       </td>
     </>
   );

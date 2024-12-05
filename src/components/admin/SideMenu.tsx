@@ -15,6 +15,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ setActivePage }) => {
         <ul>
           {sideMenus.map((menu) => (
             <li
+              key={menu.path}
               className="flex items-center p-4 hover:bg-[#7A9BFF] cursor-pointer text-white"
               onClick={() => setActivePage(menu.path)}
             >

@@ -8,6 +8,7 @@ import {
   AttendanceRow,
   VacationRow,
 } from "../components/admin/TableRows";
+import Pagination from "../components/common/Pagination";
 
 interface Vacation {
   vacationId: string;
@@ -26,13 +27,82 @@ interface User {
   address: string;
 }
 const AdminPage = () => {
+  /* 임시 더미 데이터 */
+  const dummyVacationData: Vacation[] = [
+    {
+      vacationId: "1",
+      username: "이태희",
+      startDate: "2024-12-01",
+      endDate: "2024-12-10",
+      vacationType: "연차",
+      reason: "개인 사유",
+      status: "승인",
+    },
+    {
+      vacationId: "2",
+      username: "임동건",
+      startDate: "2024-12-05",
+      endDate: "2024-12-08",
+      vacationType: "연차",
+      reason: "개인 사유",
+      status: "대기",
+    },
+    {
+      vacationId: "3",
+      username: "박찬호",
+      startDate: "2024-12-15",
+      endDate: "2024-12-20",
+      vacationType: "연차",
+      reason: "개인 사유",
+      status: "거부",
+    },
+    {
+      vacationId: "4",
+      username: "이세윤",
+      startDate: "2024-12-15",
+      endDate: "2024-12-20",
+      vacationType: "연차",
+      reason: "개인 사유",
+      status: "거부",
+    },
+    {
+      vacationId: "5",
+      username: "이태희",
+      startDate: "2024-12-01",
+      endDate: "2024-12-10",
+      vacationType: "연차",
+      reason: "개인 사유",
+      status: "승인",
+    },
+    {
+      vacationId: "6",
+      username: "이태희",
+      startDate: "2024-12-05",
+      endDate: "2024-12-8",
+      vacationType: "연차",
+      reason: "개인 사유",
+      status: "승인",
+    },
+    {
+      vacationId: "7",
+      username: "이태희",
+      startDate: "2024-12-01",
+      endDate: "2024-12-2",
+      vacationType: "연차",
+      reason: "개인 사유",
+      status: "승인",
+    },
+  ];
   const [activePage, setActivePage] = useState<string>();
-  const [vacationData, setVacationData] = useState<Vacation[]>([]);
+  // const [vacationData, setVacationData] = useState<Vacation[]>([]);
+  const [vacationData, setVacationData] =
+    useState<Vacation[]>(dummyVacationData);
   const [userData, setUserData] = useState<User[]>([]);
   const [attendData, setAttendData] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const headers = {
-    home: ["이름", "이메일", "전화번호", "생년월일", "주소"],
+    home: ["이름", "이메일", "전화번호", "생년월일", "주소", ""],
     attendance: ["이름", "상태", "시간"],
     vacation: ["이름", "휴가종류", "휴가 시작", "휴가 끝", "사유", "상태"],
   };
@@ -47,6 +117,7 @@ const AdminPage = () => {
       const response = await api.get(`${ENDPOINT.VACATION}`);
       if (response.status === 200 || response.status === 204) {
         const vacations = response.data.vacations;
+        console.log("휴가 데이터", vacations);
         setVacationData(vacations);
       }
     } catch (err) {
@@ -55,6 +126,7 @@ const AdminPage = () => {
   };
   /* 휴가 승인,미승인 업데이트 */
   const vacationApproveData = async (vacationId: string, status: string) => {
+    setIsLoading(true);
     try {
       const storedUser = localStorage.getItem("user");
       console.log({ storedUser });
@@ -63,12 +135,14 @@ const AdminPage = () => {
         `${ENDPOINT.ADMIN}/vacation/${vacationId}/status`,
         { status }
       );
-      if (response.status === 200 || response.status === 204) {
-        const vacations = response.data.vacations;
-        setVacationData(vacations);
+      if (response.status === 200) {
+        console.log(response.data.message);
+        // await vacationFetchData();
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -77,7 +151,7 @@ const AdminPage = () => {
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
-      const response = await api.get(`${ENDPOINT.ADMIN}/users`);
+      const response = await api.get(`${ENDPOINT.ADMIN_USERS}`);
       if (response.status === 200) {
         const users = response.data.users;
         setUserData(users);
@@ -92,13 +166,29 @@ const AdminPage = () => {
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
-      const response = await api.get(`${ENDPOINT.ADMIN}/users/attendance`);
-      console.log("근태", response);
-      console.log(response.data.users);
+      const response = await api.get(`${ENDPOINT.ADMIN_USERS}/attendance`);
 
       if (response.status === 200) {
         const users = response.data.users;
         setAttendData(users);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  /* 유저 삭제 */
+  const userDelete = async () => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) return;
+      const { userId } = JSON.parse(storedUser);
+      const response = await api.delete(`${ENDPOINT.ADMIN_USERS}/${userId}`);
+
+      if (response.status === 200) {
+        const users = response.data.users;
+        setAttendData(users);
+        console.log("유저 삭제 완료");
       }
     } catch (err) {
       console.error(err);
@@ -110,7 +200,7 @@ const AdminPage = () => {
     if (savedTab) {
       setActivePage(savedTab);
     }
-    vacationFetchData();
+    // vacationFetchData();
     userTotalData();
     attendanceData();
   }, []);
@@ -120,9 +210,18 @@ const AdminPage = () => {
     localStorage.setItem("activePage", tab); // 탭 상태를 localStorage에 저장
   };
 
+  /* 로딩 */
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen text-3xl font-bold">
+        <div className="spinner">로딩 중...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full flex justify-center">
-      <div className="flex w-[1280px] h-screen px-8">
+    <div className="w-full flex flex-col items-center justify-center ">
+      <div className="flex w-[1280px]  px-8">
         <SideMenu setActivePage={onChangeTab} />
         <div className="w-[80%]">
           {activePage === "home" && (
@@ -153,6 +252,7 @@ const AdminPage = () => {
               )}
             />
           )}
+          <Pagination />
         </div>
       </div>
     </div>
