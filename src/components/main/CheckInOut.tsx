@@ -160,7 +160,9 @@ const CheckInOut = () => {
         </div>
         <div className="flex gap-4">
           <Button
-            className={isCheckOutClick ? "bg-blue-200 hover:bg-blue-200" : ""}
+            className={
+              parsedIsCheckOutClick ? "bg-blue-200 hover:bg-blue-200" : ""
+            }
             disabled={parsedIsCheckOutClick}
             onClick={handleClickCheckInOut}
             btnText={
