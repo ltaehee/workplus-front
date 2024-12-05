@@ -16,7 +16,29 @@ const MainPage = () => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
   });
-  const [meetingList, setMeetingList] = useState([]);
+  const [meetingList, setMeetingList] = useState([
+    {
+      meeting: "",
+      creatorId: "",
+      attendant: [],
+      date: "",
+      startTime: "",
+      agenda: "",
+      createdAt: "",
+    },
+  ]);
+
+  const [selectMeetingList, setSelectMeetingList] = useState([
+    {
+      meeting: "",
+      creatorId: "",
+      attendant: [],
+      date: "",
+      startTime: "",
+      agenda: "",
+      createdAt: "",
+    },
+  ]);
 
   const selectDay = Array.isArray(value)
     ? dayjs(value[0]).format("YYYY년 MM월 DD일")
@@ -24,27 +46,34 @@ const MainPage = () => {
 
   const token = user.token;
 
-  const fetchMeeting = async () => {
-    try {
-      const response = await axios.get("/api/meeting", {
-        headers: {
-          authorization: `${token}`,
-        },
-      });
-      setMeetingList(response.data.meetings);
-    } catch (err) {
-      console.log("fetchMeeting 오류", err);
-      if (axios.isAxiosError(err)) {
-        alert(err.response?.data.message);
-      }
-    }
+  // const fetchMeeting = async () => {
+  //   try {
+  //     const response = await axios.get("/api/meeting/month/", {
+  //       headers: {
+  //         authorization: `${token}`,
+  //       },
+  //     });
+  //     setMeetingList(response.data.meetings);
+  //   } catch (err) {
+  //     console.log("fetchMeeting 오류", err);
+  //     if (axios.isAxiosError(err)) {
+  //       alert(err.response?.data.message);
+  //     }
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchMeeting();
+  // }, []);
+
+  const handleClickDay = (value: Date, event: MouseEvent) => {
+    const meetingDate = meetingList.filter(
+      (obj) => obj.date.split("T")[0] === dayjs(value).format("YYYY-MM-DD")
+    );
+    setSelectMeetingList(meetingDate);
+
+    console.log(value);
   };
-
-  console.log(meetingList);
-
-  useEffect(() => {
-    fetchMeeting();
-  }, []);
 
   return (
     <div className="flex justify-center bg-slate-100">
@@ -56,28 +85,33 @@ const MainPage = () => {
           <div className="bg-white border border-slate-400 rounded-lg shadow-lg h-2/3">
             <div className="bg-slate-500 flex justify-center items-center h-14">
               <div className="text-white text-lg">{selectDay}</div>
-              <div></div>
+              <div>{}</div>
             </div>
           </div>
           <CheckInOut />
         </div>
         <div
-          style={{ display: "flex", height: "calc(100% - 2rem)" }}
+          style={{ display: "flex", height: "calc(100% - 3rem)" }}
           className="calendarStyle"
         >
           <Calendar
             onChange={onChange}
             value={value}
-            formatDay={(locale, date) => dayjs(date).format("D")} // '일' 제거, 숫자만 표시
-            formatYear={(locale, date) => dayjs(date).format("YYYY")} // 네비게이션에서 숫자 년도만 표시
-            formatMonthYear={(locale, date) => dayjs(date).format("YYYY. MM")} // 네비게이션에서 '2023. 12' 형식으로 표시
+            formatDay={(_, date) => dayjs(date).format("D")} // '일' 제거, 숫자만 표시
+            formatYear={(_, date) => dayjs(date).format("YYYY")} // 네비게이션에서 숫자 년도만 표시
+            formatMonthYear={(_, date) => dayjs(date).format("YYYY. MM")} // 네비게이션에서 '2023. 12' 형식으로 표시
             calendarType="gregory" // 일요일 부터 시작
             showNeighboringMonth={false} // 전달, 다음달 날짜 숨기기
             next2Label={null} // +1년 & +10년 이동 버튼 숨기기
             prev2Label={null} // -1년 & -10년 이동 버튼 숨기기
             minDetail="year" // 10년단위 년도 숨기기
-            onClickDay={(value, event) =>
-              alert(`Clicked day: ${dayjs(value).format("YYYY-MM-DD")}`)
+            onClickDay={handleClickDay}
+            tileContent={({ activeStartDate, date, view }) =>
+              view === "month" && date.getDay() === 0 ? (
+                <div className="bg-pink-500 rounded-full p-2 text-white">
+                  일요일
+                </div>
+              ) : null
             }
           />
         </div>
