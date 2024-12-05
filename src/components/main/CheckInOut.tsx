@@ -16,7 +16,7 @@ const CheckInOut = () => {
   const options: Intl.DateTimeFormatOptions = {
     hour: "2-digit",
     minute: "2-digit",
-    second: "2-digit",
+    // second: "2-digit",
     hour12: false,
   };
 
@@ -48,6 +48,9 @@ const CheckInOut = () => {
           authorization: `${token}`,
         },
       });
+      if (!response.data.attendance) {
+        return null;
+      }
       const { timestamps, status } = response.data.attendance;
       const now = new Date(timestamps).toLocaleTimeString("ko-KR", options);
       if (status) {
@@ -78,7 +81,7 @@ const CheckInOut = () => {
 
   useEffect(() => {
     updateCurrentTime();
-    const intervalId = setInterval(updateCurrentTime, 1000);
+    const intervalId = setInterval(updateCurrentTime, 6000);
     return () => clearInterval(intervalId);
   }, []);
 
