@@ -205,12 +205,9 @@ const AdminPage = () => {
   }
 
   return (
-    <div
-      className="w-full flex items-center justify-center"
-      style={{ height: "calc(100vh - 65px)" }} /* 의미없음 ? */
-    >
+    <div className="w-full flex items-center justify-center h-[calc(100vh-65px)] overflow-y-hidden">
       <div className="flex flex-col w-[1280px] px-8 h-full relative">
-        <div className="flex justify-between ">
+        <div className="flex justify-between">
           <SideMenu setActivePage={onChangeTab} />
           <div className="w-[80%]">
             {activePage === "home" && (

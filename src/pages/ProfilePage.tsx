@@ -46,7 +46,6 @@ const ProfilePage = () => {
   const closeModal = () => setIsModalOpen(false);
 
   /* 로딩 */
-  const [isLoading, setIsLoading] = useState(false);
   const [meetingData, setMeetingData] = useState<MeetingAndVacation[]>([]);
   const [vacationData, setVacationData] = useState<MeetingAndVacation[]>([]);
   const [user, setUser] = useState<UserInfo>({
@@ -59,7 +58,6 @@ const ProfilePage = () => {
 
   /* 알림 내역 불러오기 */
   const meetingFetchData = async () => {
-    setIsLoading(true);
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
@@ -72,8 +70,6 @@ const ProfilePage = () => {
       }
     } catch (err) {
       console.error(err);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -92,7 +88,6 @@ const ProfilePage = () => {
 
   /* 연차 사용 내역 불러오기 */
   const vacationFetchData = async () => {
-    setIsLoading(true);
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
@@ -104,13 +99,10 @@ const ProfilePage = () => {
       }
     } catch (err) {
       console.error(err);
-    } finally {
-      setIsLoading(false);
     }
   };
   /* 회원정보 불러오기 */
   const fetchUserData = async () => {
-    setIsLoading(true);
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
@@ -134,8 +126,6 @@ const ProfilePage = () => {
       }
     } catch (err) {
       console.error(err);
-    } finally {
-      setIsLoading(false);
     }
   };
   useEffect(() => {
@@ -151,17 +141,8 @@ const ProfilePage = () => {
     setUser(updatedUser); // 수정된 사용자 정보를 상태에 반영
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen text-3xl font-bold">
-        <div className="spinner">로딩 중...</div>
-      </div>
-    );
-  }
-
   return (
-    /* h-screen 을 두군데 넣어줫음 근데 이러면 스크롤이 생김 근데 이걸 지우면 배경색이 밑에 부분이 짤림 */
-    <div className="bg-[#F9FBFC] h-screen overflow-y-hidden">
+    <div className="bg-[#F9FBFC] h-[calc(100vh-65px)] overflow-y-hidden">
       <div className="flex justify-center">
         <div className="flex pr-8 w-1280">
           <div className="w-4/12 h-screen  bg-white px-8 py-12 shadow-[10px_0_10px_-10px_rgba(0,0,0,0.1)]  z-10">
@@ -186,6 +167,7 @@ const ProfilePage = () => {
                 })}
                 checkNewMeeting={checkNewMeeting}
                 onListClick={openModal}
+                isMeetingSection={true}
                 className="min-h-[730px] max-h-[730px] overflow-y-auto "
               />
             </div>
@@ -204,6 +186,7 @@ const ProfilePage = () => {
                   };
                 })}
                 onListClick={openModal}
+                isMeetingSection={false}
               />
               <UserInfoCard
                 title="부가 정보 관리"

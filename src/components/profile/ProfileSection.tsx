@@ -18,6 +18,7 @@ type ProfileSectionProps = {
     details?: string;
   }) => void;
   checkNewMeeting?: (meetingId: string, username: string) => void;
+  isMeetingSection?: boolean;
 };
 
 const ProfileSection: React.FC<ProfileSectionProps> = ({
@@ -26,6 +27,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   title,
   data,
   checkNewMeeting,
+  isMeetingSection = true,
 }) => {
   const [user, _setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
@@ -67,7 +69,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
                 <button
                   className="mb-1 w-full flex justify-between items-center border-b border-gray-300 last:border-none py-2 cursor-pointer hover:text-gray-500"
                   onClick={() => {
-                    if (item.meetingId) {
+                    if (isMeetingSection && item.meetingId) {
                       handleClickAlarm(item.meetingId);
                       checkNewMeeting?.(item.meetingId, username);
                     } else {
@@ -76,9 +78,11 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
                     onListClick?.(item);
                   }}
                 >
-                  {item.checkedBy?.includes(username) ? null : (
-                    <div className="w-3 h-3 bg-pink-500 rounded-full"></div>
-                  )}
+                  {isMeetingSection &&
+                    !item.checkedBy?.includes(username) &&
+                    item.meetingId && (
+                      <div className="w-3 h-3 bg-pink-500 rounded-full"></div>
+                    )}
                   <p className="truncate text-left w-[100px]">{item.label}</p>
                   <p>{item.date}</p>
                 </button>
