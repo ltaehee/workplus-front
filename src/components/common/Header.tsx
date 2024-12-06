@@ -7,6 +7,7 @@ import XIcon from "../icons/XIcon";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import defaultImg from "../icons/profileImg.svg";
+import api from "../../utils/api";
 
 const Header = () => {
   const [isMenu, setIsMenu] = useState(false);
@@ -33,9 +34,26 @@ const Header = () => {
     setIsMenu(!isMenu);
   };
 
-  // const alarmCheck = setInterval(async () => {
-  //   const fetchData = await axios.get("", {});
-  // }, 5000);
+  const checkNewMeeting = async () => {
+    try {
+      const response = await api.get(`/meeting/my/unchecked/${user.id}`);
+      return response.data.unCheckedMeeting;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    checkNewMeeting() //
+      .then(setIsAlarm);
+    const timerId = setInterval(() => {
+      checkNewMeeting() //
+        .then(setIsAlarm);
+    }, 5000);
+
+    return () => {
+      clearInterval(timerId);
+    };
+  }, []);
 
   return (
     <header className="sticky top-0 bg-white">
@@ -67,14 +85,15 @@ const Header = () => {
           >
             <button onClick={() => navigate("/admin")}>관리자페이지</button>
           </div>
-          <div className={"flex gap-4"}>
-            <button>
-              <a className={"flex justify-between items-center"} href="">
-                <Bell
-                  className={`${isAlarm ? "opacity-100" : "opacity-30"}`}
-                  width={"24px"}
-                />
-              </a>
+          <div className={"flex"}>
+            <button
+              onClick={() => navigate("/profile")}
+              className={"flex justify-between items-center pr-2"}
+            >
+              <Bell
+                className={`${isAlarm ? "block" : "hidden"}`}
+                width={"32px"}
+              />
             </button>
             <button
               className="md:flex hidden justify-center items-center w-8 h-8"
@@ -88,7 +107,7 @@ const Header = () => {
             </button>
             <button
               className={
-                "md:flex hidden justify-between items-center text-slate-400 text-sm text-nowrap"
+                "md:flex hidden justify-between items-center text-slate-400 text-sm text-nowrap pl-4"
               }
               onClick={() => {
                 localStorage.removeItem("token");

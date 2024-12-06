@@ -163,7 +163,7 @@ const MainPage = () => {
             휴가
           </div>
           <div className="flex justify-between w-full p-4">
-            <h4>{item.reason}</h4>
+            <h4>{item.username}</h4>
             <p>{item.vacationType}</p>
           </div>
         </button>

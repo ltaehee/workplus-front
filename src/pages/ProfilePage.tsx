@@ -169,6 +169,7 @@ const ProfilePage = () => {
                 })}
                 onListClick={openModal}
                 className="min-h-[730px] max-h-[730px] overflow-y-auto "
+                meetingId={modalData?.meetingId}
               />
             </div>
             <div className="flex flex-col gap-10 w-6/12">
