@@ -5,10 +5,11 @@ import Button from "../components/common/Button";
 import ReactDatePiker from "react-datepicker";
 import AutoComplete from "../components/common/AutoComplete";
 import { UserData } from "../types";
-import { useSelectedUserStore } from "../store/useUserStore";
 import api from "../utils/api";
 import { ENDPOINT } from "../utils/endpoints";
 import { useNavigate } from "react-router-dom";
+import UseDebounce from "../hooks/useDebounce";
+import axios from "axios";
 
 // 현재 시간을 가장 가까운 30분 단위로 반올림
 const getRoundedDate = () => {
@@ -32,13 +33,15 @@ const MeetingPage: React.FC = () => {
   const [selectedTime, setSelectedTime] = useState<Date | null>(
     getRoundedDate()
   );
-
-  const now = new Date();
-  const { selectedUsers, setSelectedUsers, setDeleteUsers } =
-    useSelectedUserStore();
+  const [query, setQuery] = useState("");
+  const debouncedSearchInputValue = UseDebounce(query, 700);
+  const [filteredData, setFilteredData] = useState<UserData[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<UserData[]>([]);
   const [agenda, setAgenda] = useState("");
-  const navigate = useNavigate();
 
+  const emptyName = "";
+  const now = new Date();
+  const navigate = useNavigate();
   const loginUser = localStorage.getItem("user");
 
   // date에서 시간만 string변환
@@ -47,10 +50,52 @@ const MeetingPage: React.FC = () => {
   const selectedTimeString = `${hours}:${minutes}`;
 
   const selectedUserName = selectedUsers.map((user) => user.username);
-  console.log("selectedUsers ", selectedUsers);
+
+  const availablueUsers = filteredData.filter(
+    (user) =>
+      !selectedUsers.some((selected) => selected.username === user.username)
+  );
+
+  const setDeleteUsers = (user: UserData) => {
+    setSelectedUsers((prevState) =>
+      prevState.filter(
+        (selectedUser) => selectedUser.username !== user.username
+      )
+    );
+  };
+
+  const handleSelect = (user: UserData) => {
+    setQuery("");
+    setFilteredData([]);
+    // onSelect(user);
+    setSelectedUsers((prev) => [...prev, user]);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setQuery(value);
+  };
+
+  const getUserName = async () => {
+    try {
+      const request = await axios.get(
+        `/api/user/search?username=${debouncedSearchInputValue}`,
+        {
+          headers: {
+            Authorization: userName.token,
+          },
+        }
+      );
+
+      // console.log("getUserName data ", request.data);
+      setFilteredData(request.data.users);
+    } catch (err) {
+      console.log("Error getUserName ", err);
+    }
+  };
 
   const handleUserSelect = (user: UserData) => {
-    setSelectedUsers(user);
+    setSelectedUsers((prev) => [...prev, user]);
   };
   const handleClickAgenda = (e: ChangeEvent<HTMLInputElement>) => {
     setAgenda(e.target.value);
@@ -93,13 +138,15 @@ const MeetingPage: React.FC = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   if (userName) {
-  //     console.log("user 토큰 ", userName);
-  //   }
-  // }, [userName]);
+  useEffect(() => {
+    if (debouncedSearchInputValue) {
+      getUserName();
+    }
+    // return () => {
+    //   setFilteredData([]);
+    // };
+  }, [debouncedSearchInputValue]);
 
-  // console.log("selected", selectedUsers);
   return (
     <>
       <div className="w-full flex flex-col space-y-5 items-center">
@@ -130,7 +177,21 @@ const MeetingPage: React.FC = () => {
           />
         </div>
         <div className="w-1/6">
-          <AutoComplete onSelect={handleUserSelect} id={"참여자"} />
+          <AutoComplete
+            onSelect={handleUserSelect}
+            id={"참여자"}
+            onChange={handleChange}
+            value={query || ""}
+          />
+          {filteredData.length > 0 && (
+            <ul className=" z-10 w-full bg-white border border-gray-300 rounded">
+              {availablueUsers.map((user, index) => (
+                <li key={index} className="" onClick={() => handleSelect(user)}>
+                  {user.username}
+                </li>
+              ))}
+            </ul>
+          )}
           <div className="mt-5">
             {selectedUsers.map((user, index) => (
               <span

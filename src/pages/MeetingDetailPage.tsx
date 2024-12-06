@@ -5,10 +5,11 @@ import AutoComplete from "../components/common/AutoComplete";
 import ReactDatePiker from "react-datepicker";
 import Button from "../components/common/Button";
 import { UserData } from "../types";
-import { useSelectedUserStore } from "../store/useUserStore";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../utils/api";
 import { ENDPOINT } from "../utils/endpoints";
+import UseDebounce from "../hooks/useDebounce";
+import axios from "axios";
 
 const MeetingDetailPage: React.FC = () => {
   const [userName, setUserName] = useState<{
@@ -22,22 +23,42 @@ const MeetingDetailPage: React.FC = () => {
   const [agenda, setAgenda] = useState("");
   const [creatorId, setCreatorId] = useState(""); // 회의 생성자 id
   const [creatorUsername, setCreatorUsername] = useState(""); // 회의 생성자 이름
-  const navigate = useNavigate();
-  const { selectedUsers, setSelectedUsers, setDeleteUsers, setGetUsers } =
-    useSelectedUserStore();
+  const [query, setQuery] = useState("");
+  const [filteredData, setFilteredData] = useState<UserData[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<UserData[]>([]);
   const loginUser = localStorage.getItem("user");
+  const navigate = useNavigate();
+  const debouncedSearchInputValue = UseDebounce(query, 700);
+
   const selectedUserName = selectedUsers.map((user) => user.username);
   const now = new Date();
   const param = useParams(); // 674effc4a19783b2f22fbbea
-  // console.log("param.meetingId ", param.meetingId);
-
   // date에서 시간만 string변환
   const hours = selectedTime?.getHours().toString().padStart(2, "0");
   const minutes = selectedTime?.getMinutes().toString().padStart(2, "0");
   const selectedTimeString = `${hours}:${minutes}`;
 
+  const setDeleteUsers = (user: UserData) => {
+    setSelectedUsers((prevState) =>
+      prevState.filter(
+        (selectedUser) => selectedUser.username !== user.username
+      )
+    );
+  };
+  const setGetUsers = (users: UserData[]) => {
+    setSelectedUsers((prevState) => [
+      ...prevState,
+      ...users.filter(
+        (user) =>
+          !prevState.some(
+            (selectedUser) => selectedUser.username === user.username
+          )
+      ),
+    ]);
+  };
+
   const handleUserSelect = (user: UserData) => {
-    setSelectedUsers(user);
+    setSelectedUsers((prev) => [...prev, user]);
   };
   const handleClickAgenda = (e: ChangeEvent<HTMLInputElement>) => {
     setAgenda(e.target.value);
@@ -45,6 +66,49 @@ const MeetingDetailPage: React.FC = () => {
   const handleClickCancel = (user: UserData) => {
     setDeleteUsers(user);
   };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setQuery(value);
+  };
+  const handleSelect = (user: UserData) => {
+    setQuery("");
+    setFilteredData([]);
+    // onSelect(user);
+    setSelectedUsers((prev) => [...prev, user]);
+  };
+
+  const getUserName = async () => {
+    try {
+      const request = await axios.get(
+        `/api/user/search?username=${debouncedSearchInputValue}`,
+        {
+          headers: {
+            Authorization: userName.token,
+          },
+        }
+      );
+
+      // console.log("getUserName data ", request.data);
+      setFilteredData(request.data.users);
+    } catch (err) {
+      console.log("Error getUserName ", err);
+    }
+  };
+
+  useEffect(() => {
+    if (debouncedSearchInputValue) {
+      getUserName();
+    }
+    return () => {
+      setFilteredData([]);
+    };
+  }, [debouncedSearchInputValue]);
+
+  const availablueUsers = filteredData.filter(
+    (user) =>
+      !selectedUsers.some((selected) => selected.username === user.username)
+  );
 
   // 페이지 들어갔을때 입력했던 데이터 받아오기
   const getUserInfo = async () => {
@@ -57,9 +121,8 @@ const MeetingDetailPage: React.FC = () => {
       const newSelectedUsers = meeting.attendant.map((username: string) => ({
         username,
       }));
-
-      // console.log("selectedUsers ", selectedUsers);
       setGetUsers(newSelectedUsers);
+
       setAgenda(meeting.agenda);
       setStartDate(meeting.date);
 
@@ -79,6 +142,14 @@ const MeetingDetailPage: React.FC = () => {
 
   // 수정버튼
   const handleClickFix = async () => {
+    if (!selectedUserName.length) {
+      alert("참여자를 입력해주세요");
+      return;
+    }
+    if (!agenda) {
+      alert("회의 안건을 입력해주세요");
+      return;
+    }
     const data = {
       creatorId: userName.userId,
       attendant: selectedUserName,
@@ -86,21 +157,18 @@ const MeetingDetailPage: React.FC = () => {
       startTime: selectedTimeString,
       agenda: agenda,
     };
-
     try {
-      const request = await api.put(
+      const response = await api.put(
         `${ENDPOINT.METTING}/${param.meetingId}`,
         data
       );
-      if (agenda === "") {
-        alert("회의 안건을 입력해주세요");
-      } else if (selectedUserName.length === 0) {
-        alert("참여자를 입력해주세요");
-      } else {
-        console.log("Fix meetingDetail data ", request.data);
-        alert("회의 수정 완료");
-        navigate("/");
-      }
+
+      console.log({ response });
+      console.log({ data });
+
+      alert("회의 수정 완료");
+      setGetUsers([]);
+      navigate("/");
     } catch (err) {
       console.log("Error meetingDetail Fix ", err);
       alert("회의 수정 실패");
@@ -123,20 +191,20 @@ const MeetingDetailPage: React.FC = () => {
   };
 
   useEffect(() => {
+    setGetUsers([]);
+
     if (loginUser) {
       const user = JSON.parse(loginUser);
-      console.log("loginUser ", user.userId);
       setUserName(user);
       getUserInfo();
     }
   }, []);
 
   useEffect(() => {
-    console.log("selectedUsers ", selectedUsers);
-  }, [selectedUsers]);
-
-  // console.log("creatorid ", creatorId);
-  // console.log("userId ", userName.userId);
+    if (query === undefined) {
+      setQuery("");
+    }
+  }, [query]);
   return (
     <>
       <div className="w-full flex flex-col space-y-5 items-center">
@@ -201,7 +269,19 @@ const MeetingDetailPage: React.FC = () => {
               onSelect={handleUserSelect}
               id={"참여자"}
               readOnly={false}
+              onChange={handleChange}
+              value={query || ""}
             />
+          )}
+
+          {filteredData.length > 0 && (
+            <ul className=" z-10 w-full bg-white border border-gray-300 rounded">
+              {availablueUsers.map((user, index) => (
+                <li key={index} className="" onClick={() => handleSelect(user)}>
+                  {user.username}
+                </li>
+              ))}
+            </ul>
           )}
 
           <div className="mt-5">
