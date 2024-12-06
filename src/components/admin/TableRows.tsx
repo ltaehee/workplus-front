@@ -56,9 +56,13 @@ export const AttendanceRow = ({ attendData }: AttendanceRowProps) => {
 
   return (
     <>
-      <td className="p-2 pl-4">{attendData.username}</td>
+      <td className="p-2 pl-4 h-[57px]">{attendData.username}</td>
       <td className="p-2 pl-4">
-        {attendData.attendance.status === true ? "출근" : "퇴근"}
+        {attendData.attendance.status === true
+          ? "출근"
+          : attendData.attendance.timestamps === ""
+          ? "출근x"
+          : "퇴근"}
       </td>
       <td className="p-2 pl-4">
         {attendData.attendance?.timestamps

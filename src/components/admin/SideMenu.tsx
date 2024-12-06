@@ -10,7 +10,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ setActivePage }) => {
   ];
 
   return (
-    <div className="bg-[#5B84F5] w-[20%] h-screen">
+    <div className="bg-[#5B84F5] w-[22%] h-screen">
       <ul>
         {sideMenus.map((menu) => (
           <li

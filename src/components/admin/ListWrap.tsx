@@ -12,7 +12,7 @@ const ListWrap: React.FC<ListWrapProps> = ({
 }) => {
   return (
     <>
-      <div className="w-full">
+      <div className="w-full ">
         <table className="w-full">
           {/* 테이블 헤더 */}
           <thead>
@@ -28,7 +28,7 @@ const ListWrap: React.FC<ListWrapProps> = ({
           {/* 테이블 바디 */}
           <tbody>
             {data.map((item, index) => (
-              <tr key={index} className="border-b">
+              <tr key={index} className="border-b h-[57px]">
                 {renderRow(item)}
               </tr>
             ))}

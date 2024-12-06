@@ -48,7 +48,7 @@ const AdminPage = () => {
   /* ****************** */
 
   /* 모든 회원 연차 내역 불러오기 */
-  const vacationFetchData = async (limit: number = 15, page: number = 1) => {
+  const vacationFetchData = async (limit: number = 13, page: number = 1) => {
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
@@ -91,7 +91,7 @@ const AdminPage = () => {
   };
 
   /* 전체 유저 목록 업데이트 */
-  const userTotalData = async (limit: number = 15, page: number = 1) => {
+  const userTotalData = async (limit: number = 13, page: number = 1) => {
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
@@ -126,7 +126,7 @@ const AdminPage = () => {
   };
 
   /* 전체 유저 근태 목록 업데이트 */
-  const attendanceData = async (limit: number = 15, page: number = 1) => {
+  const attendanceData = async (limit: number = 13, page: number = 1) => {
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
@@ -178,9 +178,6 @@ const AdminPage = () => {
     vacationFetchData();
     attendanceData();
   }, []);
-  useEffect(() => {
-    // 페이지 로드 시 `localStorage`에서 저장된 페이지 번호 불러오기
-  }, []);
 
   // 초기 데이터 로드
   useEffect(() => {
@@ -206,10 +203,10 @@ const AdminPage = () => {
 
   return (
     <div className="w-full flex items-center justify-center h-[calc(100vh-65px)] overflow-y-hidden">
-      <div className="flex flex-col w-[1280px] px-8 h-full relative">
-        <div className="flex justify-between">
-          <SideMenu setActivePage={onChangeTab} />
-          <div className="w-[80%]">
+      <div className="flex w-[1280px] px-8 h-full">
+        <SideMenu setActivePage={onChangeTab} />
+        <div className="w-full flex flex-col  relative">
+          <div className="w-[100%]">
             {activePage === "home" && (
               <ListWrap
                 headers={headers.home}
@@ -246,13 +243,13 @@ const AdminPage = () => {
               />
             )}
           </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPage={totalPage}
+            onPageChange={handlePageChange}
+            className="absolute bottom-8 left-0 right-0"
+          />
         </div>
-        <Pagination
-          currentPage={currentPage}
-          totalPage={totalPage}
-          onPageChange={handlePageChange}
-          className="absolute bottom-10 left-0 right-0"
-        />
       </div>
     </div>
   );
