@@ -78,6 +78,7 @@ interface VacationRowProps {
     reason: string;
     status: string;
     vacationId: string;
+    _id: string;
   };
   vacationApproveData: (vacationId: string, status: string) => void;
 }
@@ -109,12 +110,14 @@ export const VacationRow = ({
             <Button
               btnText="승인"
               className="w-auto text-sm bg-blue-500 hover:bg-blue-600 !py-2"
-              onClick={() => vacationApproveData(vacation.vacationId, "승인")}
+              onClick={() => {
+                vacationApproveData(vacation._id, "승인");
+              }}
             />
             <Button
               btnText="미승인"
               className="w-auto text-sm bg-gray-500 ml-2 hover:bg-gray-600 !py-2"
-              onClick={() => vacationApproveData(vacation.vacationId, "거부")}
+              onClick={() => vacationApproveData(vacation._id, "거부")}
             />
           </div>
         ) : (

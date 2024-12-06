@@ -10,22 +10,19 @@ const SideMenu: React.FC<SideMenuProps> = ({ setActivePage }) => {
   ];
 
   return (
-    <>
-      <div className="bg-[#5B84F5] w-[20%] h-screen">
-        <ul>
-          {sideMenus.map((menu) => (
-            <li
-              key={menu.path}
-              className="flex items-center p-4 hover:bg-[#7A9BFF] cursor-pointer text-white"
-              onClick={() => setActivePage(menu.path)}
-            >
-              {menu.label}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div></div>
-    </>
+    <div className="bg-[#5B84F5] w-[20%] ">
+      <ul>
+        {sideMenus.map((menu) => (
+          <li
+            key={menu.path}
+            className="flex items-center p-4 hover:bg-[#7A9BFF] cursor-pointer text-white"
+            onClick={() => setActivePage(menu.path)}
+          >
+            {menu.label}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };
 

@@ -20,103 +20,57 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
-    errorElement: (
-      <Suspense fallback={<div>Loading...</div>}>
-        <ErrorPage />
-      </Suspense>
-    ),
+    errorElement: <ErrorPage />,
     children: [
       {
         path: "/",
-        element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <MainPage />
-          </Suspense>
-        ),
+        element: <MainPage />,
       },
       {
         path: "/profile",
-        element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <ProfilePage />
-          </Suspense>
-        ),
+        element: <ProfilePage />,
       },
       {
         path: "/vacation",
-        element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <VacationPage />
-          </Suspense>
-        ),
+        element: <VacationPage />,
       },
       {
         path: "/meeting",
-        element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <MeetingPage />
-          </Suspense>
-        ),
+        element: <MeetingPage />,
       },
       {
         path: "/admin",
-        element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <AdminPage />
-          </Suspense>
-        ),
+        element: <AdminPage />,
       },
       {
         path: "/vacation-detail/:vacationId",
-        element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <VacationDetailPage />
-          </Suspense>
-        ),
+        element: <VacationDetailPage />,
       },
       {
         path: "/meeting-detail/:meetingId",
-        element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <MeetingDetailPage />
-          </Suspense>
-        ),
+        element: <MeetingDetailPage />,
       },
     ],
   },
   {
     path: "/login",
-    element: (
-      <Suspense fallback={<div>Loading...</div>}>
-        <LoginPage />
-      </Suspense>
-    ),
+    element: <LoginPage />,
   },
   {
     path: "/signup",
-    element: (
-      <Suspense fallback={<div>Loading...</div>}>
-        <SignupPage />
-      </Suspense>
-    ),
+    element: <SignupPage />,
   },
   {
     path: "/find-password",
-    element: (
-      <Suspense fallback={<div>Loading...</div>}>
-        <FindPasswordPage />
-      </Suspense>
-    ),
+    element: <FindPasswordPage />,
   },
   {
     path: "*",
-    element: (
-      <Suspense fallback={<div>Loading...</div>}>
-        <ErrorPage />
-      </Suspense>
-    ),
+    element: <ErrorPage />,
   },
 ]);
 createRoot(document.getElementById("root")!).render(
-  <RouterProvider router={router} />
+  <Suspense fallback={<div>Loading...</div>}>
+    <RouterProvider router={router} />
+  </Suspense>
 );
