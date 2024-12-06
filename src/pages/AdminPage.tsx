@@ -177,25 +177,9 @@ const AdminPage = () => {
   // 초기 데이터 로드
   useEffect(() => {
     userTotalData(13, currentPage);
-  }, [currentPage]);
-  useEffect(() => {
     vacationFetchData(13, currentPage);
-  }, [currentPage]);
-  useEffect(() => {
     attendanceData(13, currentPage);
   }, [currentPage]);
-
-  /* useEffect(() => {
-    if (activePage === "home") {
-      userTotalData(13, currentPage);
-    }
-    else if (activePage === "attendance") {
-      attendanceData(15, currentPage);
-    }
-    else if (activePage === "vacation") {
-      vacationFetchData(15, currentPage);
-    }
-  }, [currentPage, activePage]); */
 
   /* 탭 변경 시 `localStorage`에 현재 탭 상태 저장 */
   const onChangeTab = (tab: string) => {
@@ -214,7 +198,7 @@ const AdminPage = () => {
 
   return (
     <div
-      className="w-full flex items-center justify-center "
+      className="w-full flex items-center justify-center border-2 border-black"
       style={{ height: "calc(100vh - 65px)" }} /* 의미없음 ? */
     >
       <div className="flex flex-col w-[1280px] px-8 h-full relative">

@@ -65,7 +65,7 @@ const Modal: React.FC<ModalProps> = ({
           {attendant && (
             <>
               <p className="mt-4 text-gray-500">참여자</p>
-              <p className="mt-2">
+              <p className="mt-2 break-words">
                 {attendant.map((name, index) => (
                   <span key={index}>
                     {name}
@@ -78,7 +78,7 @@ const Modal: React.FC<ModalProps> = ({
           )}
           {agenda && (
             <>
-              <p className="mt-4 text-gray-500">회의 안건</p>
+              <p className="mt-4 text-gray-500 break-words">회의 안건</p>
               <p className="mt-2">{agenda}</p>
             </>
           )}
