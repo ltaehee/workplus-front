@@ -4,14 +4,20 @@ import { useState } from "react";
 type ProfileSectionProps = {
   onClick?: () => void;
   className?: string;
-  meetingId?: string;
   title?: string;
-  data?: { label?: string; name?: string; date?: string }[];
+  data?: {
+    checkedBy?: string[];
+    meetingId?: string;
+    label?: string;
+    name?: string;
+    date?: string;
+  }[];
   onListClick?: (item: {
     label?: string;
     date?: string;
     details?: string;
   }) => void;
+  checkNewMeeting?: (meetingId: string, username: string) => void;
 };
 
 const ProfileSection: React.FC<ProfileSectionProps> = ({
@@ -19,7 +25,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   className,
   title,
   data,
-  meetingId,
+  checkNewMeeting,
 }) => {
   const [user, _setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
@@ -27,18 +33,19 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   });
 
   const token = user.token;
+  const username = user.username;
 
-  const handleClickAlarm = async () => {
+  const handleClickAlarm = async (meetingId: string) => {
     try {
-      const response = await axios.patch(
-        `/api/meeting/check/${user.username}/${meetingId}`,
+      await axios.patch(
+        `/api/meeting/check/${username}/${meetingId}`,
+        { username, meetingId },
         {
           headers: {
-            authorization: `${token}`,
+            authorization: token,
           },
         }
       );
-      console.log(response);
     } catch (err) {
       console.log("handleClickAlarm 오류", err);
       if (axios.isAxiosError(err)) {
@@ -56,13 +63,23 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         {data ? (
           <ul>
             {data.map((item, index) => (
-              <li
-                onClick={() => onListClick?.(item)}
-                key={index}
-                className="mb-1 flex justify-between items-center border-b border-gray-300 last:border-none py-2 cursor-pointer hover:text-gray-500"
-              >
-                <button onClick={handleClickAlarm}>
-                  <p className="truncate w-[100px]">{item.label}</p>
+              <li key={index}>
+                <button
+                  className="mb-1 w-full flex justify-between items-center border-b border-gray-300 last:border-none py-2 cursor-pointer hover:text-gray-500"
+                  onClick={() => {
+                    if (item.meetingId) {
+                      handleClickAlarm(item.meetingId);
+                      checkNewMeeting?.(item.meetingId, username);
+                    } else {
+                      console.log("meetingId가 없음");
+                    }
+                    onListClick?.(item);
+                  }}
+                >
+                  {item.checkedBy?.includes(username) ? null : (
+                    <div className="w-3 h-3 bg-pink-500 rounded-full"></div>
+                  )}
+                  <p className="truncate text-left w-[100px]">{item.label}</p>
                   <p>{item.date}</p>
                 </button>
               </li>

@@ -28,10 +28,11 @@ type MeetingAndVacation = {
   username?: string;
   // 회의 관련 속성
   creatorUsername?: string;
-  meetingId?: string;
+  _id?: string;
   startTime?: string;
   agenda?: string;
   creator?: string;
+  checkedBy: string[];
 };
 
 const ProfilePage = () => {
@@ -75,6 +76,20 @@ const ProfilePage = () => {
       setIsLoading(false);
     }
   };
+
+  const checkNewMeeting = (meetingId: string, username: string) => {
+    const newData = meetingData.map((meeting) => {
+      if (meeting._id === meetingId) {
+        return {
+          ...meeting,
+          checkedBy: [...meeting.checkedBy, username],
+        };
+      }
+      return meeting;
+    });
+    setMeetingData(newData);
+  };
+
   /* 연차 사용 내역 불러오기 */
   const vacationFetchData = async () => {
     setIsLoading(true);
@@ -161,15 +176,17 @@ const ProfilePage = () => {
                   return {
                     label: meeting.agenda,
                     date: `${meetingDate}-${meeting.startTime}`,
+                    meetingId: meeting._id,
                     onClick: () => openModal(meeting),
                     creatorUsername: meeting.creatorUsername,
                     agenda: meeting.agenda,
                     attendant: meeting.attendant,
+                    checkedBy: meeting.checkedBy,
                   };
                 })}
+                checkNewMeeting={checkNewMeeting}
                 onListClick={openModal}
                 className="min-h-[730px] max-h-[730px] overflow-y-auto "
-                meetingId={modalData?.meetingId}
               />
             </div>
             <div className="flex flex-col gap-10 w-6/12">

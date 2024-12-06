@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import Logo from "./Logo";
-import Avatar from "./Avatar";
 import Bell from "../icons/Bell";
 import MenuIcon from "../icons/MenuIcon";
 import XIcon from "../icons/XIcon";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import defaultImg from "../icons/profileImg.svg";
 import api from "../../utils/api";
@@ -36,7 +34,7 @@ const Header = () => {
 
   const checkNewMeeting = async () => {
     try {
-      const response = await api.get(`/meeting/my/unchecked/${user.id}`);
+      const response = await api.get(`/meeting/my/unchecked/${user.username}`);
       return response.data.unCheckedMeeting;
     } catch (error) {
       console.log(error);
@@ -92,7 +90,7 @@ const Header = () => {
             >
               <Bell
                 className={`${isAlarm ? "block" : "hidden"}`}
-                width={"32px"}
+                height={"32px"}
               />
             </button>
             <button
@@ -137,25 +135,37 @@ const Header = () => {
         >
           <button
             className={"py-4 border-b border-slate-300 w-11/12 text-slate-900 "}
-            onClick={() => navigate("/")}
+            onClick={() => {
+              navigate("/");
+              setIsMenu(false);
+            }}
           >
             메인페이지
           </button>
           <button
             className={"py-4 border-b border-slate-300 w-11/12 text-slate-900"}
-            onClick={() => navigate("/meeting")}
+            onClick={() => {
+              navigate("/meeting");
+              setIsMenu(false);
+            }}
           >
             회의 일정 생성
           </button>
           <button
             className={"py-4 border-b border-slate-300 w-11/12 text-slate-900"}
-            onClick={() => navigate("/vacation")}
+            onClick={() => {
+              navigate("/vacation");
+              setIsMenu(false);
+            }}
           >
             휴가 신청
           </button>
           <button
             className={"py-4 border-b border-slate-300 w-11/12 text-slate-900"}
-            onClick={() => navigate("/profile")}
+            onClick={() => {
+              navigate("/profile");
+              setIsMenu(false);
+            }}
           >
             프로필
           </button>
@@ -165,6 +175,7 @@ const Header = () => {
               localStorage.removeItem("token");
               localStorage.removeItem("user");
               navigate("/login");
+              setIsMenu(false);
             }}
           >
             로그아웃
@@ -178,13 +189,19 @@ const Header = () => {
         >
           <button
             className={"py-4 border-b border-slate-300 w-11/12 text-slate-900 "}
-            onClick={() => navigate("/admin")}
+            onClick={() => {
+              navigate("/admin");
+              setIsMenu(false);
+            }}
           >
             관리자 페이지
           </button>
           <button
             className={"py-4 border-b border-slate-300 w-11/12 text-slate-900"}
-            onClick={() => navigate("/profile")}
+            onClick={() => {
+              navigate("/profile");
+              setIsMenu(false);
+            }}
           >
             프로필
           </button>
@@ -194,6 +211,7 @@ const Header = () => {
               localStorage.removeItem("token");
               localStorage.removeItem("user");
               navigate("/login");
+              setIsMenu(false);
             }}
           >
             로그아웃

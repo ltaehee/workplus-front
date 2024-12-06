@@ -185,7 +185,7 @@ const MainPage = () => {
   }, [currentMonth]);
 
   return (
-    <div className="flex justify-center bg-slate-100">
+    <div className="flex justify-center bg-slate-100 h-[calc(100dvh-65px)]">
       <div
         style={{ height: "calc(100vh - 65px)" }}
         className="grid grid-cols-[1fr_2fr] w-[1280px] gap-4 p-8"
