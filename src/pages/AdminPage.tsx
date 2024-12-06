@@ -60,8 +60,9 @@ const AdminPage = () => {
         setVacationData(vacations);
 
         // 전체 페이지 수 계산
-        const totalCount = response.data.pageInfo.totalCount;
+        const totalCount = response.data.pageInfo.totalVacationCount;
         const totalPages = Math.ceil(totalCount / limit);
+
         setVacationTotalPage(totalPages);
       }
     } catch (err) {
@@ -91,7 +92,6 @@ const AdminPage = () => {
 
   /* 전체 유저 목록 업데이트 */
   const userTotalData = async (limit: number = 15, page: number = 1) => {
-    console.log({ page });
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
@@ -117,7 +117,7 @@ const AdminPage = () => {
     if (page === currentPage) return; // 현재 페이지와 같으면 아무 작업도 하지 않음
 
     setCurrentPage(page); // 페이지 변경
-
+    localStorage.setItem("currentPage", String(page));
     if (page === 1) {
       if (page === currentPage) return; // 현재 페이지와 같으면 아무 작업도 하지 않음
       setCurrentPage(page); // 페이지 변경
@@ -138,7 +138,7 @@ const AdminPage = () => {
         setAttendData(users);
 
         // 전체 페이지 수 계산
-        const totalCount = response.data.pageInfo.totalCount;
+        const totalCount = response.data.pageInfo.totalUserCount;
         const totalPages = Math.ceil(totalCount / limit);
         setAttendanceTotalPage(totalPages);
       }
@@ -167,11 +167,19 @@ const AdminPage = () => {
 
   useEffect(() => {
     const savedTab = localStorage.getItem("activePage");
+    const savedPage = localStorage.getItem("currentPage");
+
     if (savedTab) {
-      setActivePage(savedTab);
+      setActivePage(savedTab); // 새로고침시 현재 탭 상태 유지
+    }
+    if (savedPage) {
+      setCurrentPage(Number(savedPage)); // 새로고침시 현재 페이지네이션 유지
     }
     vacationFetchData();
     attendanceData();
+  }, []);
+  useEffect(() => {
+    // 페이지 로드 시 `localStorage`에서 저장된 페이지 번호 불러오기
   }, []);
 
   // 초기 데이터 로드
@@ -198,7 +206,7 @@ const AdminPage = () => {
 
   return (
     <div
-      className="w-full flex items-center justify-center border-2 border-black"
+      className="w-full flex items-center justify-center"
       style={{ height: "calc(100vh - 65px)" }} /* 의미없음 ? */
     >
       <div className="flex flex-col w-[1280px] px-8 h-full relative">
