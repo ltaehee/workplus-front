@@ -1,1 +1,4 @@
-declare module "tailwind-scrollbar-hide";
+declare module "tailwind-scrollbar-hide" {
+  const plugin: any;
+  export default plugin;
+}

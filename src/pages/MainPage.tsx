@@ -13,66 +13,39 @@ import { useNavigate } from "react-router-dom";
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
+interface Meeting {
+  _id: string;
+  meeting: string;
+  creatorId: string;
+  attendant: string[];
+  date: string;
+  startTime: string;
+  agenda: string;
+  createdAt: string;
+}
+
+interface Vacation {
+  _id: string;
+  createdAt: string;
+  endDate: string;
+  reason: string;
+  requesterId: string;
+  startDate: string;
+  status: string;
+  username: string;
+  vacationType: string;
+}
+
 const MainPage = () => {
   const [value, onChange] = useState<Value>(new Date());
   const [user, _setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
   });
-  const [meetingList, setMeetingList] = useState([
-    {
-      _id: "",
-      meeting: "",
-      creatorId: "",
-      attendant: [],
-      date: "",
-      startTime: "",
-      agenda: "",
-      createdAt: "",
-    },
-  ]);
-
-  const [selectMeetingList, setSelectMeetingList] = useState([
-    {
-      _id: "",
-      meeting: "",
-      creatorId: "",
-      attendant: [],
-      date: "",
-      startTime: "",
-      agenda: "",
-      createdAt: "",
-    },
-  ]);
-
-  const [vacationList, setVacationList] = useState([
-    {
-      createdAt: "",
-      endDate: "",
-      reason: "",
-      requesterId: "",
-      startDate: "",
-      status: "",
-      username: "",
-      vacationType: "",
-      _id: "",
-    },
-  ]);
-
-  const [selectVacationList, setSelectVacationList] = useState([
-    {
-      createdAt: "",
-      endDate: "",
-      reason: "",
-      requesterId: "",
-      startDate: "",
-      status: "",
-      username: "",
-      vacationType: "",
-      _id: "",
-    },
-  ]);
-
+  const [meetingList, setMeetingList] = useState<Meeting[]>([]);
+  const [selectMeetingList, setSelectMeetingList] = useState<Meeting[]>([]);
+  const [vacationList, setVacationList] = useState<Vacation[]>([]);
+  const [selectVacationList, setSelectVacationList] = useState<Vacation[]>([]);
   const [isDayclick, setisDayClick] = useState(false);
 
   const selectDay = Array.isArray(value)
@@ -80,37 +53,23 @@ const MainPage = () => {
     : dayjs(value).format("YYYY년 MM월 DD일");
 
   const currentMonth = dayjs(value as Date).format("YYYY-MM");
-
   const navigate = useNavigate();
-
   const token = user.token;
 
-  const fetchMeeting = async () => {
+  const fetchData = async () => {
     try {
-      const response = await axios.get(`/api/meeting/month/${currentMonth}`, {
-        headers: {
-          authorization: `${token}`,
-        },
-      });
-      setMeetingList(response.data.meetings);
+      const [meetingResponse, vacationResponse] = await Promise.all([
+        axios.get(`/api/meeting/month/${currentMonth}`, {
+          headers: { authorization: token },
+        }),
+        axios.get(`/api/vacation/month/${currentMonth}`, {
+          headers: { authorization: token },
+        }),
+      ]);
+      setMeetingList(meetingResponse.data.meetings);
+      setVacationList(vacationResponse.data.vacations);
     } catch (err) {
-      console.log("fetchMeeting 오류", err);
-      if (axios.isAxiosError(err)) {
-        alert(err.response?.data.message);
-      }
-    }
-  };
-
-  const fetchVacation = async () => {
-    try {
-      const response = await axios.get(`/api/vacation/month/${currentMonth}`, {
-        headers: {
-          authorization: `${token}`,
-        },
-      });
-      setVacationList(response.data.vacations);
-    } catch (err) {
-      console.log("fetchVacation 오류", err);
+      console.log("fetchData 에러", err);
       if (axios.isAxiosError(err)) {
         alert(err.response?.data.message);
       }
@@ -180,8 +139,7 @@ const MainPage = () => {
   };
 
   useEffect(() => {
-    fetchMeeting();
-    fetchVacation();
+    fetchData();
   }, [currentMonth]);
 
   return (

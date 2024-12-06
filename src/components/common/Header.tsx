@@ -12,7 +12,7 @@ const Header = () => {
   const [idAdmin, setIsAdmin] = useState(false);
   const [isAlarm, setIsAlarm] = useState(false);
   const [AvatarImage, setAvatarImage] = useState("");
-  const [user, setUser] = useState(() => {
+  const [user, _setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
   });
