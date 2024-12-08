@@ -181,15 +181,9 @@ const AdminPage = () => {
     }
   }, [currentPage, activePage]);
 
-  /* 다른 페이지 이동 후 다시 왔을때 첫 페이지부터 보이게 */
-  const resetPageState = () => {
-    localStorage.removeItem("currentPage");
-    setCurrentPage(1);
-  };
   /* 탭 변경 시 `localStorage`에 현재 탭 상태 저장 */
   const onChangeTab = (tab: string) => {
     setActivePage(tab);
-    resetPageState();
     localStorage.setItem("activePage", tab); // 탭 상태를 localStorage에 저장
   };
 

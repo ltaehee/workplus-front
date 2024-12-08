@@ -1,5 +1,3 @@
-import Pagination from "../common/Pagination";
-
 type ListWrapProps = {
   headers: string[];
   data: any[];
