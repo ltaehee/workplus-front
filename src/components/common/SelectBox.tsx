@@ -1,9 +1,4 @@
-import React, {
-  ChangeEvent,
-  FC,
-  HTMLAttributes,
-  PropsWithChildren,
-} from "react";
+import { ChangeEvent, FC, HTMLAttributes, PropsWithChildren } from "react";
 
 interface SelectProps
   extends PropsWithChildren,

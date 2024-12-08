@@ -30,6 +30,7 @@ const VacationPage = () => {
     setReason(e.target.value);
   };
 
+  // 휴가 등록 API
   const handelClickSubmit = async () => {
     const data = {
       username: userName.username,
@@ -40,8 +41,8 @@ const VacationPage = () => {
       reason: reason,
     };
     try {
-      const request = await api.post(ENDPOINT.VACATION, data);
-      console.log("vacateion data ", request.data);
+      const response = await api.post(ENDPOINT.VACATION, data);
+      console.log("vacateion data ", response.data);
       alert("휴가 신청 완료");
       navigate("/");
     } catch (err) {
@@ -51,12 +52,8 @@ const VacationPage = () => {
   };
 
   useEffect(() => {
-    console.log("user  ", loginUser);
-    console.log("userName._id ", userName.userId);
-
     if (loginUser) {
       setUserName(JSON.parse(loginUser));
-      console.log("user 토큰 ", userName);
     }
   }, []);
 

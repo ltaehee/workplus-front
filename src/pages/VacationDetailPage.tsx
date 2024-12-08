@@ -8,33 +8,31 @@ import api from "../utils/api";
 import { ENDPOINT } from "../utils/endpoints";
 
 const VacationDetailPage = () => {
-  const [isOption, setIsOption] = useState("");
-  const [startDate, setStartDate] = useState<Date | null>(new Date());
-  const [endDate, setEndDate] = useState<Date | null>(new Date());
-  const [reason, setReason] = useState("");
-  const [requesterId, setRequesterId] = useState("");
-  const [requesterUsername, setRequesterUsername] = useState("");
-  const navigate = useNavigate();
-  const today = new Date();
-  const loginUser = localStorage.getItem("user");
   const [userName, setUserName] = useState<{
     userId: string;
     email: string;
     username: string;
     token: string;
   }>({ userId: "", email: "", username: "", token: "" });
+  const [isOption, setIsOption] = useState("");
+  const [startDate, setStartDate] = useState<Date | null>(new Date());
+  const [endDate, setEndDate] = useState<Date | null>(new Date());
+  const [reason, setReason] = useState("");
+  const [requesterId, setRequesterId] = useState("");
+  const [requesterUsername, setRequesterUsername] = useState("");
+  const today = new Date();
+  const loginUser = localStorage.getItem("user");
+  const param = useParams();
+  const navigate = useNavigate();
+
   const handleChangeSelect = (e: ChangeEvent<HTMLSelectElement>) => {
     setIsOption(e.target.value);
-    console.log(e.target.value);
   };
   const handleChangeReason = (e: ChangeEvent<HTMLInputElement>) => {
     setReason(e.target.value);
   };
 
-  const param = useParams(); // 674ff4768001e362ac93297d
-  // console.log("param.vacationId ", param.vacationId);
-
-  // 페이지 들어갔을때 입력했던 데이터 받아오기
+  // 휴가 등록했던 데이터 가져오기 API
   const getUserInfo = async () => {
     try {
       const request = await api.get(`${ENDPOINT.VACATION}/${param.vacationId}`);
@@ -52,7 +50,8 @@ const VacationDetailPage = () => {
       console.log("Error getUserInfo ", err);
     }
   };
-  // 수정버튼
+
+  // 휴가 수정한 데이터 API
   const handleClickFix = async () => {
     const data = {
       username: userName.username,
@@ -81,7 +80,7 @@ const VacationDetailPage = () => {
     }
   };
 
-  // 삭제버튼
+  // 휴가 삭제한 데이터 API
   const handleClickDelete = async () => {
     try {
       const request = await api.delete(
@@ -104,9 +103,6 @@ const VacationDetailPage = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   // console.log("userName ", userName.token);
-  // }, [userName]);
   return (
     <>
       <div className="w-full flex flex-col space-y-5 items-center">

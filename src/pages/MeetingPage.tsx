@@ -9,7 +9,6 @@ import api from "../utils/api";
 import { ENDPOINT } from "../utils/endpoints";
 import { useNavigate } from "react-router-dom";
 import UseDebounce from "../hooks/useDebounce";
-import axios from "axios";
 
 // 현재 시간을 가장 가까운 30분 단위로 반올림
 const getRoundedDate = () => {
@@ -28,33 +27,28 @@ const MeetingPage: React.FC = () => {
     email: string;
     username: string;
     token?: string;
-  }>({ userId: "", email: "", username: "" });
+  }>({ userId: "", email: "", username: "", token: "" });
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [selectedTime, setSelectedTime] = useState<Date | null>(
     getRoundedDate()
   );
   const [query, setQuery] = useState("");
-  const debouncedSearchInputValue = UseDebounce(query, 700);
   const [filteredData, setFilteredData] = useState<UserData[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<UserData[]>([]);
   const [agenda, setAgenda] = useState("");
-
-  const emptyName = "";
-  const now = new Date();
-  const navigate = useNavigate();
-  const loginUser = localStorage.getItem("user");
-
-  // date에서 시간만 string변환
-  const hours = selectedTime?.getHours().toString().padStart(2, "0");
-  const minutes = selectedTime?.getMinutes().toString().padStart(2, "0");
-  const selectedTimeString = `${hours}:${minutes}`;
-
   const selectedUserName = selectedUsers.map((user) => user.username);
-
+  const debouncedSearchInputValue = UseDebounce(query, 700);
+  const now = new Date();
+  const loginUser = localStorage.getItem("user");
+  const navigate = useNavigate();
   const availablueUsers = filteredData.filter(
     (user) =>
       !selectedUsers.some((selected) => selected.username === user.username)
   );
+  // date에서 시간만 string변환
+  const hours = selectedTime?.getHours().toString().padStart(2, "0");
+  const minutes = selectedTime?.getMinutes().toString().padStart(2, "0");
+  const selectedTimeString = `${hours}:${minutes}`;
 
   const setDeleteUsers = (user: UserData) => {
     setSelectedUsers((prevState) =>
@@ -67,7 +61,6 @@ const MeetingPage: React.FC = () => {
   const handleSelect = (user: UserData) => {
     setQuery("");
     setFilteredData([]);
-    // onSelect(user);
     setSelectedUsers((prev) => [...prev, user]);
   };
 
@@ -76,19 +69,15 @@ const MeetingPage: React.FC = () => {
     setQuery(value);
   };
 
+  // 참여자 자동완성 검색 API
   const getUserName = async () => {
     try {
-      const request = await axios.get(
-        `/api/user/search?username=${debouncedSearchInputValue}`,
-        {
-          headers: {
-            Authorization: userName.token,
-          },
-        }
+      const response = await api.get(
+        `${ENDPOINT.USER}/search?username=${debouncedSearchInputValue}`
       );
 
-      // console.log("getUserName data ", request.data);
-      setFilteredData(request.data.users);
+      console.log("getUserName data ", response.data);
+      setFilteredData(response.data.users);
     } catch (err) {
       console.log("Error getUserName ", err);
     }
@@ -104,7 +93,7 @@ const MeetingPage: React.FC = () => {
     setDeleteUsers(user);
   };
 
-  // 등록버튼
+  // 회의 등록 API
   const handleClickSubmit = async () => {
     const data = {
       creatorId: userName.userId,
@@ -142,9 +131,6 @@ const MeetingPage: React.FC = () => {
     if (debouncedSearchInputValue) {
       getUserName();
     }
-    // return () => {
-    //   setFilteredData([]);
-    // };
   }, [debouncedSearchInputValue]);
 
   return (

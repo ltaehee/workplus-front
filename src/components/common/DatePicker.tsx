@@ -9,8 +9,8 @@ dayjs.locale("ko");
 type DatepickerProps = {
   className?: string;
   dateFormat?: string;
-  selected: Date | null;
-  onChange: (date: Date | null) => void;
+  selected?: Date | null;
+  onChange?: (date: Date | null) => void;
   id?: string;
   readOnly?: boolean;
   minDate?: Date;

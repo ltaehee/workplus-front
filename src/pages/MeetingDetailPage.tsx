@@ -9,15 +9,23 @@ import { useNavigate, useParams } from "react-router-dom";
 import api from "../utils/api";
 import { ENDPOINT } from "../utils/endpoints";
 import UseDebounce from "../hooks/useDebounce";
-import axios from "axios";
 
 const MeetingDetailPage: React.FC = () => {
   const [userName, setUserName] = useState<{
     userId: string;
+    isAdmin?: boolean;
     email: string;
     username: string;
+    userImage?: string;
     token?: string;
-  }>({ userId: "", email: "", username: "" });
+  }>({
+    userId: "",
+    isAdmin: false,
+    email: "",
+    username: "",
+    userImage: "",
+    token: "",
+  });
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [selectedTime, setSelectedTime] = useState<Date | null>(new Date());
   const [agenda, setAgenda] = useState("");
@@ -27,12 +35,15 @@ const MeetingDetailPage: React.FC = () => {
   const [filteredData, setFilteredData] = useState<UserData[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<UserData[]>([]);
   const loginUser = localStorage.getItem("user");
-  const navigate = useNavigate();
-  const debouncedSearchInputValue = UseDebounce(query, 700);
-
   const selectedUserName = selectedUsers.map((user) => user.username);
+  const debouncedSearchInputValue = UseDebounce(query, 700);
+  const navigate = useNavigate();
   const now = new Date();
-  const param = useParams(); // 674effc4a19783b2f22fbbea
+  const param = useParams();
+  const availablueUsers = filteredData.filter(
+    (user) =>
+      !selectedUsers.some((selected) => selected.username === user.username)
+  );
   // date에서 시간만 string변환
   const hours = selectedTime?.getHours().toString().padStart(2, "0");
   const minutes = selectedTime?.getMinutes().toString().padStart(2, "0");
@@ -74,23 +85,17 @@ const MeetingDetailPage: React.FC = () => {
   const handleSelect = (user: UserData) => {
     setQuery("");
     setFilteredData([]);
-    // onSelect(user);
     setSelectedUsers((prev) => [...prev, user]);
   };
 
+  // 참여자 자동완성 검색 API
   const getUserName = async () => {
     try {
-      const request = await axios.get(
-        `/api/user/search?username=${debouncedSearchInputValue}`,
-        {
-          headers: {
-            Authorization: userName.token,
-          },
-        }
+      const response = await api.get(
+        `${ENDPOINT.USER}/search?username=${debouncedSearchInputValue}`
       );
-
-      // console.log("getUserName data ", request.data);
-      setFilteredData(request.data.users);
+      console.log("getUserName data ", response.data);
+      setFilteredData(response.data.users);
     } catch (err) {
       console.log("Error getUserName ", err);
     }
@@ -105,12 +110,7 @@ const MeetingDetailPage: React.FC = () => {
     };
   }, [debouncedSearchInputValue]);
 
-  const availablueUsers = filteredData.filter(
-    (user) =>
-      !selectedUsers.some((selected) => selected.username === user.username)
-  );
-
-  // 페이지 들어갔을때 입력했던 데이터 받아오기
+  // 회의 등록했던 데이터 가져오기 API
   const getUserInfo = async () => {
     try {
       const request = await api.get(`${ENDPOINT.METTING}/${param.meetingId}`);
@@ -140,7 +140,7 @@ const MeetingDetailPage: React.FC = () => {
     }
   };
 
-  // 수정버튼
+  // 회의 수정한 데이터 API
   const handleClickFix = async () => {
     if (!selectedUserName.length) {
       alert("참여자를 입력해주세요");
@@ -162,10 +162,7 @@ const MeetingDetailPage: React.FC = () => {
         `${ENDPOINT.METTING}/${param.meetingId}`,
         data
       );
-
-      console.log({ response });
-      console.log({ data });
-
+      console.log("Fix data ", response);
       alert("회의 수정 완료");
       setGetUsers([]);
       navigate("/");
@@ -175,13 +172,13 @@ const MeetingDetailPage: React.FC = () => {
     }
   };
 
-  // 삭제버튼
+  // 회의 삭제한 데이터 API
   const handleClickDelete = async () => {
     try {
-      const request = await api.delete(
+      const response = await api.delete(
         `${ENDPOINT.METTING}/${param.meetingId}`
       );
-      console.log("Delete meetingDetail data ", request.data);
+      console.log("Delete meetingDetail data ", response.data);
       alert("삭제완료");
       navigate("/");
     } catch (err) {
@@ -262,6 +259,7 @@ const MeetingDetailPage: React.FC = () => {
             <AutoComplete
               onSelect={handleUserSelect}
               id={"참여자"}
+              value={query || ""}
               readOnly={true}
             />
           ) : (
