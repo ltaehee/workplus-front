@@ -128,9 +128,9 @@ const CheckInOut = () => {
   }
 
   return (
-    <div className="bg-white flex items-center border border-slate-400 rounded-lg shadow-lg px-4 h-1/3 min-h-64">
+    <div className="bg-white flex items-center border border-slate-400 rounded-lg shadow-lg px-4 h-[calc(34vh-5.5rem)] min-h-64">
       <div className="flex flex-col justify-evenly gap-4 w-full h-4/6">
-        <h2 className="text-2xl">{today}</h2>
+        <h2 className="text-2xl text-ellipsis">{today}</h2>
         <div className="flex justify-evenly py-4 rounded-lg bg-slate-100">
           <div className="flex flex-col items-center">
             <p className="text-sm text-slate-500">현재시간</p>

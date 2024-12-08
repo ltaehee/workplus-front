@@ -68,6 +68,7 @@ const MainPage = () => {
       ]);
       setMeetingList(meetingResponse.data.meetings);
       setVacationList(vacationResponse.data.vacations);
+      console.log(meetingResponse.data.meetings);
     } catch (err) {
       console.log("fetchData 에러", err);
       if (axios.isAxiosError(err)) {
@@ -143,28 +144,24 @@ const MainPage = () => {
   }, [currentMonth]);
 
   return (
-    <div className="flex justify-center bg-slate-100 h-[calc(100dvh-65px)]">
-      <div
-        style={{ height: "calc(100vh - 65px)" }}
-        className="grid grid-cols-[1fr_2fr] w-[1280px] gap-4 p-8"
-      >
+    <div className="flex justify-center bg-slate-100 h-[calc(100vh-65px)]">
+      <div className="grid grid-cols-[1fr_2fr] w-[1280px] max-h-[calc(100vh-65px)] gap-4 p-8">
         <div className=" flex flex-col gap-4">
-          <div className="bg-white border border-slate-400 rounded-lg shadow-lg h-2/3 overflow-scroll scrollbar-hide">
+          <CheckInOut />
+          <div className="bg-white border border-slate-400 rounded-lg shadow-lg h-[calc(66vh-5.5rem)] ">
             <div className="bg-slate-500 flex justify-center items-center h-14 sticky top-0">
               <div className="text-white text-lg">{selectDay}</div>
             </div>
             {isDayclick ? (
-              <>
-                <ul>{currentDayMeetingList}</ul>
-                <ul>{currentDayVacationList}</ul>
-              </>
+              <ul className="h-[calc(100%-3.5rem)] overflow-auto scrollbar-hide">
+                {currentDayMeetingList} {currentDayVacationList}
+              </ul>
             ) : (
-              <div className="flex justify-center items-center w-full h-[calc(100%-3.5rem)]">
+              <div className="flex justify-center items-center w-full h-[calc(100%-3rem)]">
                 <p className="text-lg">날짜를 선택해주세요</p>
               </div>
             )}
           </div>
-          <CheckInOut />
         </div>
         <div
           style={{ display: "flex", height: "calc(100% - 3rem)" }}
