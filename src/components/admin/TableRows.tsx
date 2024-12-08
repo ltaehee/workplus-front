@@ -108,9 +108,9 @@ export const VacationRow = ({
       <td className="p-2 pl-4">{formatDate(vacation.startDate)}</td>
       <td className="p-2 pl-4">{formatDate(vacation.endDate)}</td>
       <td className="p-2 pl-4">{vacation.reason}</td>
-      <td className="p-2 pl-4">
+      <td className="p-2 pl-4  ">
         {vacation.status === "대기중" ? (
-          <div className="w-[150px] flex">
+          <div className="w-[150px] flex ">
             <Button
               btnText="승인"
               className="w-auto text-sm bg-blue-500 hover:bg-blue-600 !py-2"

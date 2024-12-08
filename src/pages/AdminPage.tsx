@@ -35,7 +35,7 @@ const AdminPage = () => {
 
   // 페이지네이션 관련 상태 추가
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
-  const [totalPage, setTotalPage] = useState(1); // 유저목록임 전체 페이지 수
+  const [userTotalPage, setUserTotalPage] = useState(1); // 유저목록임 전체 페이지 수
   const [vacationTotalPage, setVacationTotalPage] = useState(1); // 휴가 페이지 수
   const [attendanceTotalPage, setAttendanceTotalPage] = useState(1); // 근태 페이지 수
 
@@ -61,9 +61,9 @@ const AdminPage = () => {
 
         // 전체 페이지 수 계산
         const totalCount = response.data.pageInfo.totalVacationCount;
-        const totalPages = Math.ceil(totalCount / limit);
+        const totalPage = Math.ceil(totalCount / limit);
 
-        setVacationTotalPage(totalPages);
+        setVacationTotalPage(totalPage);
       }
     } catch (err) {
       console.error(err);
@@ -81,7 +81,7 @@ const AdminPage = () => {
       );
       if (response.status === 200) {
         console.log(response.data.message);
-        await vacationFetchData();
+        await vacationFetchData(13, currentPage);
       }
     } catch (err) {
       console.error(err);
@@ -105,48 +105,13 @@ const AdminPage = () => {
         setUserData(users);
 
         // 전체 페이지 수 계산
-        const totalPages = Math.ceil(totalCount / limit);
-        setTotalPage(totalPages); // 전체 페이지 수 설정
+        const totalPage = Math.ceil(totalCount / limit);
+        setUserTotalPage(totalPage);
       }
     } catch (err) {
       console.error(err);
     }
   };
-  // 페이지 변경 시 호출되는 함수
-  const handlePageChange = (page: number) => {
-    if (page === currentPage) return; // 현재 페이지와 같으면 아무 작업도 하지 않음
-
-    setCurrentPage(page); // 페이지 변경
-    localStorage.setItem("currentPage", String(page));
-    if (page === 1) {
-      if (page === currentPage) return; // 현재 페이지와 같으면 아무 작업도 하지 않음
-      setCurrentPage(page); // 페이지 변경
-      userTotalData(5, page); // 새로운 페이지 데이터 요청
-    }
-  };
-
-  /* 전체 유저 근태 목록 업데이트 */
-  const attendanceData = async (limit: number = 13, page: number = 1) => {
-    try {
-      const storedUser = localStorage.getItem("user");
-      if (!storedUser) return;
-      const response = await api.get(
-        `${ENDPOINT.ADMIN_USERS}/attendance?limit=${limit}&page=${page}`
-      );
-      if (response.status === 200) {
-        const users = response.data.users;
-        setAttendData(users);
-
-        // 전체 페이지 수 계산
-        const totalCount = response.data.pageInfo.totalUserCount;
-        const totalPages = Math.ceil(totalCount / limit);
-        setAttendanceTotalPage(totalPages);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   /* 유저 삭제 */
   const userDelete = async (userId: string) => {
     try {
@@ -164,31 +129,67 @@ const AdminPage = () => {
       console.error(err);
     }
   };
+  /* 전체 유저 근태 목록 업데이트 */
+  const attendanceData = async (limit: number = 13, page: number = 1) => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) return;
+      const response = await api.get(
+        `${ENDPOINT.ADMIN_USERS}/attendance?limit=${limit}&page=${page}`
+      );
+      if (response.status === 200) {
+        const users = response.data.users;
+        setAttendData(users);
+
+        // 전체 페이지 수 계산
+        const totalCount = response.data.pageInfo.totalUserCount;
+        const totalPage = Math.ceil(totalCount / limit);
+        setAttendanceTotalPage(totalPage);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // 페이지 변경 시 호출되는 함수
+  const handlePageChange = (page: number) => {
+    if (page === currentPage) return; // 현재 페이지와 같으면 아무 작업도 하지 않음
+
+    setCurrentPage(page); // 페이지 변경
+    localStorage.setItem("currentPage", String(page));
+    if (page === 1) {
+      if (page === currentPage) return;
+      setCurrentPage(page);
+      userTotalData(5, page);
+    }
+  };
 
   useEffect(() => {
-    const savedTab = localStorage.getItem("activePage");
+    const savedTab = localStorage.getItem("activePage") || "home"; // 기본값을 "home"으로 설정
     const savedPage = localStorage.getItem("currentPage");
+    setActivePage(savedTab);
 
-    if (savedTab) {
-      setActivePage(savedTab); // 새로고침시 현재 탭 상태 유지
+    const page = savedPage ? Number(savedPage) : 1; // 저장된 페이지가 없으면 1로 설정
+    setCurrentPage(page);
+
+    if (savedTab === "home") {
+      userTotalData(13, page);
+    } else if (savedTab === "vacation") {
+      vacationFetchData(13, page);
+    } else if (savedTab === "attendance") {
+      attendanceData(13, page);
     }
-    if (savedPage) {
-      setCurrentPage(Number(savedPage)); // 새로고침시 현재 페이지네이션 유지
-    }
-    vacationFetchData();
-    attendanceData();
-  }, []);
+  }, [currentPage, activePage]);
 
-  // 초기 데이터 로드
-  useEffect(() => {
-    userTotalData(13, currentPage);
-    vacationFetchData(13, currentPage);
-    attendanceData(13, currentPage);
-  }, [currentPage]);
-
+  /* 다른 페이지 이동 후 다시 왔을때 첫 페이지부터 보이게 */
+  const resetPageState = () => {
+    localStorage.removeItem("currentPage");
+    setCurrentPage(1);
+  };
   /* 탭 변경 시 `localStorage`에 현재 탭 상태 저장 */
   const onChangeTab = (tab: string) => {
     setActivePage(tab);
+    resetPageState();
     localStorage.setItem("activePage", tab); // 탭 상태를 localStorage에 저장
   };
 
@@ -245,7 +246,13 @@ const AdminPage = () => {
           </div>
           <Pagination
             currentPage={currentPage}
-            totalPage={totalPage}
+            totalPage={
+              activePage === "home"
+                ? userTotalPage
+                : activePage === "vacation"
+                ? vacationTotalPage
+                : attendanceTotalPage
+            }
             onPageChange={handlePageChange}
             className="absolute bottom-8 left-0 right-0"
           />
