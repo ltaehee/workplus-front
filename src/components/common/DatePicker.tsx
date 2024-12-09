@@ -54,7 +54,7 @@ const Datepicker: React.FC<DatepickerProps> = ({
                 {">"}
               </button>
             </div>
-            <div className="grid grid-cols-7   mt-2">
+            <div className="grid grid-cols-7 mt-2">
               {daysOfWeek.map((day) => (
                 <div key={day}>{day}</div>
               ))}

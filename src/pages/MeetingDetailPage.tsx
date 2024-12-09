@@ -26,6 +26,17 @@ const MeetingDetailPage: React.FC = () => {
     userImage: "",
     token: "",
   });
+  const [initialData, setInitialData] = useState<{
+    startDate: Date | null;
+    agenda: string;
+    selectedUsers: UserData[];
+    selectedTime: Date | null;
+  }>({
+    startDate: null,
+    agenda: "",
+    selectedUsers: [],
+    selectedTime: null,
+  });
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [selectedTime, setSelectedTime] = useState<Date | null>(new Date());
   const [agenda, setAgenda] = useState("");
@@ -95,7 +106,7 @@ const MeetingDetailPage: React.FC = () => {
       const response = await api.get(
         `${ENDPOINT.USER}/search?username=${debouncedSearchInputValue}`
       );
-      console.log("getUserName data ", response.data);
+      // console.log("getUserName data ", response.data);
       setFilteredData(response.data.users);
     } catch (err) {
       console.log("Error getUserName ", err);
@@ -111,25 +122,13 @@ const MeetingDetailPage: React.FC = () => {
     };
   }, [debouncedSearchInputValue]);
 
-  const [initialData, setInitialData] = useState<{
-    startDate: Date | null;
-    agenda: string;
-    selectedUsers: UserData[];
-    selectedTime: Date | null;
-  }>({
-    startDate: null,
-    agenda: "",
-    selectedUsers: [],
-    selectedTime: null,
-  });
-
   // 회의 등록했던 데이터 가져오기 API
   const getUserInfo = async () => {
     try {
       const request = await api.get(`${ENDPOINT.METTING}/${param.meetingId}`);
 
       const meeting = request.data.data.meeting;
-      console.log("meeting data ", meeting);
+      // console.log("meeting data ", meeting);
 
       const newSelectedUsers = meeting.attendant.map((username: string) => ({
         username,
@@ -182,7 +181,7 @@ const MeetingDetailPage: React.FC = () => {
         `${ENDPOINT.METTING}/${param.meetingId}`,
         data
       );
-      console.log("Fix data ", response);
+      // console.log("Fix data ", response);
       alert("회의 수정 완료");
       setGetUsers([]);
       navigate("/");
@@ -198,7 +197,7 @@ const MeetingDetailPage: React.FC = () => {
       const response = await api.delete(
         `${ENDPOINT.METTING}/${param.meetingId}`
       );
-      console.log("Delete meetingDetail data ", response.data);
+      // console.log("Delete meetingDetail data ", response.data);
       alert("삭제완료");
       navigate("/");
     } catch (err) {
@@ -216,39 +215,28 @@ const MeetingDetailPage: React.FC = () => {
       getUserInfo();
     }
   }, []);
-  // console.log("initialData ", initialData);
-  // console.log("agenda ", agenda);
-  // console.log("selectedUsers ", selectedUsers);
 
-  // console.log("startDate ", startDate);
-  // useEffect(() => {
-  //   const checkModification = () => {
-  //     const isModified =
-  //       startDate !== initialData.startDate ||
-  //       selectedTime?.toString !== initialData.selectedTime?.toString ||
-  //       agenda !== initialData.agenda ||
-  //       JSON.stringify(selectedUsers) !==
-  //         JSON.stringify(initialData.selectedUsers);
+  // 수정한게 없을 때는 수정 버튼 disabled 설정
+  useEffect(() => {
+    const checkModification = () => {
+      const isModified =
+        (startDate instanceof Date ? startDate.toISOString() : "") !==
+          (initialData.startDate instanceof Date
+            ? initialData.startDate.toISOString()
+            : "") ||
+        (selectedTime instanceof Date ? selectedTime.toISOString() : "") !==
+          (initialData.selectedTime instanceof Date
+            ? initialData.selectedTime.toISOString()
+            : "") ||
+        agenda !== initialData.agenda ||
+        JSON.stringify(selectedUsers) !==
+          JSON.stringify(initialData.selectedUsers);
 
-  //     console.log("startDate ", startDate?.toISOString());
-  //     console.log(
-  //       "initialData startDate ",
-  //       initialData.startDate?.toISOString()
-  //     );
-  //     // console.log("selectedTime ", selectedTime?.toString);
-  //     // console.log(
-  //     //   "initialData selectedTime ",
-  //     //   initialData.selectedTime?.toString
-  //     // );
-  //     setIsModified(isModified);
-  //   };
-  //   checkModification();
-  // }, [startDate, selectedTime, agenda, selectedUsers, initialData]);
-  // useEffect(() => {
-  //   if (query === undefined) {
-  //     setQuery("");
-  //   }
-  // }, [query]);
+      setIsModified(isModified);
+    };
+    checkModification();
+  }, [startDate, selectedTime, agenda, selectedUsers, initialData]);
+
   return (
     <>
       <div className="w-full flex flex-col space-y-5 items-center">
