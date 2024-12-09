@@ -153,14 +153,18 @@ const FindPasswordPage = () => {
 
                 {!isclick ? (
                   <Button
-                    className={"bg-blue-400"}
                     onClick={handleClickEmailSend}
                     btnText={
                       isloading ? "잠시만 기다려주세요" : "이메일 보내기"
                     }
+                    disabled={isloading}
                   />
                 ) : (
-                  <h3 className={"text-l"}>이메일을 확인해주세요</h3>
+                  <Button
+                    btnText={"이메일을 확인해주세요"}
+                    disabled
+                    className="bg-blue-300 hover:bg-blue-300"
+                  />
                 )}
               </>
             ) : (
