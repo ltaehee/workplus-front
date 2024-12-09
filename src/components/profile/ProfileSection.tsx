@@ -72,8 +72,6 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
                     if (isMeetingSection && item.meetingId) {
                       handleClickAlarm(item.meetingId);
                       checkNewMeeting?.(item.meetingId, username);
-                    } else {
-                      console.log("meetingId가 없음");
                     }
                     onListClick?.(item);
                   }}

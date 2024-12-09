@@ -42,6 +42,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
         address: editInput.address,
         id: userId,
       });
+      console.log("API Response:", response);
 
       if (response.status === 204 || response.status === 200) {
         onEdit({
@@ -50,15 +51,8 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
           birth: editInput.birth,
           address: editInput.address,
         });
-        console.log(
-          "수정 성공",
-          "휴대폰:",
-          editInput.phone,
-          "생일:",
-          editInput.birth,
-          "주소:",
-          editInput.address
-        );
+        console.log("user", user);
+
         alert("수정 완료");
       }
     } catch (err) {
@@ -69,14 +63,14 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      const userData = JSON.parse(storedUser);
-      setEditInput({
-        phone: userData.phone || "",
-        birth: userData.birth || "",
-        address: userData.address || "",
-      });
+      setEditInput((prev) => ({
+        ...prev,
+        phone: user.phone || prev.phone,
+        birth: user.birth || prev.birth,
+        address: user.address || prev.address,
+      }));
     }
-  }, []);
+  }, [user]);
   return (
     <div>
       <p className="font-bold pb-2">{title}</p>
@@ -86,13 +80,13 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
           <Input
             onChange={handleChange}
             value={editInput.phone}
-            placeholder="010-0000-0000"
+            placeholder="ex) 010-0000-0000"
             name="phone"
           />
           <Button
             btnText="수정"
-            className="!w-[20%]"
             onClick={handleClickInfoChange}
+            className="max-w-[70px]"
           />
         </div>
         <div className="w-full flex gap-2 mb-1 flex justify-between items-center border-b border-gray-300 last:border-none py-2">
@@ -100,13 +94,13 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
           <Input
             onChange={handleChange}
             value={editInput.birth}
-            placeholder="2000.12.23"
+            placeholder="ex) 2000.12.23"
             name="birth"
           />
           <Button
             btnText="수정"
-            className="!w-[20%]"
             onClick={handleClickInfoChange}
+            className="max-w-[70px]"
           />
         </div>
         <div className="w-full flex gap-2 mb-1 flex justify-between items-center border-b border-gray-300 last:border-none py-2">
@@ -114,13 +108,13 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
           <Input
             onChange={handleChange}
             value={editInput.address}
-            placeholder="경기도 수원시 장안구"
+            placeholder="ex) 경기도 수원시 장안구"
             name="address"
           />
           <Button
             btnText="수정"
-            className="!w-[20%]"
             onClick={handleClickInfoChange}
+            className="max-w-[70px]"
           />
         </div>
       </div>

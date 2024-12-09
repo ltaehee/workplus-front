@@ -39,7 +39,6 @@ const MeetingPage: React.FC = () => {
   const selectedUserName = selectedUsers.map((user) => user.username);
   const debouncedSearchInputValue = UseDebounce(query, 700);
   const now = new Date();
-  const loginUser = localStorage.getItem("user");
   const navigate = useNavigate();
   const availablueUsers = filteredData.filter(
     (user) =>
@@ -95,6 +94,15 @@ const MeetingPage: React.FC = () => {
 
   // 회의 등록 API
   const handleClickSubmit = async () => {
+    if (!agenda) {
+      alert("회의 안건을 입력해주세요");
+      return;
+    }
+    if (selectedUserName.length === 0) {
+      alert("참여자를 입력해주세요");
+      return;
+    }
+
     const data = {
       creatorId: userName.userId,
       date: startDate,
@@ -105,16 +113,11 @@ const MeetingPage: React.FC = () => {
     };
 
     try {
-      const request = await api.post(ENDPOINT.METTING, data);
-      if (agenda === "") {
-        alert("회의 안건을 입력해주세요");
-      } else if (selectedUserName.length === 0) {
-        alert("참여자를 입력해주세요");
-      } else {
-        console.log("meeting data ", request.data);
-        alert("회의 신청 완료");
-        navigate("/");
-      }
+      const response = await api.post(ENDPOINT.METTING, data);
+
+      console.log("meeting data ", response.data);
+      alert("회의 신청 완료");
+      navigate("/");
     } catch (err) {
       console.log("Error submit meeting data", err);
       alert("회의 신청 실패");
@@ -122,8 +125,13 @@ const MeetingPage: React.FC = () => {
   };
 
   useEffect(() => {
+    const loginUser = localStorage.getItem("user");
+
     if (loginUser) {
-      setUserName(JSON.parse(loginUser));
+      const parsedUser = JSON.parse(loginUser);
+      setUserName(parsedUser);
+      const initialUser: UserData = { username: parsedUser.username };
+      setSelectedUsers([initialUser]);
     }
   }, []);
 
@@ -137,7 +145,7 @@ const MeetingPage: React.FC = () => {
     <>
       <div className="w-full flex flex-col space-y-5 items-center">
         <p className="mt-20">회의 일정 생성 페이지</p>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           <Datepicker
             className="w-full px-4 py-2 border rounded-md"
             dateFormat="yyyy/MM/dd"
@@ -147,14 +155,14 @@ const MeetingPage: React.FC = () => {
             minDate={now}
           />
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           <Input
             placeholder="회의 안건"
             id={"회의 안건"}
             onChange={handleClickAgenda}
           />
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           <Input
             placeholder="생성자"
             id={"생성자"}
@@ -162,7 +170,7 @@ const MeetingPage: React.FC = () => {
             readOnly
           />
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           <AutoComplete
             onSelect={handleUserSelect}
             id={"참여자"}
@@ -170,7 +178,7 @@ const MeetingPage: React.FC = () => {
             value={query || ""}
           />
           {filteredData.length > 0 && (
-            <ul className=" z-10 w-full bg-white border border-gray-300 rounded">
+            <ul className=" z-10 w-full bg-white border border-gray-300 rounded overflow-auto h-[100px] scrollbar-hide">
               {availablueUsers.map((user, index) => (
                 <li key={index} className="" onClick={() => handleSelect(user)}>
                   {user.username}
@@ -190,7 +198,7 @@ const MeetingPage: React.FC = () => {
             ))}
           </div>
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           <ReactDatePiker
             className="px-4 py-2 border rounded-md w-full focus:outline-none focus:ring-2"
             selected={selectedTime}
@@ -205,7 +213,8 @@ const MeetingPage: React.FC = () => {
             dateFormat="hh:mm aa"
           />
         </div>
-        <div className="w-1/6">
+
+        <div className="w-full max-w-md">
           <Button btnText="등록" onClick={handleClickSubmit} />
         </div>
       </div>

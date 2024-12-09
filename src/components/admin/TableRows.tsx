@@ -20,7 +20,7 @@ export const UserRow = ({ userData, userDelete }: UserRowProps) => {
       <td className="p-2 pl-4">{userData.email}</td>
       <td className="p-2 pl-4">{userData.phone}</td>
       <td className="p-2 pl-4">{userData.birth}</td>
-      <td className="p-2 pl-4">{userData.address}</td>
+      <td className="p-2 pl-4 max-w-[200px]">{userData.address}</td>
       <div className="flex items-center justify-center  h-[50px] ">
         <Button
           onClick={() => {
@@ -107,8 +107,8 @@ export const VacationRow = ({
       <td className="p-2 pl-4">{vacation.vacationType}</td>
       <td className="p-2 pl-4">{formatDate(vacation.startDate)}</td>
       <td className="p-2 pl-4">{formatDate(vacation.endDate)}</td>
-      <td className="p-2 pl-4">{vacation.reason}</td>
-      <td className="p-2 pl-4  ">
+      <td className="p-2 pl-4 max-w-[200px]">{vacation.reason}</td>
+      <td className="p-2 pl-4">
         {vacation.status === "대기중" ? (
           <div className="w-[150px] flex ">
             <Button

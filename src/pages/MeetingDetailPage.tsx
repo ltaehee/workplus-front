@@ -34,6 +34,7 @@ const MeetingDetailPage: React.FC = () => {
   const [query, setQuery] = useState("");
   const [filteredData, setFilteredData] = useState<UserData[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<UserData[]>([]);
+  const [isModified, setIsModified] = useState(false);
   const loginUser = localStorage.getItem("user");
   const selectedUserName = selectedUsers.map((user) => user.username);
   const debouncedSearchInputValue = UseDebounce(query, 700);
@@ -110,6 +111,18 @@ const MeetingDetailPage: React.FC = () => {
     };
   }, [debouncedSearchInputValue]);
 
+  const [initialData, setInitialData] = useState<{
+    startDate: Date | null;
+    agenda: string;
+    selectedUsers: UserData[];
+    selectedTime: Date | null;
+  }>({
+    startDate: null,
+    agenda: "",
+    selectedUsers: [],
+    selectedTime: null,
+  });
+
   // 회의 등록했던 데이터 가져오기 API
   const getUserInfo = async () => {
     try {
@@ -135,6 +148,13 @@ const MeetingDetailPage: React.FC = () => {
       setSelectedTime(DateTime);
       setCreatorId(meeting.creatorId);
       setCreatorUsername(meeting.creatorUsername);
+
+      setInitialData({
+        startDate: meeting.date,
+        agenda: meeting.agenda,
+        selectedUsers: newSelectedUsers,
+        selectedTime: DateTime,
+      });
     } catch (err) {
       console.log("Error getUserInfo ", err);
     }
@@ -196,18 +216,45 @@ const MeetingDetailPage: React.FC = () => {
       getUserInfo();
     }
   }, []);
+  // console.log("initialData ", initialData);
+  // console.log("agenda ", agenda);
+  // console.log("selectedUsers ", selectedUsers);
 
-  useEffect(() => {
-    if (query === undefined) {
-      setQuery("");
-    }
-  }, [query]);
+  // console.log("startDate ", startDate);
+  // useEffect(() => {
+  //   const checkModification = () => {
+  //     const isModified =
+  //       startDate !== initialData.startDate ||
+  //       selectedTime?.toString !== initialData.selectedTime?.toString ||
+  //       agenda !== initialData.agenda ||
+  //       JSON.stringify(selectedUsers) !==
+  //         JSON.stringify(initialData.selectedUsers);
+
+  //     console.log("startDate ", startDate?.toISOString());
+  //     console.log(
+  //       "initialData startDate ",
+  //       initialData.startDate?.toISOString()
+  //     );
+  //     // console.log("selectedTime ", selectedTime?.toString);
+  //     // console.log(
+  //     //   "initialData selectedTime ",
+  //     //   initialData.selectedTime?.toString
+  //     // );
+  //     setIsModified(isModified);
+  //   };
+  //   checkModification();
+  // }, [startDate, selectedTime, agenda, selectedUsers, initialData]);
+  // useEffect(() => {
+  //   if (query === undefined) {
+  //     setQuery("");
+  //   }
+  // }, [query]);
   return (
     <>
       <div className="w-full flex flex-col space-y-5 items-center">
         <p className="mt-20">회의 일정 상세 페이지</p>
 
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           {creatorId !== userName.userId ? (
             <Datepicker
               className="w-full px-4 py-2 border rounded-md"
@@ -228,7 +275,7 @@ const MeetingDetailPage: React.FC = () => {
             />
           )}
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           {creatorId !== userName.userId ? (
             <Input
               placeholder="회의 안건"
@@ -246,7 +293,7 @@ const MeetingDetailPage: React.FC = () => {
             />
           )}
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           <Input
             placeholder="생성자"
             id={"생성자"}
@@ -254,7 +301,7 @@ const MeetingDetailPage: React.FC = () => {
             readOnly
           />
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           {creatorId !== userName.userId ? (
             <AutoComplete
               onSelect={handleUserSelect}
@@ -298,7 +345,7 @@ const MeetingDetailPage: React.FC = () => {
             ))}
           </div>
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           {creatorId !== userName.userId ? (
             <ReactDatePiker
               className="px-4 py-2 border rounded-md w-full focus:outline-none focus:ring-2"
@@ -332,10 +379,14 @@ const MeetingDetailPage: React.FC = () => {
             />
           )}
         </div>
-        <div className="w-1/6 flex justify-between">
+        <div className="w-full max-w-md flex justify-between">
           <div className="w-1/3">
             {creatorId !== userName.userId ? null : (
-              <Button btnText="수정" onClick={handleClickFix} />
+              <Button
+                btnText="수정"
+                disabled={!isModified}
+                onClick={handleClickFix}
+              />
             )}
           </div>
           <div className="w-1/3">
