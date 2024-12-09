@@ -31,7 +31,6 @@ const AdminPage = () => {
   const [vacationData, setVacationData] = useState<Vacation[]>([]);
   const [userData, setUserData] = useState<User[]>([]);
   const [attendData, setAttendData] = useState<User[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
 
   // 페이지네이션 관련 상태 추가
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
@@ -71,7 +70,6 @@ const AdminPage = () => {
   };
   /* 휴가 승인,미승인 업데이트 */
   const vacationApproveData = async (vacationId: string, status: string) => {
-    setIsLoading(true);
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
@@ -80,13 +78,10 @@ const AdminPage = () => {
         { status }
       );
       if (response.status === 200) {
-        console.log(response.data.message);
         await vacationFetchData(13, currentPage);
       }
     } catch (err) {
       console.error(err);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -122,8 +117,9 @@ const AdminPage = () => {
       if (response.status === 200 || response.status === 204) {
         const users = response.data.users;
         setAttendData(users);
-        console.log("유저 삭제 완료");
         alert("유저 삭제 완료");
+
+        await userTotalData(13, currentPage);
       }
     } catch (err) {
       console.error(err);
@@ -184,17 +180,10 @@ const AdminPage = () => {
   /* 탭 변경 시 `localStorage`에 현재 탭 상태 저장 */
   const onChangeTab = (tab: string) => {
     setActivePage(tab);
+    setCurrentPage(1); // 탭 변경 시 페이지를 1로 초기화
     localStorage.setItem("activePage", tab); // 탭 상태를 localStorage에 저장
+    localStorage.setItem("currentPage", "1");
   };
-
-  /* 로딩 */
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center text-3xl font-bold">
-        <div className="spinner">로딩 중...</div>
-      </div>
-    );
-  }
 
   return (
     <div className="w-full flex items-center justify-center h-[calc(100vh-65px)] overflow-y-hidden">
