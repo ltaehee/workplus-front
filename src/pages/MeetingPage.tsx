@@ -75,7 +75,7 @@ const MeetingPage: React.FC = () => {
         `${ENDPOINT.USER}/search?username=${debouncedSearchInputValue}`
       );
 
-      console.log("getUserName data ", response.data);
+      // console.log("getUserName data ", response.data);
       setFilteredData(response.data.users);
     } catch (err) {
       console.log("Error getUserName ", err);
@@ -115,7 +115,7 @@ const MeetingPage: React.FC = () => {
     try {
       const response = await api.post(ENDPOINT.METTING, data);
 
-      console.log("meeting data ", response.data);
+      // console.log("meeting data ", response.data);
       alert("회의 신청 완료");
       navigate("/");
     } catch (err) {

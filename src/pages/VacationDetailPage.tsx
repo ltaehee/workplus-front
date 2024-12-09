@@ -14,13 +14,24 @@ const VacationDetailPage = () => {
     username: string;
     token: string;
   }>({ userId: "", email: "", username: "", token: "" });
+  const [initialData, setInitialData] = useState<{
+    startDate: Date | null;
+    endDate: Date | null;
+    isOption: string;
+    reason: string;
+  }>({
+    startDate: null,
+    endDate: null,
+    isOption: "",
+    reason: "",
+  });
+  const [isModified, setIsModified] = useState(false);
   const [isOption, setIsOption] = useState("");
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [endDate, setEndDate] = useState<Date | null>(new Date());
   const [reason, setReason] = useState("");
   const [requesterId, setRequesterId] = useState("");
   const [requesterUsername, setRequesterUsername] = useState("");
-  const today = new Date();
   const loginUser = localStorage.getItem("user");
   const param = useParams();
   const navigate = useNavigate();
@@ -38,7 +49,7 @@ const VacationDetailPage = () => {
       const request = await api.get(`${ENDPOINT.VACATION}/${param.vacationId}`);
 
       const vacation = request.data.data.vacation;
-      console.log("getUser data ", vacation);
+      // console.log("getUser data ", vacation);
 
       setIsOption(vacation.vacationType);
       setReason(vacation.reason);
@@ -46,6 +57,13 @@ const VacationDetailPage = () => {
       setEndDate(vacation.endDate);
       setRequesterId(vacation.requesterId);
       setRequesterUsername(vacation.username);
+
+      setInitialData({
+        startDate: vacation.startDate,
+        endDate: vacation.endDate,
+        isOption: vacation.vacationType,
+        reason: vacation.reason,
+      });
     } catch (err) {
       console.log("Error getUserInfo ", err);
     }
@@ -67,7 +85,7 @@ const VacationDetailPage = () => {
         data
       );
 
-      console.log("Fix vacationDetail data ", request.data);
+      // console.log("Fix vacationDetail data ", request.data);
       alert("휴가신청 수정완료");
       navigate("/");
     } catch (err) {
@@ -91,7 +109,7 @@ const VacationDetailPage = () => {
       const request = await api.delete(
         `${ENDPOINT.VACATION}/${param.vacationId}`
       );
-      console.log("Delete vacationDetail data ", request.data);
+      // console.log("Delete vacationDetail data ", request.data);
       alert("삭제완료");
       navigate("/");
     } catch (err) {
@@ -107,6 +125,26 @@ const VacationDetailPage = () => {
       getUserInfo();
     }
   }, []);
+
+  // 수정한게 없을 때는 수정 버튼 disabled 설정
+  useEffect(() => {
+    const checkModification = () => {
+      const isModified =
+        (startDate instanceof Date ? startDate.toISOString() : "") !==
+          (initialData.startDate instanceof Date
+            ? initialData.startDate.toISOString()
+            : "") ||
+        (endDate instanceof Date ? endDate.toISOString() : "") !==
+          (initialData.endDate instanceof Date
+            ? initialData.endDate.toISOString()
+            : "") ||
+        isOption !== initialData.isOption ||
+        reason !== initialData.reason;
+
+      setIsModified(isModified);
+    };
+    checkModification();
+  }, [startDate, endDate, isOption, reason, initialData]);
 
   return (
     <>
@@ -137,7 +175,7 @@ const VacationDetailPage = () => {
               dateFormat="yyyy/MM/dd"
               selected={startDate}
               onChange={(date) => setStartDate(date)}
-              minDate={today}
+              minDate={new Date()}
             />
           )}
         </div>
@@ -158,7 +196,7 @@ const VacationDetailPage = () => {
               dateFormat="yyyy/MM/dd"
               selected={endDate}
               onChange={(date) => setEndDate(date)}
-              minDate={today}
+              minDate={new Date()}
             />
           )}
         </div>
@@ -206,7 +244,11 @@ const VacationDetailPage = () => {
         <div className="w-full max-w-md flex justify-between">
           <div className="w-1/3">
             {requesterId !== userName.userId ? null : (
-              <Button btnText="수정" onClick={handleClickFix} />
+              <Button
+                btnText="수정"
+                disabled={!isModified}
+                onClick={handleClickFix}
+              />
             )}
           </div>
           <div className="w-1/3 ">
