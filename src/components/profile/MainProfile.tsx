@@ -43,7 +43,6 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
 
       if (response.status === 200 || response.status === 204) {
         onEdit({ ...user, name: editName });
-        console.log("이름 수정 성공:", editName);
         alert("이름 수정 완료");
       }
     } catch (err) {
@@ -62,7 +61,6 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
   };
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    console.log("파일이름", file);
 
     const storedUser = localStorage.getItem("user");
     if (!storedUser) return;
@@ -81,13 +79,15 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
         `${ENDPOINT.USER_PROFILE_IMAGE}/${userId}`,
         formData
       );
-      console.log("응답2", response);
       if (response.status === 200 || response.status === 204) {
-        console.log("파일 업로드 성공");
         // 업로드 후 처리 로직 (예: 이미지 URL 업데이트)
         const uploadedImageUrl = response.data.data.imgUrl;
-        console.log(uploadedImageUrl);
+
         onEdit({ ...user, userImage: uploadedImageUrl });
+        /* 헤더에 이미지 바로 변경안됨 */
+        // localStorage.setItem("user", JSON.stringify(uploadedImageUrl)); // 로컬 스토리지에 저장
+        // const updatedUser = { ...user, userImage: uploadedImageUrl };
+        // onEdit(updatedUser);
       }
     } catch (err) {
       console.error("Error uploading file:", err);

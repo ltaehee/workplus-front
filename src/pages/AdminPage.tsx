@@ -237,7 +237,7 @@ const AdminPage = () => {
                 : attendanceTotalPage
             }
             onPageChange={handlePageChange}
-            className="absolute bottom-8 left-0 right-0"
+            className="mt-6"
           />
         </div>
       </div>
