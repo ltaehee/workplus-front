@@ -183,9 +183,14 @@ const SignupPage = () => {
                     btnText={
                       isloading ? "잠시만 기다려주세요" : "이메일 보내기"
                     }
+                    disabled={isloading}
                   />
                 ) : (
-                  <h3 className={"text-l"}>이메일을 확인해주세요</h3>
+                  <Button
+                    btnText={"이메일을 확인해주세요"}
+                    disabled
+                    className="bg-blue-300 hover:bg-blue-300"
+                  />
                 )}
                 <div className={"flex flex-col gap-2 pt-4"}>
                   <div className={"flex items-center py-4"}>
@@ -219,9 +224,14 @@ const SignupPage = () => {
                   id={"이메일"}
                 />
                 <Button
-                  className={ifVerifyOk ? "bg-green-800" : "bg-blue-800"}
+                  className={
+                    ifVerifyOk
+                      ? "bg-green-800 hover:bg-green-800"
+                      : "bg-blue-800"
+                  }
                   onClick={handleClickEmailVerify}
                   btnText={ifVerifyOk ? "인증되었습니다" : "이메일 인증받기"}
+                  disabled={ifVerifyOk && true}
                 />
               </>
             )}
