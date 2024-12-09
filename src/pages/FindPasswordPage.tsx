@@ -70,10 +70,9 @@ const FindPasswordPage = () => {
     } else {
       try {
         setIsLoading(true);
-        const response = await axios.post("/api/auth/send-email-password", {
+        await axios.post("/api/auth/send-email-password", {
           email,
         });
-        console.log(response);
         setIsclick(true);
       } catch (err) {
         console.log("handleClickEmailSend 오류", err);
@@ -88,11 +87,10 @@ const FindPasswordPage = () => {
 
   const handleClickEmailVerify = useCallback(async () => {
     try {
-      const response = await axios.post("/api/auth/verify-email", {
+      await axios.post("/api/auth/verify-email", {
         email: emailInputValue,
         token,
       });
-      console.log(response);
       setIsVerifyOk(true);
     } catch (err) {
       console.log("handleClickEmailVerify 오류", err);
@@ -111,11 +109,10 @@ const FindPasswordPage = () => {
       alert("비밀번호가 일치하지 않습니다");
     } else if (password === passwordCheck) {
       try {
-        const response = await axios.patch("/api/auth/password", {
+        await axios.patch("/api/auth/password", {
           email: emailInputValue,
           password,
         });
-        console.log(response);
         alert("비밀번호가 변경되었습니다.");
         navigate("/login");
       } catch (err) {

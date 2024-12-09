@@ -72,10 +72,9 @@ const SignupPage = () => {
     } else {
       try {
         setIsLoading(true);
-        const response = await axios.post("/api/auth/send-email", {
+        await axios.post("/api/auth/send-email", {
           email,
         });
-        console.log(response);
         setIsclick(true);
       } catch (err) {
         console.log("handleClickEmailSend 오류", err);
@@ -90,11 +89,10 @@ const SignupPage = () => {
 
   const handleClickEmailVerify = async () => {
     try {
-      const response = await axios.post("/api/auth/verify-email", {
+      await axios.post("/api/auth/verify-email", {
         email: emailInputValue,
         token,
       });
-      console.log(response);
       setIsVerifyOk(true);
     } catch (err) {
       console.log("handleClickEmailVerify 오류", err);
@@ -112,12 +110,11 @@ const SignupPage = () => {
       alert("비밀번호가 일치하지 않습니다");
     } else if (password === passwordCheck) {
       try {
-        const response = await axios.post("/api/auth/signup", {
+        await axios.post("/api/auth/signup", {
           email: emailInputValue,
           username: name,
           password,
         });
-        console.log(response);
         alert("회원가입이 완료되었습니다.");
         navigate("/login");
       } catch (err) {

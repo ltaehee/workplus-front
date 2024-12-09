@@ -46,7 +46,7 @@ const Header = () => {
     const timerId = setInterval(() => {
       checkNewMeeting() //
         .then(setIsAlarm);
-    }, 5000);
+    }, 2500);
 
     return () => {
       clearInterval(timerId);
@@ -110,6 +110,7 @@ const Header = () => {
               onClick={() => {
                 localStorage.removeItem("token");
                 localStorage.removeItem("user");
+                localStorage.removeItem("isCheckOutClick");
                 navigate("/login");
               }}
             >
@@ -174,6 +175,7 @@ const Header = () => {
             onClick={() => {
               localStorage.removeItem("token");
               localStorage.removeItem("user");
+              localStorage.removeItem("isCheckOutClick");
               navigate("/login");
               setIsMenu(false);
             }}
