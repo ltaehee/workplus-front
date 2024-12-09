@@ -1,7 +1,7 @@
 import Logo from "../components/common/Logo";
 import Input from "../components/common/Input";
 import Button from "../components/common/Button";
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 

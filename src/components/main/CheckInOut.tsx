@@ -4,7 +4,7 @@ import Button from "../common/Button";
 
 const CheckInOut = () => {
   const [currentTime, setCurrentTime] = useState("");
-  const [user, setUser] = useState(() => {
+  const [user, _setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
   });

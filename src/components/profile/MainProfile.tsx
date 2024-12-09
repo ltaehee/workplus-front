@@ -22,7 +22,7 @@ type MainProfileProps = {
 
 const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
   /* 이미지 업로드 */
-  const [imgFile, setImgFile] = useState<File>();
+  const [_imgFile, setImgFile] = useState<File>();
   const inputFileRef = useRef<HTMLInputElement | null>(null);
 
   /* 이름 수정 */
