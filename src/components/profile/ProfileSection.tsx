@@ -60,7 +60,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
     <div className="h-full">
       <p className="font-bold pb-2 pt-8">{title}</p>
       <div
-        className={`border border-[#DFDFDF] bg-white rounded-md h-[calc(100%-64px)] p-6 ${className}`}
+        className={`border border-[#DFDFDF] bg-white rounded-md h-[calc(100%-64px)] p-6 overflow-scroll ${className}`}
       >
         {data ? (
           <ul>

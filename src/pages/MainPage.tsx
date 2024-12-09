@@ -97,13 +97,13 @@ const MainPage = () => {
       <li key={item._id}>
         <button
           onClick={() => navigate(`/meeting-detail/${item._id}`)}
-          className="transition ease-in-out flex items-center w-full border-b hover:bg-teal-50"
+          className="transition ease-in-out flex items-center w-full border-b hover:bg-teal-50 "
         >
           <div className="bg-teal-500 rounded-lg p-2 text-white text-sm text-nowrap ml-4">
             회의
           </div>
           <div className="flex justify-between w-full p-4">
-            <h4>{item.agenda}</h4>
+            <h4 className="max-w-[200px] truncate">{item.agenda}</h4>
             <p>{item.startTime}</p>
           </div>
         </button>
@@ -122,7 +122,7 @@ const MainPage = () => {
             휴가
           </div>
           <div className="flex justify-between w-full p-4">
-            <h4>{item.username}</h4>
+            <h4 className="max-w-[200px] truncate">{item.username}</h4>
             <p>{item.vacationType}</p>
           </div>
         </button>
@@ -147,7 +147,7 @@ const MainPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] w-[1280px] h-[calc(100vh-65px)] gap-4 p-8 overflow-auto scrollbar-hide">
         <div className=" flex flex-col gap-4">
           <CheckInOut />
-          <div className="bg-white shadow-lg rounded-lg h-60 md:h-[calc(66vh-5rem)] min-h-[420px] ">
+          <div className="bg-white shadow-lg rounded-lg h-60 md:h-[calc(66vh-5rem)] min-h-[420px]">
             <div className="bg-slate-500 rounded-t-lg flex justify-center items-center h-14 sticky top-[-2rem]">
               <div className="text-white text-lg">{selectDay}</div>
             </div>

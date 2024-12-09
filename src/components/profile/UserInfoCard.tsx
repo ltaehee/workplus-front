@@ -31,7 +31,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
     const { name, value } = target;
 
     // 입력 값 변경 시 검증 실행
-    let error = "";
+    let error;
     if (name === "phone") error = validatePhone(value);
     if (name === "birth") error = validateBirth(value);
 
@@ -94,7 +94,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
     <div>
       <p className="font-bold pb-2 pt-8">{title}</p>
       <div className="border border-[#DFDFDF] bg-white rounded-md p-6">
-        <div className="w-full flex gap-2 mb-1 flex justify-between items-center border-b border-gray-300 last:border-none py-2">
+        <div className="w-full flex gap-2 mb-1 justify-between items-center border-b border-gray-300 last:border-none py-2">
           <img src={phoneImg} alt="휴대폰이미지" />
           <Input
             onChange={handleChange}
@@ -109,7 +109,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
             className="max-w-[70px]"
           />
         </div>
-        <div className="w-full flex gap-2 mb-1 flex justify-between items-center border-b border-gray-300 last:border-none py-2">
+        <div className="w-full flex gap-2 mb-1 justify-between items-center border-b border-gray-300 last:border-none py-2">
           <img src={birthImg} alt="케이크이미지" />
           <Input
             onChange={handleChange}
@@ -123,7 +123,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
             className="max-w-[70px]"
           />
         </div>
-        <div className="w-full flex gap-2 mb-1 flex justify-between items-center border-b border-gray-300 last:border-none py-2">
+        <div className="w-full flex gap-2 mb-1 justify-between items-center border-b border-gray-300 last:border-none py-2">
           <img src={homeImg} alt="홈이미지" />
           <Input
             onChange={handleChange}
