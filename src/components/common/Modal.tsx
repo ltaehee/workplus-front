@@ -79,7 +79,7 @@ const Modal: React.FC<ModalProps> = ({
           {agenda && (
             <>
               <p className="mt-4 text-gray-500 break-words">회의 안건</p>
-              <p className="mt-2">{agenda}</p>
+              <p className="mt-2 break-words">{agenda}</p>
             </>
           )}
           {/* 연차 모달 내용 */}
