@@ -22,7 +22,6 @@ type MainProfileProps = {
 
 const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
   /* 이미지 업로드 */
-  const [_imgFile, setImgFile] = useState<File>();
   const inputFileRef = useRef<HTMLInputElement | null>(null);
 
   /* 이름 수정 */
@@ -63,7 +62,6 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
   };
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    setImgFile(file);
     console.log("파일이름", file);
 
     const storedUser = localStorage.getItem("user");
@@ -127,15 +125,6 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
         <p className="text-sm">{user.email}</p>
       </div>
       <div className="pt-14">
-        {/* 잠시 주석 처리 */}
-        {/* <p className="text-sm">성</p>
-        <Input
-          type="text"
-          name="name"
-          value={editName}
-          className="mt-2"
-          onChange={handleChange}
-        /> */}
         <p className="text-sm pt-4">이름</p>
         <Input
           type="text"
