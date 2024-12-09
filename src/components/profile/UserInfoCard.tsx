@@ -30,29 +30,32 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
   const handleChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = target;
 
-    // 입력 값 변경 시 검증 실행
-    let error;
-    if (name === "phone") error = validatePhone(value);
-    if (name === "birth") error = validateBirth(value);
-
     setEditInput((prev) => ({ ...prev, [name]: value }));
   };
 
   /* 부가 정보 수정 하기*/
-  const handleClickInfoChange = async () => {
+  const handleClickPhoneChange = async () => {
     const phoneError = validatePhone(editInput.phone);
-    const birthError = validateBirth(editInput.birth);
-
     if (phoneError) {
       alert(phoneError);
       return;
     }
+    updateInfo();
+  };
+  const handleClickBirthChange = async () => {
+    const birthError = validateBirth(editInput.birth);
 
     if (birthError) {
       alert(birthError);
       return;
     }
+    updateInfo();
+  };
+  const handleClickAddressChange = async () => {
+    updateInfo();
+  };
 
+  const updateInfo = async () => {
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
@@ -105,7 +108,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
 
           <Button
             btnText="수정"
-            onClick={handleClickInfoChange}
+            onClick={handleClickPhoneChange}
             className="max-w-[70px]"
           />
         </div>
@@ -119,7 +122,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
           />
           <Button
             btnText="수정"
-            onClick={handleClickInfoChange}
+            onClick={handleClickBirthChange}
             className="max-w-[70px]"
           />
         </div>
@@ -133,7 +136,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
           />
           <Button
             btnText="수정"
-            onClick={handleClickInfoChange}
+            onClick={handleClickAddressChange}
             className="max-w-[70px]"
           />
         </div>
