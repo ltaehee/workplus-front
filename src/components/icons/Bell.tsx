@@ -27,7 +27,7 @@ const Bell: SVGIconProps = (props) => {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <g clip-path="url(#clip0_514_2066)">
+          <g clipPath="url(#clip0_514_2066)">
             <path
               d="M12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24Z"
               fill="#FF0062"
@@ -35,16 +35,16 @@ const Bell: SVGIconProps = (props) => {
             <path
               d="M16.8998 8.70002C16.8998 7.40002 16.1998 6.20002 15.3998 5.30002C14.4998 4.40002 13.1998 3.90002 11.9998 3.90002C10.7998 3.90002 9.4998 4.50002 8.5998 5.30002C7.6998 6.10002 7.1998 7.50002 7.1998 8.70002C7.1998 14.4 4.7998 16.1 4.7998 16.1H19.4998C19.4998 16.1 17.0998 14.4 17.0998 8.70002H16.8998Z"
               stroke="white"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
               d="M13.3 19.4C13.2 19.6 13 19.8 12.7 20C12.4 20.2 12.1 20.2 11.9 20.2C11.7 20.2 11.3 20.2 11.1 20C10.9 19.9 10.7 19.7 10.5 19.4"
               stroke="white"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
           </g>
           <defs>

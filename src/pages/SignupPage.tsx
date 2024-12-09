@@ -152,15 +152,19 @@ const SignupPage = () => {
 
   return (
     <>
-      <div className={"grid grid-cols-2"}>
+      <div
+        className={"grid grid-cols-1 h-screen md:grid-cols-2 content-center"}
+      >
         <button
           onClick={() => navigate("/login")}
-          className={"flex justify-center items-center  h-screen"}
+          className={"flex justify-center items-center pb-16 md:h-screen"}
         >
           <Logo className={"w-6/12"} />
         </button>
         <div
-          className={"flex flex-col justify-center items-center gap-8 h-screen"}
+          className={
+            "flex flex-col justify-center items-center gap-8 md:h-screen"
+          }
         >
           <div className={"flex flex-col w-8/12 min-w-80 gap-4"}>
             <h2 className={"text-xl"}>회원가입</h2>

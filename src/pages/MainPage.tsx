@@ -143,16 +143,16 @@ const MainPage = () => {
   }, [currentMonth]);
 
   return (
-    <div className="flex justify-center bg-slate-100 h-[calc(100vh-65px)] overflow-auto scrollbar-hide">
-      <div className="grid grid-cols-[1fr_2fr] w-[1280px] max-h-[calc(100vh-65px)] gap-4 p-8">
+    <div className="flex justify-center bg-slate-100">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] w-[1280px] h-[calc(100vh-65px)] gap-4 p-8 overflow-auto scrollbar-hide">
         <div className=" flex flex-col gap-4">
           <CheckInOut />
-          <div className="bg-white border border-slate-400 rounded-lg shadow-lg h-[calc(66vh-5rem)] min-h-[420px] ">
-            <div className="bg-slate-500 flex justify-center items-center h-14 sticky top-0">
+          <div className="bg-white shadow-lg rounded-lg  h-60 md:h-[calc(66vh-5rem)] min-h-[420px] ">
+            <div className="bg-slate-500 rounded-t-lg flex justify-center items-center h-14 sticky top-[-2rem]">
               <div className="text-white text-lg">{selectDay}</div>
             </div>
             {isDayclick ? (
-              <ul className="h-[calc(100%-3.5rem)] overflow-auto scrollbar-hide">
+              <ul className="border border-slate-400 rounded-b-lg h-[calc(100%-3.5rem)] overflow-auto scrollbar-hide">
                 {currentDayMeetingList} {currentDayVacationList}
               </ul>
             ) : (
