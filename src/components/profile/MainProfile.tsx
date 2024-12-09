@@ -5,7 +5,6 @@ import Input from "../common/Input";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import api from "../../utils/api";
 import { ENDPOINT } from "../../utils/endpoints";
-import { useStore } from "../../store/useStore";
 
 type UserInfo = {
   id?: string;
@@ -83,13 +82,14 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
         // 업로드 후 처리 로직 (예: 이미지 URL 업데이트)
 
         const uploadedImageUrl = response.data.data.imgUrl;
-        console.log({ user });
-        const updatedUser = { ...user, userImage: uploadedImageUrl };
+        const updatedUser = {
+          ...user,
+          userImage: uploadedImageUrl,
+          name: editName,
+        };
+        console.log({ updatedUser });
         localStorage.setItem("user", JSON.stringify(updatedUser)); // 로컬 스토리지에 저장
         onEdit(updatedUser);
-
-        // zustand 상태 업데이트 (여기서 상태를 업데이트)
-        useStore.getState().setProfileImage(uploadedImageUrl);
       }
     } catch (err) {
       console.error("Error uploading file:", err);
@@ -123,7 +123,7 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
             />
           </div>
         </div>
-        <h3 className="text-xl font-semibold pt-3">{user.name}</h3>
+        <h3 className="text-xl font-semibold pt-3">{editName}</h3>
         <p className="text-sm">{user.email}</p>
       </div>
       <div className="pt-14">

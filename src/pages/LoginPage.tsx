@@ -5,27 +5,16 @@ import { ChangeEvent, useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import GoogleIcon from "../components/icons/GoogleIcon";
-import { create } from "zustand";
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const googleRedirectUrl = import.meta.env.VITE_GOOGLE_OAUTH_SIGNIN_REDIRECT_URL;
 const googleOauthEntryUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleClientId}&redirect_uri=${googleRedirectUrl}&response_type=code&scope=email profile`;
-
-interface Store {
-  user: string | null;
-  setUser: (user: string | null) => void;
-}
-const useStore = create<Store>((set) => ({
-  user: null,
-  setUser: (user) => set({ user }),
-}));
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
-  const setUser = useStore((state) => state.setUser); // setUser 함수를 가져옵니다.
 
   const isLogin = !!localStorage.getItem("user");
 
@@ -54,8 +43,6 @@ const LoginPage = () => {
         email,
         password,
       });
-      // 로그인 성공 시 사용자 정보를 zustand 상태에 저장
-      setUser(response.data.user); // Zustand 상태에 user 정보 저장
       localStorage.setItem("user", JSON.stringify(response.data.user));
       navigate("/");
     } catch (err) {
@@ -78,7 +65,6 @@ const LoginPage = () => {
         code,
       });
       if (response.data.user) {
-        setUser(response.data.user); // 구글 로그인 후 상태에 저장
         localStorage.setItem("user", JSON.stringify(response.data.user));
         navigate("/");
       }
