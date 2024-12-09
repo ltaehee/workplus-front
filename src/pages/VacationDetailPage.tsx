@@ -49,7 +49,6 @@ const VacationDetailPage = () => {
       const request = await api.get(`${ENDPOINT.VACATION}/${param.vacationId}`);
 
       const vacation = request.data.data.vacation;
-      // console.log("getUser data ", vacation);
 
       setIsOption(vacation.vacationType);
       setReason(vacation.reason);
@@ -80,12 +79,8 @@ const VacationDetailPage = () => {
 
   const updateVacationDetails = async () => {
     try {
-      const request = await api.put(
-        `${ENDPOINT.VACATION}/${param.vacationId}`,
-        data
-      );
+      await api.put(`${ENDPOINT.VACATION}/${param.vacationId}`, data);
 
-      // console.log("Fix vacationDetail data ", request.data);
       alert("휴가신청 수정완료");
       navigate("/");
     } catch (err) {
@@ -106,10 +101,7 @@ const VacationDetailPage = () => {
   // 휴가 삭제한 데이터 API
   const handleClickDelete = async () => {
     try {
-      const request = await api.delete(
-        `${ENDPOINT.VACATION}/${param.vacationId}`
-      );
-      // console.log("Delete vacationDetail data ", request.data);
+      await api.delete(`${ENDPOINT.VACATION}/${param.vacationId}`);
       alert("삭제완료");
       navigate("/");
     } catch (err) {

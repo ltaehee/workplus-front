@@ -45,8 +45,7 @@ const VacationPage = () => {
       reason: reason,
     };
     try {
-      const response = await api.post(ENDPOINT.VACATION, data);
-      // console.log("vacation data ", response.data);
+      await api.post(ENDPOINT.VACATION, data);
       alert("휴가 신청 완료");
       navigate("/");
     } catch (err) {

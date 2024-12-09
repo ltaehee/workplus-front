@@ -106,7 +106,6 @@ const MeetingDetailPage: React.FC = () => {
       const response = await api.get(
         `${ENDPOINT.USER}/search?username=${debouncedSearchInputValue}`
       );
-      // console.log("getUserName data ", response.data);
       setFilteredData(response.data.users);
     } catch (err) {
       console.log("Error getUserName ", err);
@@ -128,7 +127,6 @@ const MeetingDetailPage: React.FC = () => {
       const request = await api.get(`${ENDPOINT.METTING}/${param.meetingId}`);
 
       const meeting = request.data.data.meeting;
-      // console.log("meeting data ", meeting);
 
       const newSelectedUsers = meeting.attendant.map((username: string) => ({
         username,
@@ -177,11 +175,7 @@ const MeetingDetailPage: React.FC = () => {
       agenda: agenda,
     };
     try {
-      const response = await api.put(
-        `${ENDPOINT.METTING}/${param.meetingId}`,
-        data
-      );
-      // console.log("Fix data ", response);
+      await api.put(`${ENDPOINT.METTING}/${param.meetingId}`, data);
       alert("회의 수정 완료");
       setGetUsers([]);
       navigate("/");
@@ -194,10 +188,7 @@ const MeetingDetailPage: React.FC = () => {
   // 회의 삭제한 데이터 API
   const handleClickDelete = async () => {
     try {
-      const response = await api.delete(
-        `${ENDPOINT.METTING}/${param.meetingId}`
-      );
-      // console.log("Delete meetingDetail data ", response.data);
+      await api.delete(`${ENDPOINT.METTING}/${param.meetingId}`);
       alert("삭제완료");
       navigate("/");
     } catch (err) {
