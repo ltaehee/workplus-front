@@ -32,6 +32,10 @@ const VacationPage = () => {
 
   // 휴가 등록 API
   const handelClickSubmit = async () => {
+    if (!reason) {
+      alert("사유를 입력해주세요");
+      return;
+    }
     const data = {
       username: userName.username,
       userId: userName.userId,
@@ -42,12 +46,12 @@ const VacationPage = () => {
     };
     try {
       const response = await api.post(ENDPOINT.VACATION, data);
-      console.log("vacateion data ", response.data);
+      console.log("vacation data ", response.data);
       alert("휴가 신청 완료");
       navigate("/");
     } catch (err) {
       console.log("Error submit vacation data ", err);
-      alert("휴가 신청 실패: 사유를 입력해주세요");
+      alert("휴가 신청 실패");
     }
   };
 
@@ -61,7 +65,7 @@ const VacationPage = () => {
     <>
       <div className="w-full flex flex-col space-y-5 items-center">
         <p className="mt-20">휴가 신청 페이지</p>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           <Input
             placeholder="이름"
             id={"이름"}
@@ -69,7 +73,7 @@ const VacationPage = () => {
             readOnly
           />
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           <Datepicker
             id={"시작 날짜"}
             className="w-full px-4 py-2 border rounded-md"
@@ -79,7 +83,7 @@ const VacationPage = () => {
             minDate={today}
           />
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           <Datepicker
             id={"종료 날짜"}
             className="w-full px-4 py-2 border rounded-md"
@@ -89,7 +93,7 @@ const VacationPage = () => {
             minDate={today}
           />
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           <SelectBox
             id={"종류"}
             className=""
@@ -99,10 +103,10 @@ const VacationPage = () => {
             onChange={handleChangeSelect}
           />
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           <Input placeholder="사유" id={"사유"} onChange={handleChangeReason} />
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           <Button btnText="등록" onClick={handelClickSubmit} />
         </div>
       </div>

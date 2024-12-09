@@ -51,33 +51,38 @@ const VacationDetailPage = () => {
     }
   };
 
-  // 휴가 수정한 데이터 API
-  const handleClickFix = async () => {
-    const data = {
-      username: userName.username,
-      userId: userName.userId,
-      startDate: startDate,
-      endDate: endDate,
-      vacationType: isOption,
-      reason: reason,
-    };
+  const data = {
+    username: userName.username,
+    userId: userName.userId,
+    startDate: startDate,
+    endDate: endDate,
+    vacationType: isOption,
+    reason: reason,
+  };
 
+  const updateVacationDetails = async () => {
     try {
       const request = await api.put(
         `${ENDPOINT.VACATION}/${param.vacationId}`,
         data
       );
-      if (reason === "") {
-        alert("휴가 수정 실패: 사유를 입력해주세요");
-      } else {
-        console.log("Fix vacationDetail data ", request.data);
-        alert("휴가신청 수정완료");
-        navigate("/");
-      }
+
+      console.log("Fix vacationDetail data ", request.data);
+      alert("휴가신청 수정완료");
+      navigate("/");
     } catch (err) {
       console.log("Error vacationDetail Fix ", err);
       alert("휴가 수정 실패");
     }
+  };
+
+  // 휴가 수정한 데이터 API
+  const handleClickFix = () => {
+    if (!reason) {
+      alert("사유를 입력해주세요");
+      return;
+    }
+    updateVacationDetails();
   };
 
   // 휴가 삭제한 데이터 API
@@ -107,7 +112,7 @@ const VacationDetailPage = () => {
     <>
       <div className="w-full flex flex-col space-y-5 items-center">
         <p className="mt-20">휴가 신청 상세 페이지</p>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           <Input
             placeholder="이름"
             id={"이름"}
@@ -115,7 +120,7 @@ const VacationDetailPage = () => {
             readOnly
           />
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           {requesterId !== userName.userId ? (
             <Datepicker
               id={"시작 날짜"}
@@ -136,7 +141,7 @@ const VacationDetailPage = () => {
             />
           )}
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           {requesterId !== userName.userId ? (
             <Datepicker
               id={"종료 날짜"}
@@ -157,7 +162,7 @@ const VacationDetailPage = () => {
             />
           )}
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           {requesterId !== userName.userId ? (
             <SelectBox
               id={"종류"}
@@ -180,7 +185,7 @@ const VacationDetailPage = () => {
             />
           )}
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           {requesterId !== userName.userId ? (
             <Input
               placeholder="사유"
@@ -198,7 +203,7 @@ const VacationDetailPage = () => {
             />
           )}
         </div>
-        <div className="w-1/6 flex justify-between">
+        <div className="w-full max-w-md flex justify-between">
           <div className="w-1/3">
             {requesterId !== userName.userId ? null : (
               <Button btnText="수정" onClick={handleClickFix} />
