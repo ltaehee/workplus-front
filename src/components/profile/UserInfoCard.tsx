@@ -73,7 +73,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
   }, [user]);
   return (
     <div>
-      <p className="font-bold pb-2">{title}</p>
+      <p className="font-bold pb-2 pt-8">{title}</p>
       <div className="border border-[#DFDFDF] bg-white rounded-md p-6">
         <div className="w-full flex gap-2 mb-1 flex justify-between items-center border-b border-gray-300 last:border-none py-2">
           <img src={phoneImg} alt="휴대폰이미지" />

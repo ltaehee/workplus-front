@@ -147,7 +147,7 @@ const MainPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] w-[1280px] h-[calc(100vh-65px)] gap-4 p-8 overflow-auto scrollbar-hide">
         <div className=" flex flex-col gap-4">
           <CheckInOut />
-          <div className="bg-white shadow-lg rounded-lg  h-60 md:h-[calc(66vh-5rem)] min-h-[420px] ">
+          <div className="bg-white shadow-lg rounded-lg h-60 md:h-[calc(66vh-5rem)] min-h-[420px] ">
             <div className="bg-slate-500 rounded-t-lg flex justify-center items-center h-14 sticky top-[-2rem]">
               <div className="text-white text-lg">{selectDay}</div>
             </div>
@@ -156,7 +156,7 @@ const MainPage = () => {
                 {currentDayMeetingList} {currentDayVacationList}
               </ul>
             ) : (
-              <div className="flex justify-center items-center w-full h-[calc(100%-3rem)]">
+              <div className="flex justify-center border border-slate-400 rounded-b-lg items-center w-full h-[calc(100%-3.5rem)]">
                 <p className="text-lg">날짜를 선택해주세요</p>
               </div>
             )}

@@ -57,10 +57,10 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   };
 
   return (
-    <div>
-      <p className="font-bold pb-2">{title}</p>
+    <div className="h-full">
+      <p className="font-bold pb-2 pt-8">{title}</p>
       <div
-        className={`border border-[#DFDFDF] bg-white rounded-md p-6 ${className}`}
+        className={`border border-[#DFDFDF] bg-white rounded-md h-[calc(100%-64px)] p-6 ${className}`}
       >
         {data ? (
           <ul>

@@ -141,14 +141,15 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="bg-[#F9FBFC] h-[calc(100vh-65px)] overflow-y-hidden">
-      <div className="flex justify-center">
-        <div className="flex pr-8 w-1280">
-          <div className="w-4/12 h-screen  bg-white px-8 py-12 shadow-[10px_0_10px_-10px_rgba(0,0,0,0.1)]  z-10">
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1280px 1fr" }}>
+      <div></div>
+      <div className="flex justify-center bg-slate-100">
+        <div className="grid grid-cols-[1fr_2fr] h-[calc(100vh-65px)] gap-4 overflow-auto scrollbar-hide">
+          <div className="flex justify-center items-center px-20 h-100% shadow-[10px_0_10px_-10px_rgba(0,0,0,0.1)] bg-white">
             <MainProfile user={user} onEdit={handleEdit} />
           </div>
-          <div className="flex gap-10 bg-[#F9FBFC]  w-8/12  pl-8 py-12 ">
-            <div className="w-6/12">
+          <div className="grid grid-cols-2 w-[842.67px] gap-4 mb-8">
+            <div className="h-[calc(100vh-96px)] min-h-[640px]">
               <ProfileSection
                 title="회의 알림"
                 data={meetingData.map((meeting) => {
@@ -167,26 +168,28 @@ const ProfilePage = () => {
                 checkNewMeeting={checkNewMeeting}
                 onListClick={openModal}
                 isMeetingSection={true}
-                className="min-h-[730px] max-h-[730px] overflow-y-auto "
+                className=""
               />
             </div>
-            <div className="flex flex-col gap-10 w-6/12">
-              <ProfileSection
-                title="연차 사용 내역"
-                className="h-[400px] overflow-y-auto"
-                data={vacationData.map((vacation) => {
-                  const startDate = vacation.startDate?.split("T")[0];
-                  const endDate = vacation.endDate?.split("T")[0];
-                  return {
-                    label: vacation.vacationType,
-                    date: `${startDate} ~ ${endDate}`,
-                    reason: vacation.reason,
-                    onClick: () => openModal(vacation),
-                  };
-                })}
-                onListClick={openModal}
-                isMeetingSection={false}
-              />
+            <div className="flex flex-col">
+              <div className="h-[calc(100vh-416px)] min-h-80">
+                <ProfileSection
+                  title="연차 사용 내역"
+                  className=""
+                  data={vacationData.map((vacation) => {
+                    const startDate = vacation.startDate?.split("T")[0];
+                    const endDate = vacation.endDate?.split("T")[0];
+                    return {
+                      label: vacation.vacationType,
+                      date: `${startDate} ~ ${endDate}`,
+                      reason: vacation.reason,
+                      onClick: () => openModal(vacation),
+                    };
+                  })}
+                  onListClick={openModal}
+                  isMeetingSection={false}
+                />
+              </div>
               <UserInfoCard
                 title="부가 정보 관리"
                 user={user}
@@ -208,6 +211,7 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
+      <div className="bg-slate-100"></div>
     </div>
   );
 };
