@@ -66,6 +66,10 @@ const MeetingPage: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
+
+    if (value === "") {
+      setFilteredData([]);
+    }
   };
 
   // 참여자 자동완성 검색 API
