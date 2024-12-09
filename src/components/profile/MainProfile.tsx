@@ -5,7 +5,7 @@ import Input from "../common/Input";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import api from "../../utils/api";
 import { ENDPOINT } from "../../utils/endpoints";
-// import ToastNotification from "../common/ToastNotification";
+import { useStore } from "../../store/useStore";
 
 type UserInfo = {
   id?: string;
@@ -30,6 +30,7 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
   const handleChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     setEditName(target.value);
   };
+
   /* 이름 수정 하기*/
   const handleClickEdit = async () => {
     try {
@@ -64,8 +65,7 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
 
     const storedUser = localStorage.getItem("user");
     if (!storedUser) return;
-    const { userId } = JSON.parse(storedUser);
-
+    const user = JSON.parse(storedUser);
     try {
       const formData = new FormData();
       if (file) {
@@ -76,18 +76,20 @@ const MainProfile: React.FC<MainProfileProps> = ({ user, onEdit }) => {
         return;
       }
       const response = await api.put(
-        `${ENDPOINT.USER_PROFILE_IMAGE}/${userId}`,
+        `${ENDPOINT.USER_PROFILE_IMAGE}/${user.userId}`,
         formData
       );
       if (response.status === 200 || response.status === 204) {
         // 업로드 후 처리 로직 (예: 이미지 URL 업데이트)
-        const uploadedImageUrl = response.data.data.imgUrl;
 
-        onEdit({ ...user, userImage: uploadedImageUrl });
-        /* 헤더에 이미지 바로 변경안됨 */
-        // localStorage.setItem("user", JSON.stringify(uploadedImageUrl)); // 로컬 스토리지에 저장
-        // const updatedUser = { ...user, userImage: uploadedImageUrl };
-        // onEdit(updatedUser);
+        const uploadedImageUrl = response.data.data.imgUrl;
+        console.log({ user });
+        const updatedUser = { ...user, userImage: uploadedImageUrl };
+        localStorage.setItem("user", JSON.stringify(updatedUser)); // 로컬 스토리지에 저장
+        onEdit(updatedUser);
+
+        // zustand 상태 업데이트 (여기서 상태를 업데이트)
+        useStore.getState().setProfileImage(uploadedImageUrl);
       }
     } catch (err) {
       console.error("Error uploading file:", err);

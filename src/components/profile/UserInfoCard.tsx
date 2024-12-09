@@ -6,6 +6,7 @@ import Input from "../common/Input";
 import { ChangeEvent, useEffect, useState } from "react";
 import api from "../../utils/api";
 import { ENDPOINT } from "../../utils/endpoints";
+import { validatePhone, validateBirth } from "../../utils/validation";
 
 type UserInfo = {
   phone?: string;
@@ -27,11 +28,31 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
   });
 
   const handleChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-    setEditInput((prev) => ({ ...prev, [target.name]: target.value }));
+    const { name, value } = target;
+
+    // 입력 값 변경 시 검증 실행
+    let error = "";
+    if (name === "phone") error = validatePhone(value);
+    if (name === "birth") error = validateBirth(value);
+
+    setEditInput((prev) => ({ ...prev, [name]: value }));
   };
 
   /* 부가 정보 수정 하기*/
   const handleClickInfoChange = async () => {
+    const phoneError = validatePhone(editInput.phone);
+    const birthError = validateBirth(editInput.birth);
+
+    if (phoneError) {
+      alert(phoneError);
+      return;
+    }
+
+    if (birthError) {
+      alert(birthError);
+      return;
+    }
+
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
@@ -42,7 +63,6 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
         address: editInput.address,
         id: userId,
       });
-      console.log("API Response:", response);
 
       if (response.status === 204 || response.status === 200) {
         onEdit({
@@ -51,7 +71,6 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
           birth: editInput.birth,
           address: editInput.address,
         });
-        console.log("user", user);
 
         alert("수정 완료");
       }
@@ -83,6 +102,7 @@ const UserInfoCard: React.FC<InfoCardProps> = ({ title, user, onEdit }) => {
             placeholder="ex) 010-0000-0000"
             name="phone"
           />
+
           <Button
             btnText="수정"
             onClick={handleClickInfoChange}

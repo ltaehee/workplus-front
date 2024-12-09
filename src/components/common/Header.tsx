@@ -6,6 +6,7 @@ import XIcon from "../icons/XIcon";
 import { useNavigate } from "react-router-dom";
 import defaultImg from "../icons/profileImg.svg";
 import api from "../../utils/api";
+import { useStore } from "../../store/useStore";
 
 const Header = () => {
   const [isMenu, setIsMenu] = useState(false);
@@ -16,6 +17,7 @@ const Header = () => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
   });
+  const userImage = useStore((state) => state.user.userImage);
 
   const navigate = useNavigate();
 
@@ -99,7 +101,7 @@ const Header = () => {
             >
               <img
                 className="object-cover w-full h-full rounded-full cursor-pointer"
-                src={AvatarImage}
+                src={userImage || AvatarImage}
                 alt="Profile image"
               />
             </button>

@@ -2,7 +2,7 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./components/Layout.tsx";
-import { lazy, Suspense } from "react";
+import { lazy } from "react";
 
 const MainPage = lazy(() => import("./pages/MainPage.tsx"));
 const VacationPage = lazy(() => import("./pages/VacationPage.tsx"));
