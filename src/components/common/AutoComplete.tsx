@@ -1,40 +1,19 @@
-import { useState } from "react";
-
-type UserData = {
-  name: string;
-  id: string;
-};
+import { UserData } from "../../types";
 
 type AutoCompleteProps = {
-  data: UserData[];
-  onSelect: (user: UserData) => void;
+  value?: string;
+  onSelect?: (user: UserData) => void;
   id?: string;
+  readOnly?: boolean;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-const AutoComplete: React.FC<AutoCompleteProps> = ({ data, onSelect, id }) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredData, setFilteredData] = useState<UserData[]>([]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-
-    if (value) {
-      const filtered = data.filter(
-        (user) => user.name.toLowerCase().includes(value.toLowerCase()) // 입력할때마다 소문자변환
-      );
-      setFilteredData(filtered);
-    } else {
-      setFilteredData([]);
-    }
-  };
-
-  const handleSelect = (user: UserData) => {
-    setSearchTerm(user.name);
-    setFilteredData([]);
-    onSelect(user);
-  };
-
+const AutoComplete: React.FC<AutoCompleteProps> = ({
+  id,
+  readOnly,
+  onChange,
+  value,
+}) => {
   return (
     <div className="">
       {id ? (
@@ -43,21 +22,13 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({ data, onSelect, id }) => {
         </label>
       ) : null}
       <input
-        type="text"
+        type="search"
         className="px-4 py-2 border rounded-md w-full focus:outline-none focus:ring-2"
-        value={searchTerm}
-        onChange={handleChange}
+        value={value}
+        onChange={onChange}
         placeholder="참여자 검색"
+        readOnly={readOnly}
       />
-      {filteredData.length > 0 && (
-        <ul className=" z-10 w-full bg-white border border-gray-300 rounded">
-          {filteredData.map((user) => (
-            <li key={user.id} className="" onClick={() => handleSelect(user)}>
-              {user.name}
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 };

@@ -4,9 +4,14 @@ import Button from "../components/common/Button";
 import { ChangeEvent, useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
+import GoogleIcon from "../components/icons/GoogleIcon";
 
 const regex =
   /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*()_+[\]{};':"\\|,.<>\/?`~\-]).{8,}$/;
+
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const googleRedirectUrl = import.meta.env.VITE_GOOGLE_OAUTH_SIGNUP_REDIRECT_URL;
+const googleOauthEntryUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleClientId}&redirect_uri=${googleRedirectUrl}&response_type=code&scope=email profile`;
 
 const SignupPage = () => {
   const [email, setEmail] = useState("");
@@ -22,6 +27,19 @@ const SignupPage = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
+
+  const isLogin = !!localStorage.getItem("user");
+
+  useEffect(() => {
+    if (isLogin) {
+      navigate("/");
+      alert("로그인이 되어있습니다.");
+    }
+  }, [isLogin, navigate]);
+
+  if (isLogin) {
+    return null;
+  }
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -54,10 +72,9 @@ const SignupPage = () => {
     } else {
       try {
         setIsLoading(true);
-        const response = await axios.post("/api/auth/send-email", {
+        await axios.post("/api/auth/send-email", {
           email,
         });
-        console.log(response);
         setIsclick(true);
       } catch (err) {
         console.log("handleClickEmailSend 오류", err);
@@ -72,11 +89,10 @@ const SignupPage = () => {
 
   const handleClickEmailVerify = async () => {
     try {
-      const response = await axios.post("/api/auth/verify-email", {
+      await axios.post("/api/auth/verify-email", {
         email: emailInputValue,
         token,
       });
-      console.log(response);
       setIsVerifyOk(true);
     } catch (err) {
       console.log("handleClickEmailVerify 오류", err);
@@ -94,12 +110,11 @@ const SignupPage = () => {
       alert("비밀번호가 일치하지 않습니다");
     } else if (password === passwordCheck) {
       try {
-        const response = await axios.post("/api/auth/signup", {
+        await axios.post("/api/auth/signup", {
           email: emailInputValue,
           username: name,
           password,
         });
-        console.log(response);
         alert("회원가입이 완료되었습니다.");
         navigate("/login");
       } catch (err) {
@@ -108,14 +123,48 @@ const SignupPage = () => {
     }
   };
 
+  const handleClickGoogleLogin = () => {
+    window.location.href = googleOauthEntryUrl;
+  };
+
+  const googleRedirect = async (code: string) => {
+    try {
+      const response = await axios.post("/api/auth/google-oauth-signup", {
+        code,
+      });
+      alert(response.data.message);
+      navigate("/login");
+    } catch (err) {
+      console.log("googleRedirect 오류", err);
+      if (axios.isAxiosError(err)) {
+        alert(err.response?.data.message);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const code = urlParams.get("code");
+    if (code) {
+      googleRedirect(code);
+    }
+  }, [location]);
+
   return (
     <>
-      <div className={"grid grid-cols-2"}>
-        <div className={"flex justify-center items-center  h-screen"}>
+      <div
+        className={"grid grid-cols-1 h-screen md:grid-cols-2 content-center"}
+      >
+        <button
+          onClick={() => navigate("/login")}
+          className={"flex justify-center items-center pb-16 md:h-screen"}
+        >
           <Logo className={"w-6/12"} />
-        </div>
+        </button>
         <div
-          className={"flex flex-col justify-center items-center gap-8 h-screen"}
+          className={
+            "flex flex-col justify-center items-center gap-8 md:h-screen"
+          }
         >
           <div className={"flex flex-col w-8/12 min-w-80 gap-4"}>
             <h2 className={"text-xl"}>회원가입</h2>
@@ -130,15 +179,39 @@ const SignupPage = () => {
 
                 {!isclick ? (
                   <Button
-                    className={"bg-blue-400"}
                     onClick={handleClickEmailSend}
                     btnText={
                       isloading ? "잠시만 기다려주세요" : "이메일 보내기"
                     }
+                    disabled={isloading}
                   />
                 ) : (
-                  <h3 className={"text-l"}>이메일을 확인해주세요</h3>
+                  <Button
+                    btnText={"이메일을 확인해주세요"}
+                    disabled
+                    className="bg-blue-300 hover:bg-blue-300"
+                  />
                 )}
+                <div className={"flex flex-col gap-2 pt-4"}>
+                  <div className={"flex items-center py-4"}>
+                    <div
+                      className={"flex-1 border-t border-gray-400 mr-4"}
+                    ></div>
+                    <span className={"text-slate-600 "}>SNS 간편 회원가입</span>
+                    <div
+                      className={"flex-1 border-t border-gray-400 ml-4"}
+                    ></div>
+                  </div>
+                  <button
+                    onClick={handleClickGoogleLogin}
+                    className={
+                      "flex justify-center px-4 py-3  bg-white text-slate-900 rounded-md border border-gray-400 hover:bg-slate-50 transition duration-10 w-full"
+                    }
+                  >
+                    <GoogleIcon className={"mr-2"} width={"24px"} />
+                    구글로 회원가입
+                  </button>
+                </div>
               </>
             ) : (
               <>
@@ -151,9 +224,14 @@ const SignupPage = () => {
                   id={"이메일"}
                 />
                 <Button
-                  className={ifVerifyOk ? "bg-green-800" : "bg-blue-800"}
+                  className={
+                    ifVerifyOk
+                      ? "bg-green-800 hover:bg-green-800"
+                      : "bg-blue-800"
+                  }
                   onClick={handleClickEmailVerify}
                   btnText={ifVerifyOk ? "인증되었습니다" : "이메일 인증받기"}
+                  disabled={ifVerifyOk && true}
                 />
               </>
             )}

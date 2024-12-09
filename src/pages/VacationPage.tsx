@@ -3,23 +3,25 @@ import SelectBox from "../components/common/SelectBox";
 import Input from "../components/common/Input";
 import Button from "../components/common/Button";
 import Datepicker from "../components/common/DatePicker";
-import axios from "axios";
-import { data } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import api from "../utils/api";
+import { ENDPOINT } from "../utils/endpoints";
+
 const VacationPage = () => {
   const [userName, setUserName] = useState<{
-    id: string;
+    userId: string;
     email: string;
     username: string;
-  }>({ id: "", email: "", username: "" });
-  const [isOption, setIsOption] = useState("");
+    token?: string;
+  }>({ userId: "", email: "", username: "" });
+  const [isOption, setIsOption] = useState("연차");
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [endDate, setEndDate] = useState<Date | null>(new Date());
   const [reason, setReason] = useState("");
-
+  const navigate = useNavigate();
   const loginUser = localStorage.getItem("user");
-  const token = localStorage.getItem("token");
-  const startDateString = startDate?.toLocaleDateString("ko-KR");
-  const endDateString = endDate?.toLocaleDateString("ko-KR");
+  const today = new Date();
+
   const handleChangeSelect = (e: ChangeEvent<HTMLSelectElement>) => {
     setIsOption(e.target.value);
     console.log(e.target.value);
@@ -28,73 +30,69 @@ const VacationPage = () => {
     setReason(e.target.value);
   };
 
+  // 휴가 등록 API
   const handelClickSubmit = async () => {
+    if (!reason) {
+      alert("사유를 입력해주세요");
+      return;
+    }
     const data = {
       username: userName.username,
-      userId: userName.id,
-      startDate: startDateString,
-      endDate: endDateString,
+      userId: userName.userId,
+      startDate: startDate,
+      endDate: endDate,
       vacationType: isOption,
       reason: reason,
     };
     try {
-      const request = await axios.post("/api/vacation", data, {
-        headers: {
-          authorization: token,
-        },
-      });
-      console.log("vacateion data ", request.data);
+      await api.post(ENDPOINT.VACATION, data);
+      alert("휴가 신청 완료");
+      navigate("/");
     } catch (err) {
       console.log("Error submit vacation data ", err);
+      alert("휴가 신청 실패");
     }
   };
 
   useEffect(() => {
-    console.log("user  ", loginUser);
-    console.log("userName._id ", userName.id);
-
     if (loginUser) {
       setUserName(JSON.parse(loginUser));
-      console.log("user 토큰 ", userName);
     }
   }, []);
-
-  // console.log("시작날짜 ", startDateString);
-  // console.log("종료날짜 ", endDateString);
-  // console.log("종류 ", isOption);
-  // console.log("사유 ", reason);
 
   return (
     <>
       <div className="w-full flex flex-col space-y-5 items-center">
         <p className="mt-20">휴가 신청 페이지</p>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           <Input
             placeholder="이름"
             id={"이름"}
             value={userName.username}
-            readonly
+            readOnly
           />
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           <Datepicker
             id={"시작 날짜"}
-            className="w-full"
+            className="w-full px-4 py-2 border rounded-md"
             dateFormat="yyyy/MM/dd"
             selected={startDate}
             onChange={(date) => setStartDate(date)}
+            minDate={today}
           />
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           <Datepicker
             id={"종료 날짜"}
-            className="w-full"
+            className="w-full px-4 py-2 border rounded-md"
             dateFormat="yyyy/MM/dd"
             selected={endDate}
             onChange={(date) => setEndDate(date)}
+            minDate={today}
           />
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           <SelectBox
             id={"종류"}
             className=""
@@ -104,10 +102,10 @@ const VacationPage = () => {
             onChange={handleChangeSelect}
           />
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           <Input placeholder="사유" id={"사유"} onChange={handleChangeReason} />
         </div>
-        <div className="w-1/6">
+        <div className="w-full max-w-md">
           <Button btnText="등록" onClick={handelClickSubmit} />
         </div>
       </div>

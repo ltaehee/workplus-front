@@ -2,17 +2,19 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./components/Layout.tsx";
-import MainPage from "./pages/MainPage.tsx";
-import VacationPage from "./pages/VacationPage.tsx";
-import ErrorPage from "./pages/ErrorPage.tsx";
-import LoginPage from "./pages/LoginPage.tsx";
-import ProfilePage from "./pages/ProfilePage.tsx";
-import SignupPage from "./pages/SignupPage.tsx";
-import MeetingPage from "./pages/MeetingPage.tsx";
-import AdminPage from "./pages/AdminPage.tsx";
-import VacationDetailPage from "./pages/VacationDetailPage.tsx";
-import MeetingDetailPage from "./pages/MeetingDetailPage.tsx";
-import FindPasswordPage from "./pages/FindPasswordPage.tsx";
+import { lazy } from "react";
+
+const MainPage = lazy(() => import("./pages/MainPage.tsx"));
+const VacationPage = lazy(() => import("./pages/VacationPage.tsx"));
+const ErrorPage = lazy(() => import("./pages/ErrorPage.tsx"));
+const LoginPage = lazy(() => import("./pages/LoginPage.tsx"));
+const SignupPage = lazy(() => import("./pages/SignupPage.tsx"));
+const MeetingPage = lazy(() => import("./pages/MeetingPage.tsx"));
+const AdminPage = lazy(() => import("./pages/AdminPage.tsx"));
+const VacationDetailPage = lazy(() => import("./pages/VacationDetailPage.tsx"));
+const MeetingDetailPage = lazy(() => import("./pages/MeetingDetailPage.tsx"));
+const FindPasswordPage = lazy(() => import("./pages/FindPasswordPage.tsx"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage.tsx"));
 
 const router = createBrowserRouter([
   {
@@ -41,11 +43,11 @@ const router = createBrowserRouter([
         element: <AdminPage />,
       },
       {
-        path: "/vacationDetail/:vacationId",
+        path: "/vacation-detail/:vacationId",
         element: <VacationDetailPage />,
       },
       {
-        path: "/meetingDetail/:meetingId",
+        path: "/meeting-detail/:meetingId",
         element: <MeetingDetailPage />,
       },
     ],

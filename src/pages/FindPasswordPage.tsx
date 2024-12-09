@@ -1,7 +1,7 @@
 import Logo from "../components/common/Logo";
 import Input from "../components/common/Input";
 import Button from "../components/common/Button";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -22,6 +22,19 @@ const FindPasswordPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const isLogin = !!localStorage.getItem("user");
+
+  useEffect(() => {
+    if (isLogin) {
+      navigate("/");
+      alert("로그인이 되어있습니다.");
+    }
+  }, [isLogin, navigate]);
+
+  if (isLogin) {
+    return null;
+  }
+
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const emailValue = urlParams.get("email");
@@ -35,25 +48,31 @@ const FindPasswordPage = () => {
     }
   }, [location]);
 
-  const handleChangeEmail = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChangeEmail = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-  };
-  const handleChangePassword = (e: ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
-  const handleChangePasswordCheck = (e: ChangeEvent<HTMLInputElement>) => {
-    setPasswordCheck(e.target.value);
-  };
-  const handleClickEmailSend = async () => {
+  }, []);
+  const handleChangePassword = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setPassword(e.target.value);
+    },
+    []
+  );
+  const handleChangePasswordCheck = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setPasswordCheck(e.target.value);
+    },
+    []
+  );
+
+  const handleClickEmailSend = useCallback(async () => {
     if (!email.includes("@")) {
       alert("메일에@넣어주세요");
     } else {
       try {
         setIsLoading(true);
-        const response = await axios.post("/api/auth/send-email-password", {
+        await axios.post("/api/auth/send-email-password", {
           email,
         });
-        console.log(response);
         setIsclick(true);
       } catch (err) {
         console.log("handleClickEmailSend 오류", err);
@@ -64,15 +83,14 @@ const FindPasswordPage = () => {
         setIsLoading(false);
       }
     }
-  };
+  }, [email]);
 
-  const handleClickEmailVerify = async () => {
+  const handleClickEmailVerify = useCallback(async () => {
     try {
-      const response = await axios.post("/api/auth/verify-email", {
+      await axios.post("/api/auth/verify-email", {
         email: emailInputValue,
         token,
       });
-      console.log(response);
       setIsVerifyOk(true);
     } catch (err) {
       console.log("handleClickEmailVerify 오류", err);
@@ -80,9 +98,9 @@ const FindPasswordPage = () => {
         alert(err.response?.data.message);
       }
     }
-  };
+  }, [emailInputValue, token]);
 
-  const handleClickPassword = async () => {
+  const handleClickPassword = useCallback(async () => {
     if (!regex.test(password)) {
       alert(
         "password는 8글자 이상 + 영문, 특수문자는 꼭 하나씩 들어가야됩니다."
@@ -91,11 +109,10 @@ const FindPasswordPage = () => {
       alert("비밀번호가 일치하지 않습니다");
     } else if (password === passwordCheck) {
       try {
-        const response = await axios.patch("/api/auth/password", {
+        await axios.patch("/api/auth/password", {
           email: emailInputValue,
           password,
         });
-        console.log(response);
         alert("비밀번호가 변경되었습니다.");
         navigate("/login");
       } catch (err) {
@@ -105,16 +122,23 @@ const FindPasswordPage = () => {
         }
       }
     }
-  };
+  }, [password, passwordCheck, emailInputValue, navigate]);
 
   return (
     <>
-      <div className={"grid grid-cols-2"}>
-        <div className={"flex justify-center items-center  h-screen"}>
+      <div
+        className={"grid grid-cols-1 h-screen md:grid-cols-2 content-center"}
+      >
+        <button
+          onClick={() => navigate("/login")}
+          className={"flex justify-center items-center pb-16 md:h-screen"}
+        >
           <Logo className={"w-6/12"} />
-        </div>
+        </button>
         <div
-          className={"flex flex-col justify-center items-center gap-8 h-screen"}
+          className={
+            "flex flex-col justify-center items-center gap-8 md:h-screen"
+          }
         >
           <div className={"flex flex-col w-8/12 min-w-80 gap-4"}>
             <h2 className={"text-xl"}>비밀번호 찾기</h2>
@@ -129,14 +153,18 @@ const FindPasswordPage = () => {
 
                 {!isclick ? (
                   <Button
-                    className={"bg-blue-400"}
                     onClick={handleClickEmailSend}
                     btnText={
                       isloading ? "잠시만 기다려주세요" : "이메일 보내기"
                     }
+                    disabled={isloading}
                   />
                 ) : (
-                  <h3 className={"text-l"}>이메일을 확인해주세요</h3>
+                  <Button
+                    btnText={"이메일을 확인해주세요"}
+                    disabled
+                    className="bg-blue-300 hover:bg-blue-300"
+                  />
                 )}
               </>
             ) : (

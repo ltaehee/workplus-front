@@ -1,164 +1,244 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SideMenu from "../components/admin/SideMenu";
 import ListWrap from "../components/admin/ListWrap";
+import { ENDPOINT } from "../utils/endpoints";
+import api from "../utils/api";
+import {
+  UserRow,
+  AttendanceRow,
+  VacationRow,
+} from "../components/admin/TableRows";
+import Pagination from "../components/common/Pagination";
 
+interface Vacation {
+  vacationId: string;
+  username: string;
+  startDate: string;
+  endDate: string;
+  vacationType: string;
+  reason: string;
+  status: string;
+}
 interface User {
-  id: number;
-  name: string;
-  phone?: string;
-  birth?: string;
-  typeVacation?: string;
-  start?: string;
-  end?: string;
-  clockIn?: string;
-  clockOut?: string;
+  username: string;
+  phone: string;
+  birth: string;
+  email: string;
+  address: string;
 }
 const AdminPage = () => {
-  const [activePage, setActivePage] = useState<string>("home");
+  const [activePage, setActivePage] = useState<string>();
+  const [vacationData, setVacationData] = useState<Vacation[]>([]);
+  const [userData, setUserData] = useState<User[]>([]);
+  const [attendData, setAttendData] = useState<User[]>([]);
 
-  // 더미 데이터
-  const userList = [
-    {
-      id: 1,
-      name: "엘리스1",
-      email: "elice123@naver.com",
-      phone: "010-1234-5678",
-      birth: "1990-01-01",
-      address: "수원시 장안구",
-    },
-    {
-      id: 2,
-      name: "엘리스2",
-      email: "elice123@naver.com",
-      phone: "010-1234-5678",
-      birth: "1990-01-01",
-      address: "안양시 동안구",
-    },
-    {
-      id: 3,
-      name: "엘리스3",
-      email: "elice123@naver.com",
-      phone: "010-1234-5678",
-      birth: "1990-01-01",
-      address: "서울시 강남구",
-    },
-  ];
-
-  const attendanceList = [
-    { id: 1, user: "엘리스4", clockIn: "09:00", clockOut: "18:00" },
-  ];
-
-  const vacationList = [
-    {
-      id: 1,
-      user: "엘리스5",
-      typeVacation: "연차",
-      start: "2024-12-01",
-      end: "2024-12-10",
-      status: "승인",
-    },
-    {
-      id: 2,
-      user: "엘리스5",
-      typeVacation: "연차",
-      start: "2024-12-01",
-      end: "2024-12-10",
-      status: "미승인",
-    },
-  ];
+  // 페이지네이션 관련 상태 추가
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+  const [userTotalPage, setUserTotalPage] = useState(1); // 유저목록임 전체 페이지 수
+  const [vacationTotalPage, setVacationTotalPage] = useState(1); // 휴가 페이지 수
+  const [attendanceTotalPage, setAttendanceTotalPage] = useState(1); // 근태 페이지 수
 
   const headers = {
-    home: ["ID", "이름", "이메일", "전화번호", "생년월일", "주소"],
-    attendance: ["ID", "이름", "출근 시간", "퇴근 시간"],
-    vacation: ["ID", "이름", "휴가종류", "휴가 시작", "휴가 끝", "상태"],
+    home: ["이름", "이메일", "전화번호", "생년월일", "주소", ""],
+    attendance: ["이름", "상태", "시간"],
+    vacation: ["이름", "휴가종류", "휴가 시작", "휴가 끝", "사유", "상태"],
   };
 
-  // 테이블 헤더와 각 페이지에 맞는 행 렌더링 함수
-  const renderUserRow = (user: {
-    id: number;
-    name: string;
-    phone: string;
-    birth: string;
-    email: string;
-    address: string;
-  }) => (
-    <>
-      <td className="p-2 pl-4">{user.id}</td>
-      <td className="p-2 pl-4">{user.name}</td>
-      <td className="p-2 pl-4">{user.email}</td>
-      <td className="p-2 pl-4">{user.phone}</td>
-      <td className="p-2 pl-4">{user.birth}</td>
-      <td className="p-2 pl-4">{user.address}</td>
-    </>
-  );
+  /* ****************** */
 
-  const renderAttendanceRow = (att: {
-    id: number;
-    user: string;
-    clockIn: string;
-    clockOut: string;
-  }) => (
-    <>
-      <td className="p-2 pl-4">{att.id}</td>
-      <td className="p-2 pl-4">{att.user}</td>
-      <td className="p-2 pl-4">{att.clockIn}</td>
-      <td className="p-2 pl-4">{att.clockOut}</td>
-    </>
-  );
+  /* 모든 회원 연차 내역 불러오기 */
+  const vacationFetchData = async (limit: number = 13, page: number = 1) => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) return;
+      const response = await api.get(
+        `${ENDPOINT.ADMIN}/vacations?limit=${limit}&page=${page}`
+      );
+      if (response.status === 200 || response.status === 204) {
+        const { vacations } = response.data;
+        setVacationData(vacations);
 
-  const renderVacationRow = (vacation: {
-    id: number;
-    user: string;
-    start: string;
-    end: string;
-    typeVacation: string;
-    status: string;
-  }) => (
-    <>
-      <td className="p-2 pl-4">{vacation.id}</td>
-      <td className="p-2 pl-4">{vacation.user}</td>
-      <td className="p-2 pl-4">{vacation.typeVacation}</td>
-      <td className="p-2 pl-4">{vacation.start}</td>
-      <td className="p-2 pl-4">{vacation.end}</td>
-      <td className="p-2 pl-4">
-        <button
-          className={`px-3 py-2 rounded-md text-sm cursor-pointer ${
-            vacation.status === "승인" ? "bg-blue-500" : "bg-gray-500"
-          } text-white`}
-          disabled
-        >
-          {vacation.status}
-        </button>
-      </td>
-    </>
-  );
+        // 전체 페이지 수 계산
+        const totalCount = response.data.pageInfo.totalVacationCount;
+        const totalPage = Math.ceil(totalCount / limit);
+
+        setVacationTotalPage(totalPage);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  /* 휴가 승인,미승인 업데이트 */
+  const vacationApproveData = async (vacationId: string, status: string) => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) return;
+      const response = await api.patch(
+        `${ENDPOINT.ADMIN}/vacation/${vacationId}/status`,
+        { status }
+      );
+      if (response.status === 200) {
+        await vacationFetchData(13, currentPage);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  /* 전체 유저 목록 업데이트 */
+  const userTotalData = async (limit: number = 13, page: number = 1) => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) return;
+      const response = await api.get(
+        `${ENDPOINT.ADMIN_USERS}?limit=${limit}&page=${page}`
+      );
+
+      if (response.status === 200) {
+        const users = response.data.users;
+        const totalCount = response.data.pageInfo.totalUserCount; // 전체 데이터 갯수
+        setUserData(users);
+
+        // 전체 페이지 수 계산
+        const totalPage = Math.ceil(totalCount / limit);
+        setUserTotalPage(totalPage);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  /* 유저 삭제 */
+  const userDelete = async (userId: string) => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) return;
+      const response = await api.delete(`${ENDPOINT.ADMIN_USERS}/${userId}`);
+
+      if (response.status === 200 || response.status === 204) {
+        const users = response.data.users;
+        setAttendData(users);
+        alert("유저 삭제 완료");
+
+        await userTotalData(13, currentPage);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  /* 전체 유저 근태 목록 업데이트 */
+  const attendanceData = async (limit: number = 13, page: number = 1) => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) return;
+      const response = await api.get(
+        `${ENDPOINT.ADMIN_USERS}/attendance?limit=${limit}&page=${page}`
+      );
+      if (response.status === 200) {
+        const users = response.data.users;
+        setAttendData(users);
+
+        // 전체 페이지 수 계산
+        const totalCount = response.data.pageInfo.totalUserCount;
+        const totalPage = Math.ceil(totalCount / limit);
+        setAttendanceTotalPage(totalPage);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // 페이지 변경 시 호출되는 함수
+  const handlePageChange = (page: number) => {
+    if (page === currentPage) return; // 현재 페이지와 같으면 아무 작업도 하지 않음
+
+    setCurrentPage(page); // 페이지 변경
+    localStorage.setItem("currentPage", String(page));
+    if (page === 1) {
+      if (page === currentPage) return;
+      setCurrentPage(page);
+      userTotalData(5, page);
+    }
+  };
+
+  useEffect(() => {
+    const savedTab = localStorage.getItem("activePage") || "home"; // 기본값을 "home"으로 설정
+    const savedPage = localStorage.getItem("currentPage");
+    setActivePage(savedTab);
+
+    const page = savedPage ? Number(savedPage) : 1; // 저장된 페이지가 없으면 1로 설정
+    setCurrentPage(page);
+
+    if (savedTab === "home") {
+      userTotalData(13, page);
+    } else if (savedTab === "vacation") {
+      vacationFetchData(13, page);
+    } else if (savedTab === "attendance") {
+      attendanceData(13, page);
+    }
+  }, [currentPage, activePage]);
+
+  /* 탭 변경 시 `localStorage`에 현재 탭 상태 저장 */
+  const onChangeTab = (tab: string) => {
+    setActivePage(tab);
+    setCurrentPage(1); // 탭 변경 시 페이지를 1로 초기화
+    localStorage.setItem("activePage", tab); // 탭 상태를 localStorage에 저장
+    localStorage.setItem("currentPage", "1");
+  };
 
   return (
-    <div className="w-full flex justify-center">
-      <div className="flex w-[1280px] h-screen px-8">
-        <SideMenu setActivePage={setActivePage} />
-        <div className="w-[80%]">
-          {activePage === "home" && (
-            <ListWrap
-              headers={headers.home}
-              data={userList}
-              renderRow={renderUserRow}
-            />
-          )}
-          {activePage === "attendance" && (
-            <ListWrap
-              headers={headers.attendance}
-              data={attendanceList}
-              renderRow={renderAttendanceRow}
-            />
-          )}
-          {activePage === "vacation" && (
-            <ListWrap
-              headers={headers.vacation}
-              data={vacationList}
-              renderRow={renderVacationRow}
-            />
-          )}
+    <div className="w-full flex items-center justify-center h-[calc(100vh-65px)] overflow-y-hidden">
+      <div className="flex w-[1280px] px-8 h-full">
+        <SideMenu setActivePage={onChangeTab} />
+        <div className="w-full flex flex-col  relative">
+          <div className="w-[100%]">
+            {activePage === "home" && (
+              <ListWrap
+                headers={headers.home}
+                data={userData}
+                renderRow={(userData) => (
+                  <UserRow
+                    userData={userData}
+                    userDelete={() => {
+                      userDelete(userData._id);
+                    }}
+                  />
+                )}
+              />
+            )}
+            {activePage === "attendance" && (
+              <ListWrap
+                headers={headers.attendance}
+                data={attendData}
+                renderRow={(attendData) => (
+                  <AttendanceRow attendData={attendData} />
+                )}
+              />
+            )}
+            {activePage === "vacation" && (
+              <ListWrap
+                headers={headers.vacation}
+                data={vacationData}
+                renderRow={(vacation) => (
+                  <VacationRow
+                    vacation={vacation}
+                    vacationApproveData={vacationApproveData}
+                  />
+                )}
+              />
+            )}
+          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPage={
+              activePage === "home"
+                ? userTotalPage
+                : activePage === "vacation"
+                ? vacationTotalPage
+                : attendanceTotalPage
+            }
+            onPageChange={handlePageChange}
+            className="mt-6"
+          />
         </div>
       </div>
     </div>

@@ -1,9 +1,8 @@
-interface MenuIconProps {
-  width: string;
-  className?: string;
-}
+import { FC, SVGProps } from "react";
 
-const MenuIcon = (props: MenuIconProps) => {
+type SVGIconProps = FC<SVGProps<SVGSVGElement>>;
+
+const MenuIcon: SVGIconProps = (props) => {
   const { width, className } = props;
   return (
     <svg
